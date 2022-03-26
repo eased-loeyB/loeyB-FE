@@ -21,6 +21,7 @@ LogBox.ignoreLogs([
   'Require cycle: node_modules/rn-fetch-blob/index.js',
   'new NativeEventEmitter()',
   'Warning: Cannot update a component (`ImageViewer`) while rendering a different component (`ImageViewer`)',
+  "[react-native-gesture-handler] Seems like you're using an old API with gesture components, check out new Gestures system!",
 ]);
 LogBox.ignoreAllLogs();
 create();
