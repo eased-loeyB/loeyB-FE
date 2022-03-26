@@ -6,8 +6,10 @@ const Stack = createStackNavigator();
 
 const LoginScreen = () => {
   return (
-    <View style={{width: 100, height: 100, backgroundColor: 'red'}}>
-      <Text>Login</Text>
+    <View style={{width: 400, height: 1000, backgroundColor: 'red'}}>
+      <Text style={{textAlign: 'center', marginTop: 100, color: 'yellow'}}>
+        Login
+      </Text>
     </View>
   );
 };
