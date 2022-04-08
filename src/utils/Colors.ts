@@ -65,3 +65,6 @@ export const SuccessColors = {
   Main: '#22C245',
   Dark: '#06A228',
 };
+
+export const LightBlue2 = '#F4FAFF'
+export const LightBlue = '#A7D5F6'

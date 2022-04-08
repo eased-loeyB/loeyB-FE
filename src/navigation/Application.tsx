@@ -81,7 +81,7 @@ const ApplicationNavigator = () => {
     <SafeAreaProvider>
       <NavigationContainer ref={navigationRef}>
         <StatusBar
-          barStyle={'dark-content'}
+          barStyle={'light-content'}
           translucent={true}
           backgroundColor="transparent"
         />

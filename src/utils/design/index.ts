@@ -1,7 +1,7 @@
 import {Dimensions, PixelRatio, Platform} from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-const WIDTH_DESIGN = 411;
-const HEIGHT_DESIGN = 731;
+const WIDTH_DESIGN = 375;
+const HEIGHT_DESIGN = 812;
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
 

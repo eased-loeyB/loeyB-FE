@@ -6,7 +6,7 @@ import {ApplicationNavigator} from './navigation';
 // @ts-ignore
 import apolloLogger from 'apollo-link-logger';
 import {getApolloClient} from './apollo/client';
-import {DeviceEventEmitter, LogBox, Platform} from 'react-native';
+import {DeviceEventEmitter, LogBox, Platform, View} from 'react-native';
 import 'dayjs/locale/ko';
 import './translations';
 import dayjs from 'dayjs';
@@ -15,6 +15,9 @@ import Toast from 'react-native-toast-message';
 import {setCustomText} from 'react-native-global-props';
 //import {Fonts} from './assets';
 import store from './store';
+import BackgroundCommon from './components/BackgroundCommon';
+import 'react-native-gesture-handler'
+
 
 ApolloLink.from([apolloLogger]);
 LogBox.ignoreLogs([
@@ -57,7 +60,11 @@ const App = () => {
   }, []);
 
   if (!client) {
-    return null;
+    return (
+      <BackgroundCommon>
+        <View />
+      </BackgroundCommon>
+    );
   }
 
   return (
