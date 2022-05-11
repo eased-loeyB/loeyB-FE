@@ -21,7 +21,7 @@ export const Button = (props: ButtonProps) => {
         style={{
           backgroundColor: LightBlue,
           width: convertWidth(324),
-          height: convertHeight(60),
+          height: 60,
           opacity: props.enable ? 1 : 0.3,
           borderRadius: 16,
           justifyContent: 'center',

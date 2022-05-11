@@ -93,7 +93,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentText: {
-    fontFamily: Fonts.Regular,
     fontWeight: '400',
     fontSize: convertFontSize(13),
     letterSpacing: -0.1,

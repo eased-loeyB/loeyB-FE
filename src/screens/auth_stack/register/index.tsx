@@ -1,28 +1,24 @@
-import React, {useState} from 'react';
-import {
-  Alert,
-  Image,
-  Keyboard,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Keyboard, Text, TouchableWithoutFeedback, View} from 'react-native';
 import BackgroundCommon from '../../../components/BackgroundCommon';
-import TextField from '../../../components/TextField';
+import TextField from '../../../components/text_field';
 import {convertHeight, convertWidth} from '../../../utils';
 import {CommonStyles} from '../../../utils/Styles';
-import {Button} from '../../../components/Button';
+import {Button} from '../../../components/button';
 import _ from 'lodash';
-import {GOOGLE_LOGIN} from '../../../assets';
-import {validateEmail, validatePassword} from '../../../utils/Validate';
+import {validateEmail} from '../../../utils/Validate';
 import {navigate} from '../../../navigation';
 import {NameScreenAuthStack} from '../../../navigation/stacks';
+import {useMutation} from '@apollo/client';
+import {REQUEST_REGISTER_CODE} from '../../../apollo/mutations/auth';
+import {useGetData} from './useGetData';
 
 // @ts-ignore
 export const Register = ({route}) => {
   const [email, setEmail] = useState(route?.params?.email ?? '');
   const [code, setCode] = useState('');
   const isValidEmail = validateEmail(email) && !_.isEmpty(email);
+
   const isValidCode = !_.isEmpty(code);
 
   const canNext = isValidEmail && isValidCode;
@@ -37,7 +33,9 @@ export const Register = ({route}) => {
               flex: 1,
             }}>
             <Text style={{...CommonStyles.title}}>Sign up</Text>
-            <Text style={{...CommonStyles.subTitle, marginTop: 7}}>Create your password </Text>
+            <Text style={{...CommonStyles.subTitle, marginTop: 7}}>
+              What is your email?{' '}
+            </Text>
             <View style={{marginTop: convertHeight(46)}}>
               <TextField
                 value={email}
@@ -68,7 +66,10 @@ export const Register = ({route}) => {
               <Button
                 title={'Verify'}
                 callback={() => {
-                  navigate(NameScreenAuthStack.INPUT_NAME, {})
+                  navigate(NameScreenAuthStack.REGISTER_WITH_PASS, {
+                    email: email,
+                    code: code,
+                  });
                 }}
                 enable={canNext}
               />

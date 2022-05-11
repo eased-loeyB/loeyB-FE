@@ -1,5 +1,5 @@
 //import {REFRESH_TOKEN} from '../apollo/mutations/auth';
-//import {IsLoggedInDataType, IS_LOGGED_IN} from '../apollo/queries/isLoggedIn';
+import {IsLoggedInDataType, IS_LOGGED_IN} from '../apollo/queries/isLoggedIn';
 //import {isSuccessResponse} from '../models/CommonResponse';
 import {MainNavigator} from './index';
 import {navigationRef} from './Root';
@@ -21,6 +21,7 @@ import React, {useEffect} from 'react';
 import {StatusBar} from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {useQuery} from '@apollo/client';
 //import {getApolloClient} from '../apollo/client';
 
 export const ApplicationStack = {
@@ -33,6 +34,7 @@ const Stack = createStackNavigator();
 
 // @refresh reset
 const ApplicationNavigator = () => {
+  const { loading, data } = useQuery<IsLoggedInDataType>(IS_LOGGED_IN)
   // const [getRefreshToken] = useMutation(REFRESH_TOKEN, {
   //   onCompleted: async res => {
   //     if (isSuccessResponse(res.refresh)) {
@@ -58,7 +60,7 @@ const ApplicationNavigator = () => {
   //       },
   //     });
   //   });
-
+  //
   //   return () => {
   //     event.remove();
   //   };
@@ -86,7 +88,7 @@ const ApplicationNavigator = () => {
           backgroundColor="transparent"
         />
         <Stack.Navigator screenOptions={{headerShown: false}}>
-          {false ? (
+          {!loading && data?.isLoggedIn ? (
             <Stack.Screen
               name="Main"
               component={MainNavigator}

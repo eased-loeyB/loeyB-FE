@@ -1,22 +1,40 @@
 import React, {memo} from 'react';
 import {convertWidth, deviceHeight, deviceWidth} from '../utils';
-import {Animated, Image, TouchableOpacity, View} from 'react-native';
+import {
+  Animated,
+  Image,
+  ImageRequireSource,
+  ImageStyle,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {ARROW_BACK, FILTER_IMAGE, SPLASH_IMAGE} from '../assets';
 // @ts-ignore
 import RadialGradient from 'react-native-radial-gradient';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {Edge, SafeAreaView} from 'react-native-safe-area-context';
 import {goBack} from '../navigation';
+import {CommonStyles} from '../utils/Styles';
 
 export interface BackgroundCommonProps {
   children: JSX.Element;
   haveFilter?: boolean;
   canGoBack?: boolean;
+  title?: string;
+  filterBG?: ImageRequireSource;
+  customFiler?: ImageStyle;
+  edges?: Edge[];
 }
 
 const BackgroundCommon = ({
   children,
   haveFilter,
   canGoBack,
+  title,
+  filterBG,
+  customFiler,
+  edges,
 }: BackgroundCommonProps) => {
   return (
     <RadialGradient
@@ -27,28 +45,41 @@ const BackgroundCommon = ({
       radius={convertWidth(375)}>
       {haveFilter && (
         <Image
-          source={FILTER_IMAGE}
-          style={{position: 'absolute', top: 15, left: 24}}
+          source={filterBG ?? FILTER_IMAGE}
+          style={{position: 'absolute', top: 15, left: 24, ...customFiler}}
         />
       )}
-      <SafeAreaView style={{flex: 1}}>
+      <SafeAreaView
+        style={{flex: 1}}
+        edges={edges ?? ['bottom', 'left', 'right', 'top']}>
         {canGoBack && (
-          <TouchableOpacity onPress={() => goBack()}>
-            <View
-              style={{
-                paddingHorizontal: 24,
-                paddingTop: 38,
-                paddingBottom: 20,
-                width: '20%',
-              }}>
-              <Image source={ARROW_BACK} />
-            </View>
-          </TouchableOpacity>
+          <View style={styles.container}>
+            <TouchableOpacity onPress={() => goBack()}>
+              <View style={styles.iconBack}>
+                <Image source={ARROW_BACK} />
+              </View>
+            </TouchableOpacity>
+            <Text style={CommonStyles.title}>{title}</Text>
+            <View />
+          </View>
         )}
         {children}
       </SafeAreaView>
     </RadialGradient>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    paddingTop: 38,
+    paddingBottom: 20,
+  },
+  iconBack: {
+    paddingLeft: 24,
+    paddingRight: 20,
+    marginRight: 79,
+  },
+});
 
 export default memo(BackgroundCommon);

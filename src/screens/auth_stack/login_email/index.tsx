@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   Keyboard,
@@ -7,19 +7,40 @@ import {
   View,
 } from 'react-native';
 import BackgroundCommon from '../../../components/BackgroundCommon';
-import TextField from '../../../components/TextField';
-import {convertHeight, convertWidth} from '../../../utils';
+import TextField from '../../../components/text_field';
+import {convertHeight, convertWidth, create} from '../../../utils';
 import {CommonStyles} from '../../../utils/Styles';
-import {Button} from '../../../components/Button';
+import {Button} from '../../../components/button';
 import _ from 'lodash';
 import {GOOGLE_LOGIN} from '../../../assets';
 import {validateEmail} from '../../../utils/Validate';
 import {NameScreenAuthStack} from '../../../navigation/stacks';
 import {push} from '../../../navigation';
+import {useGetData} from '../register/useGetData';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
   const isValidEmail = validateEmail(email);
+  const {data, loading, error, requestCode, errorCode, getContentData} =
+    useGetData({
+      email: email,
+    });
+
+  useEffect(() => {
+    const responseData = getContentData();
+    if (responseData) {
+      if (responseData.result === 'DUPLICATE_EMAIL') {
+        push(NameScreenAuthStack.LOGIN_WITH_PASS, {
+          email: email,
+        });
+      } else {
+        push(NameScreenAuthStack.REGISTER, {
+          email: email,
+        });
+      }
+    }
+  }, [data]);
+
   return (
     <BackgroundCommon haveFilter={true}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -47,19 +68,10 @@ export const Login = () => {
               <Button
                 title={'Continue'}
                 callback={() => {
-                  push(NameScreenAuthStack.LOGIN_WITH_PASS, {
-                    email: email,
-                  });
-                }}
-                enable={!_.isEmpty(email)}
-              />
-            </View>
-            <View style={{marginTop: 28}}>
-              <Button
-                title={'REGISTER'}
-                callback={() => {
-                  push(NameScreenAuthStack.REGISTER, {
-                    email: email,
+                  requestCode({
+                    variables: {
+                      email: email,
+                    },
                   });
                 }}
                 enable={!_.isEmpty(email)}

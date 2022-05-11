@@ -16,8 +16,7 @@ import {setCustomText} from 'react-native-global-props';
 //import {Fonts} from './assets';
 import store from './store';
 import BackgroundCommon from './components/BackgroundCommon';
-import 'react-native-gesture-handler'
-
+import 'react-native-gesture-handler';
 
 ApolloLink.from([apolloLogger]);
 LogBox.ignoreLogs([

@@ -8,13 +8,29 @@ import {
   View,
 } from 'react-native';
 import BackgroundCommon from '../../../components/BackgroundCommon';
-import TextField from '../../../components/TextField';
+import TextField from '../../../components/text_field';
 import {convertHeight, convertWidth} from '../../../utils';
 import {CommonStyles} from '../../../utils/Styles';
-import {Button} from '../../../components/Button';
+import {Button} from '../../../components/button';
 import _ from 'lodash';
 import {GOOGLE_LOGIN} from '../../../assets';
 import {validateEmail, validatePassword} from '../../../utils/Validate';
+import {useLazyQuery} from '@apollo/client';
+import {AUTHENTICATE} from '../../../apollo/queries/Auth';
+import Toast from 'react-native-toast-message';
+import ToastService from '../../../utils/ToastService';
+import {AuthResponse} from '../../../models/Auth';
+import {isSuccessResponse} from '../../../models/CommonResponse';
+import {push} from '../../../navigation';
+import {NameScreenAuthStack} from '../../../navigation/stacks';
+import {getApolloClient} from '../../../apollo/client';
+import {
+  loadCustomerToken,
+  saveCustomerToken,
+  saveExpiresIn,
+  saveRefreshToken,
+} from '../../../utils/storage';
+import {IS_LOGGED_IN} from '../../../apollo/queries/isLoggedIn';
 
 // @ts-ignore
 export const LoginWithPassword = ({route}) => {
@@ -22,6 +38,37 @@ export const LoginWithPassword = ({route}) => {
   const [password, setPassword] = useState('');
   const isValidEmail = validateEmail(email) && !_.isEmpty(email);
   const isValidPassword = validatePassword(password) && !_.isEmpty(password);
+
+  const [login, {loading, error, data}] = useLazyQuery<{
+    authenticate: AuthResponse;
+  }>(AUTHENTICATE, {
+    onCompleted: async res => {
+      if (isSuccessResponse(res.authenticate)) {
+        const client = await getApolloClient();
+        await saveCustomerToken(res.authenticate.data.accessToken);
+        await saveRefreshToken(res.authenticate.data.refreshToken);
+        await saveExpiresIn(`${res.authenticate.data.expiresIn}`);
+        let token = await loadCustomerToken();
+
+        if (token) {
+          client.cache.writeQuery({
+            query: IS_LOGGED_IN,
+            data: {
+              isLoggedIn: true,
+              isLoginExpired: false,
+            },
+          });
+        }
+        ToastService.showSuccess(`Welcome back ${email}`);
+      } else {
+        ToastService.showError('The email or password is incorrect');
+      }
+    },
+    onError: () => {
+      ToastService.showError('The email or password is incorrect');
+    },
+    fetchPolicy: 'no-cache',
+  });
 
   const canNext = isValidEmail && isValidPassword;
   return (
@@ -66,7 +113,12 @@ export const LoginWithPassword = ({route}) => {
               <Button
                 title={'Login'}
                 callback={() => {
-                  Alert.alert('Logined');
+                  login({
+                    variables: {
+                      email: email,
+                      password: password,
+                    },
+                  });
                 }}
                 enable={canNext}
               />

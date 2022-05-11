@@ -7,7 +7,7 @@ import {
   StyleProp,
   StyleSheet,
   Text,
-  TextInput,
+  TextInput, TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -17,7 +17,8 @@ import {
   convertHeight,
   convertWidth,
   ErrorColors,
-  GrayColors, LightBlue,
+  GrayColors,
+  LightBlue,
   LightBlue2,
   TextColors,
 } from '../../utils';
@@ -42,8 +43,9 @@ export interface TextFieldProps {
   activeVariant?: TextInputVariant;
   variant?: TextInputVariant;
   autoFocus?: boolean;
-  customTextInputStyle?: ViewStyle;
+  customTextInputStyle?: TextStyle;
   secureTextEntry?: boolean;
+  customWrapperContainer?: ViewStyle;
 }
 
 const TextField = ({
@@ -66,7 +68,8 @@ const TextField = ({
   variant = 'inactive',
   autoFocus = false,
   customTextInputStyle,
-                     secureTextEntry= false
+  secureTextEntry = false,
+  customWrapperContainer = {},
 }: TextFieldProps) => {
   const [currentVariant, setCurrentVariant] =
     useState<TextInputVariant>(variant);
@@ -86,14 +89,15 @@ const TextField = ({
 
   return (
     <View>
-      <View style={{borderWidth: 1, borderRadius: 8, borderColor: 'white'}}>
+      <View style={[{borderWidth: editable ? 1 : 0, borderRadius: 8, borderColor: 'white'}, customWrapperContainer]}>
         <View
           style={{
             width: '100%',
             height: '100%',
             position: 'absolute',
-            opacity: editable ? 0.08 : 0.5,
+            opacity: 0.08,
             backgroundColor: LightBlue2,
+            borderRadius: 8
           }}
         />
         <View style={[styles.textField, containerStyle]}>
@@ -162,7 +166,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    height: convertHeight(56),
+    height: convertHeight(48),
   },
   textInput: {
     flex: 1,
