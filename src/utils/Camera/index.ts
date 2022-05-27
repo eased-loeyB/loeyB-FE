@@ -2,7 +2,7 @@ import {Alert, Platform} from 'react-native';
 import {
   CameraOptions,
   ImagePickerResponse,
-  launchCamera, launchImageLibrary,
+  launchCamera,
   MediaType,
 } from 'react-native-image-picker';
 import {PERMISSIONS} from 'react-native-permissions';
@@ -23,7 +23,6 @@ const callback = (
   imagePickerRes: ImagePickerResponse,
   callbackResult: (result: FileAttachment[]) => void,
 ) => {
-  console.log("call back");
   const {didCancel, errorCode, errorMessage, assets} = imagePickerRes;
   // handle errorss
   switch (errorCode) {
@@ -127,7 +126,7 @@ export async function ChooseMultiple(
         id: uuid.v4(),
         uri: item.path,
         size: `${item.size}`,
-        name: getFileNameFromPath(item.path),
+        name: item.path,
         type: item.mime,
       } as FileAttachment);
     }

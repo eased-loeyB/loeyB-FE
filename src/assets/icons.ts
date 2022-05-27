@@ -23,10 +23,14 @@ export const SICK = require('./icons/category/sick.png');
 export const SKILLS = require('./icons/category/skills.png');
 export const SPORT = require('./icons/category/sport.png');
 export const THOUGHT = require('./icons/category/thought.png');
-
 export const TIME = require('./icons/access_time.png');
 export const SEARCH = require('./icons/image_search.png');
 export const LAST_PAGE = require('./icons/last_page.png');
 export const loeyB = require('./icons/loeyb.png');
 export const PUBLIC = require('./icons/public.png');
 export const TRASH = require('./icons/trash.png');
+export const CAMERA = require('./icons/camera.png');
+export const VIDEO_CAMERA = require('./icons/video-camera.png');
+export const VIEW_CAROUSEL = require('./icons/view_carousel.png');
+export const HAND = require('./icons/hand.png');
+export const DELETE_MODAL = require('./icons/delete_modal.png');

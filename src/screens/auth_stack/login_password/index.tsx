@@ -16,7 +16,7 @@ import _ from 'lodash';
 import {GOOGLE_LOGIN} from '../../../assets';
 import {validateEmail, validatePassword} from '../../../utils/Validate';
 import {useLazyQuery} from '@apollo/client';
-import {AUTHENTICATE} from '../../../apollo/queries/Auth';
+import {AUTHENTICATE} from '../../../apollo/queries/auth';
 import Toast from 'react-native-toast-message';
 import ToastService from '../../../utils/ToastService';
 import {AuthResponse} from '../../../models/Auth';

@@ -48,3 +48,18 @@ export const SET_USER_NAME = gql`
     }
   }
 `;
+
+export const GOOGLE_LOGIN = gql`
+  mutation googleLogin($token: String!) {
+    googleLogin(input: {token: $token}) {
+      result
+      errorMessage
+      data {
+        accessToken
+        tokenType
+        expiresIn
+        refreshToken
+      }
+    }
+  }
+`;

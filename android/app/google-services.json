@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "322865048963",
+    "project_id": "loeyb-350410",
+    "storage_bucket": "loeyb-350410.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:322865048963:android:a2c14cd691383dead51ab6",
+        "android_client_info": {
+          "package_name": "com.eased.loeybfe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "322865048963-u5lql0p3ea99q1gon8jp3g55919c31fi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.eased.loeybfe",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "322865048963-j669ueha4prbomsg2d1u1ag0uknceen0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlljI9k9CUg70Norqjo8jO3MoCb6sJnsg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "322865048963-12mn48dd7b50g0p4qhh843dv3va7ucvq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "322865048963-tuq93lhan6395vnfr2ukpihum7qv2qp7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.eased.loeyB"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

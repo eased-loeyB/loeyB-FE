@@ -60,7 +60,7 @@ const BackgroundCommon = ({
               </View>
             </TouchableOpacity>
             <Text style={CommonStyles.title}>{title}</Text>
-            <View />
+            <View  style={{width: 30}}/>
           </View>
         )}
         {children}
@@ -74,11 +74,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingTop: 38,
     paddingBottom: 20,
+    justifyContent: 'space-between',
+    paddingLeft: 24,
   },
   iconBack: {
-    paddingLeft: 24,
-    paddingRight: 20,
-    marginRight: 79,
+
   },
 });
 

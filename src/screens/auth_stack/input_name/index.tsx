@@ -29,19 +29,16 @@ export const InputName = () => {
   const [name, setName] = useState('');
   const isValidName = !_.isEmpty(name) && name.length < 31;
 
-  const {
-    request: requestSetName,
-    responseData,
-  } = useSetName();
+  const {request: requestSetName, responseData, errorCode} = useSetName();
 
   useEffect(() => {
     if (responseData) {
-        console.log("res", responseData);
-      if (isSuccessResponse(responseData)) {
-        navigate(NameScreenAuthStack.SELECT_CATEGORY, {userName: name});
-      }
+
+      // if (isSuccessResponse(responseData)) {
+      //   navigate(NameScreenAuthStack.SELECT_CATEGORY, {userName: name});
+      // }
     }
-  }, [responseData]);
+  }, [responseData, errorCode]);
   return (
     <BackgroundCommon haveFilter={true}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

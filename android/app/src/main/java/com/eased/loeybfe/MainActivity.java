@@ -1,4 +1,4 @@
-package com.loeybfe;
+package com.eased.loeybfe;
 
 import com.facebook.react.ReactActivity;
 

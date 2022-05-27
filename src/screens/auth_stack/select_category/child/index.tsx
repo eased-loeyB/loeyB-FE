@@ -54,7 +54,10 @@ export const Category = (props: CategoryProps) => {
         keyExtractor={item => `${item.title}`}
         extraData={focusUpdate}
         renderItem={({item}) => {
-          const isSelected = !!_.find(selected, i => i.title === item.title);
+          const isSelected = !!_.find(
+              selected,
+            i => i.title === item.title,
+          );
           return CategoryItem(
             item,
             isSelected,
@@ -65,7 +68,6 @@ export const Category = (props: CategoryProps) => {
               } else {
                 currentList.push(item);
               }
-              console.log('new', currentList);
               setSetected(currentList);
               setFocusUpdate(!focusUpdate);
               props.callback(currentList);
@@ -84,26 +86,30 @@ const CategoryItem = (
   callback: () => void,
   style: any,
 ) => {
+  const opacity = isSelected ? 1 : 0.4;
+  console.log('isSelected', isSelected, opacity);
   return (
     <TouchableOpacity
       onPress={() => {
         callback();
-      }}
-      style={{
-        alignItems: 'center',
-        marginTop: convertHeight(25),
-        opacity: isSelected ? 1 : 0.4,
       }}>
-      <Image source={item.image} />
-      <Text
+      <View
         style={{
-          fontSize: 10,
-          fontWeight: '600',
-          marginTop: 5,
-          color: style.color,
+          alignItems: 'center',
+          marginTop: convertHeight(25),
+          opacity: opacity,
         }}>
-        {item.title}
-      </Text>
+        <Image source={item.image} />
+        <Text
+          style={{
+            fontSize: 10,
+            fontWeight: '600',
+            marginTop: 5,
+            color: style.color,
+          }}>
+          {item.title}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 };

@@ -7,7 +7,7 @@ import {InputName} from '../../screens/auth_stack/input_name';
 import {SelectCategory} from '../../screens/auth_stack/select_category';
 import {Splash} from '../../screens/splash';
 import {RegisterWithPass} from '../../screens/auth_stack/register_with_pass';
-import {FirstMemory} from '../../screens/tutorial_stack/first_memory';
+import {FirstMemory} from '../../screens/memore_stack/first_memory';
 import {MainStackName} from './MainStack';
 import { CameraPage } from '../../components/camera/CameraPage';
 import {MyCamera} from '../../components/rn_camera';
@@ -27,7 +27,8 @@ export const AuthStack = () => {
   return (
     <Stack.Navigator
       screenOptions={{headerShown: false}}
-      initialRouteName={NameScreenAuthStack.SPLASH}>
+      // initialRouteName={NameScreenAuthStack.FIRST_MEMORY}
+    >
       {/*<Stack.Screen name={MainStackName.FIRST_MEMORY} component={FirstMemory} />*/}
       {/*  <Stack.Screen name={MainStackName.CAMERA} component={MyCamera} />*/}
       <Stack.Screen name={NameScreenAuthStack.SPLASH} component={Splash} />

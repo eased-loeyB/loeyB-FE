@@ -12,9 +12,9 @@ export const useSetName = () => {
     notifyOnNetworkStatusChange: true,
     onCompleted: res => {
       if (isSuccessResponse(res.setUsername)) {
-        setResponeData(res.requestEmailVerificationCode);
+        setResponeData(res.setUsername);
       } else {
-        setErrorCode(res.requestEmailVerificationCode.result);
+        setErrorCode(res.setUsername.result);
       }
     },
   });

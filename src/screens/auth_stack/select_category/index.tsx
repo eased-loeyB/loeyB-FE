@@ -37,15 +37,35 @@ import {
   workTitle,
 } from './Const';
 import {MainStackName} from '../../../navigation/stacks/MainStack';
+import {
+  AreaCategoryInput,
+  useRegisterCategories,
+} from './hook/useRegisterCategories';
 
 // @ts-ignore
 export const SelectCategory = ({route}) => {
-  const {userName} = route?.params;
+  const {userName, email} = route?.params;
   const [health, setHealth] = useState<SubCategoryProps[]>([]);
   const [mind, setMind] = useState<SubCategoryProps[]>([]);
   const [social, setSocial] = useState<SubCategoryProps[]>([]);
   const [life, setLife] = useState<SubCategoryProps[]>([]);
   const [work, setWork] = useState<SubCategoryProps[]>([]);
+  const {updateData, data, loading, error, errorCode, responseData} =
+    useRegisterCategories(userName ?? '', email ?? 'huytd2510@gmail.com');
+
+  const canNext =
+    health.length + mind.length + social.length + life.length + work.length >=
+    3;
+
+  const submitData = () => {
+    const dataSubmit: AreaCategoryInput[] = [];
+    health.forEach(h => dataSubmit.push({area: 'HEALTH', category: h.title}));
+    mind.forEach(h => dataSubmit.push({area: 'MIND', category: h.title}));
+    social.forEach(h => dataSubmit.push({area: 'SOCIAL', category: h.title}));
+    life.forEach(h => dataSubmit.push({area: 'HOBBY', category: h.title}));
+    work.forEach(h => dataSubmit.push({area: 'WORK', category: h.title}));
+    updateData(dataSubmit);
+  };
 
   return (
     <BackgroundCommon haveFilter={true} canGoBack={true} title={userName ?? ''}>
@@ -115,9 +135,10 @@ export const SelectCategory = ({route}) => {
             <Button
               title={'Next'}
               callback={() => {
+                submitData()
                 navigate(MainStackName.Welcome, {userName});
               }}
-              enable={true}
+              enable={canNext}
             />
           </View>
         </View>
