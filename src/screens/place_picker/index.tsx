@@ -1,11 +1,12 @@
 import React, {useCallback, useMemo, useRef} from 'react';
 import {
-    FlatList,
-    Image,
-    Modal, StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  FlatList,
+  Image,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import {convertHeight, DarkBlue, LightBlue2} from '../../utils';
 import {PUBLIC} from '../../assets';
