@@ -1,6 +1,6 @@
 import {useQuery} from '@apollo/client';
 import {useState} from 'react';
-import {FETCH_REGISTERED_AREA_CATEGORY_TAG} from '../../../../apollo/queries/memory';
+import {FETCH_REGISTERED_AREA_CATEGORY_TAG} from 'apollo/queries/memory';
 import {
   RegisterCategoryAndTagAndArea,
   RegisterCategoryAndTagAndAreaResponse,
