@@ -36,6 +36,7 @@ import {MyDatePicker} from '../../../components/date_picker';
 import {LocationPicker} from '../../../components/location_picker';
 import {DeleteModal} from '../../tutorial_stack/delete_modal';
 import Swiper from 'react-native-swiper';
+import {BottomModal} from '../../../components/bottom_modal';
 
 export const FirstMemory = () => {
   const [image, setImage] = useState<FileAttachment[]>();
@@ -218,21 +219,7 @@ export const FirstMemory = () => {
             />
           </View>
         </KeyboardAvoidingView>
-        <View
-          style={{
-            backgroundColor: 'rgba(244, 250, 255, 0.12)',
-            height: convertHeight(100),
-            width: '100%',
-            alignItems: 'center',
-            paddingTop: 10,
-            borderTopRightRadius: 50,
-            borderTopLeftRadius: 50,
-          }}>
-          <View style={{height: 4, width: 66, backgroundColor: 'black'}} />
-          <Text style={{marginTop: 10, color: LightBlue2}}>
-            Swipe up to save
-          </Text>
-        </View>
+        <BottomModal />
       </View>
     </BackgroundCommon>
   );

@@ -26,7 +26,12 @@ import {useKeyboard} from '@react-native-community/hooks';
 import {useGoogleLogin} from './hook/useGoogleLogin';
 import {isSuccessResponse} from '../../../models/CommonResponse';
 import {getApolloClient} from '../../../apollo/client';
-import {loadCustomerToken, saveCustomerToken, saveExpiresIn, saveRefreshToken} from '../../../utils/storage';
+import {
+  loadCustomerToken,
+  saveCustomerToken,
+  saveExpiresIn,
+  saveRefreshToken,
+} from '../../../utils/storage';
 import {IS_LOGGED_IN} from '../../../apollo/queries/isLoggedIn';
 import ToastService from '../../../utils/ToastService';
 
@@ -73,16 +78,16 @@ export const Login = () => {
       });
     }
     ToastService.showSuccess(`Welcome back`);
-  }
+  };
 
   useEffect(() => {
     // const responseData = getContentData();
     if (resGoogleLogin) {
-      if(isSuccessResponse(resGoogleLogin)){
-        saveToken(resGoogleLogin.data)
+      if (isSuccessResponse(resGoogleLogin)) {
+        saveToken(resGoogleLogin.data);
       }
     }
-  }, [resGoogleLogin])
+  }, [resGoogleLogin]);
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -97,7 +102,7 @@ export const Login = () => {
   const signIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
-      const currentUser = await GoogleSignin.getTokens()
+      const currentUser = await GoogleSignin.getTokens();
       console.log('Respsone from google: => ', currentUser);
       googleLogin({
         variables: {
@@ -107,6 +112,7 @@ export const Login = () => {
       // this.setState({ userInfo });
     } catch (error) {
       Alert.alert('', 'Some things went wrong.');
+      console.log(error);
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
       } else if (error.code === statusCodes.IN_PROGRESS) {
