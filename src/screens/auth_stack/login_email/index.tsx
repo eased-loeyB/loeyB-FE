@@ -136,7 +136,8 @@ export const Login = () => {
               flex: 1,
             }}>
             <Text style={{...CommonStyles.title}}>Welcome to loeyB</Text>
-            <View style={{marginTop: convertHeight(66)}}>
+            <Text style={{...CommonStyles.subTitle, marginTop: 12}}>Input your email to login or signup</Text>
+            <View style={{marginTop: convertHeight(50)}}>
               <TextField
                 value={email}
                 onTextChange={value => setEmail(value)}

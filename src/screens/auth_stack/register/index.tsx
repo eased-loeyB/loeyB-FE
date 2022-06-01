@@ -34,7 +34,7 @@ export const Register = ({route}) => {
             }}>
             <Text style={{...CommonStyles.title}}>Sign up</Text>
             <Text style={{...CommonStyles.subTitle, marginTop: 7}}>
-              What is your email?{' '}
+              Verify your email
             </Text>
             <View style={{marginTop: convertHeight(46)}}>
               <TextField

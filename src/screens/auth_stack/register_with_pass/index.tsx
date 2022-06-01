@@ -77,7 +77,7 @@ export const RegisterWithPass = ({route}) => {
             }}>
             <Text style={{...CommonStyles.title}}>Sign up</Text>
             <Text style={{...CommonStyles.subTitle, marginTop: 7}}>
-              What is your email?{' '}
+              Create your password
             </Text>
             <View style={{marginTop: convertHeight(46)}}>
               <TextField
