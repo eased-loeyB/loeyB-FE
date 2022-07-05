@@ -13,3 +13,12 @@ export const AUTHENTICATE = gql`
     }
   }
 `;
+
+export const REMOVE_DEVICE_TOKEN = gql`
+  query removeDeviceToken($email: String!, $deviceToken: String) {
+    removeDeviceToken(input: {email: $email, deviceToken: $deviceToken}) {
+      result
+      errorMessage
+    }
+  }
+`;

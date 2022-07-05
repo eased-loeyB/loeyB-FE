@@ -9,28 +9,23 @@ import {Splash} from '../../screens/splash';
 import {RegisterWithPass} from '../../screens/auth_stack/register_with_pass';
 import {FirstMemory} from '../../screens/memore_stack/first_memory';
 import {MainStackName} from './MainStack';
-import { CameraPage } from '../../components/camera/CameraPage';
+import {CameraPage} from '../../components/camera/CameraPage';
 import {MyCamera} from '../../components/rn_camera';
 
 const Stack = createStackNavigator();
 export const NameScreenAuthStack = {
   SPLASH: 'SPLASH',
-  LOGIN: 'Login',
+  LOGIN: 'LOGIN',
   LOGIN_WITH_PASS: 'LOGIN_WITH_PASS',
   REGISTER: 'REGISTER',
   INPUT_NAME: 'INPUT_NAME',
   SELECT_CATEGORY: 'SELECT_CATEGORY',
-  REGISTER_WITH_PASS: 'RegisterWithPass',
+  REGISTER_WITH_PASS: 'REGISTER_WITH_PASS',
 };
 
 export const AuthStack = () => {
   return (
-    <Stack.Navigator
-      screenOptions={{headerShown: false}}
-      // initialRouteName={NameScreenAuthStack.FIRST_MEMORY}
-    >
-      {/*<Stack.Screen name={MainStackName.FIRST_MEMORY} component={FirstMemory} />*/}
-      {/*  <Stack.Screen name={MainStackName.CAMERA} component={MyCamera} />*/}
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name={NameScreenAuthStack.SPLASH} component={Splash} />
       <Stack.Screen name={NameScreenAuthStack.LOGIN} component={Login} />
       <Stack.Screen

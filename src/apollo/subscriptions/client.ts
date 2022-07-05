@@ -1,15 +1,20 @@
-import {END_POINT, WSS_END_POINT} from '../config/baseurl';
-import {loadAccessToken, removeAccessToken, TOKEN_EXPIRED} from '../utils';
-import ToastService from '../utils/ToastService';
+import {
+  END_POINT,
+  loadAccessToken,
+  removeAccessToken,
+  ToastService,
+  WSS_END_POINT,
+} from '../../utils';
 import {ApolloClient, ApolloLink, from, HttpLink, split} from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
 import {onError} from '@apollo/client/link/error';
+import {IS_LOGGED_IN} from '../queries/isLoggedIn';
 import {WebSocketLink} from '@apollo/client/link/ws';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {SubscriptionClient} from 'subscriptions-transport-ws';
+import {cache} from '../cache';
 import {DeviceEventEmitter} from 'react-native';
-import {cache} from './cache';
-import {IS_LOGGED_IN} from './queries/isLoggedIn';
+import {TOKEN_EXPIRED} from '../../utils';
 
 let _client: ApolloClient<any>;
 let webSocketClient: SubscriptionClient;
@@ -21,9 +26,9 @@ export async function getApolloClient(
     return _client;
   }
   const token = await loadAccessToken();
-  const accessToken = token || null;
+  const customerToken = token || null;
 
-  if (accessToken !== null) {
+  if (customerToken !== null) {
     cache.writeQuery({
       query: IS_LOGGED_IN,
       data: {
@@ -41,7 +46,9 @@ export async function getApolloClient(
     });
   }
 
-  const errorLink = onError(({graphQLErrors, networkError}) => {
+  const errorLink = onError(errorResponse => {
+    const {graphQLErrors, networkError, response, forward, operation} =
+      errorResponse;
     if (graphQLErrors) {
       graphQLErrors.forEach(({message}) => {
         async function autoLogout() {
@@ -57,13 +64,20 @@ export async function getApolloClient(
 
         if (message === 'INVALID_TOKEN') {
           autoLogout();
-        }
-        if (message === 'TOKEN_EXPIRED') {
+        } else if (message === 'TOKEN_EXPIRED') {
           DeviceEventEmitter.emit(TOKEN_EXPIRED);
+        } else {
+          console.log(
+            'ERROR CLIENT',
+            graphQLErrors,
+            message,
+            response,
+            forward,
+            operation,
+          );
         }
       });
     }
-    console.log('networkError', networkError, graphQLErrors);
     if (networkError) {
       ToastService.show({
         isError: true,
@@ -86,9 +100,9 @@ export async function getApolloClient(
 
   const subscriptionAuthMiddleware = {
     applyMiddleware: async (options: any, next: any) => {
-      const _token = await loadAccessToken();
+      const user_token = await loadAccessToken();
       options.headers = {
-        authorization: _token ? `Bearer ${_token}` : '',
+        authorization: user_token ? `Bearer ${user_token}` : '',
       };
       next();
     },
@@ -97,11 +111,11 @@ export async function getApolloClient(
   webSocketClient.use([subscriptionAuthMiddleware]);
 
   const authLink = setContext(async (_, {headers}) => {
-    const __token = await loadAccessToken();
+    const userToken = await loadAccessToken();
     return {
       headers: {
         ...headers,
-        authorization: __token ? `Bearer ${__token}` : '',
+        authorization: userToken ? `Bearer ${userToken}` : '',
       },
     };
   });
