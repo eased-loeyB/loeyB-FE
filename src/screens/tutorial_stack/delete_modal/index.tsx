@@ -1,13 +1,11 @@
 import React from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
-import {CLEAR_ICON, DELETE_MODAL} from '../../../assets';
-import {
-  convertHeight,
-  convertWidth,
-  DarkBlue,
-  LightBlue2,
-} from '../../../utils';
+
 import Modal from 'react-native-modal';
+
+import {CLEAR_ICON, DELETE_MODAL} from '~/assets';
+import {DarkBlue, LightBlue2} from '~/utils/Colors';
+import {convertWidth, convertHeight} from '~/utils/design';
 
 export interface DeleteModalProps {
   open: boolean;
@@ -30,15 +28,14 @@ export const DeleteModal = (props: DeleteModalProps) => {
           borderRadius: 50,
           alignItems: 'center',
         }}>
-        <TouchableOpacity onPress={props.dismiss} style={{
+        <TouchableOpacity
+          onPress={props.dismiss}
+          style={{
             position: 'absolute',
             top: 29,
             right: 32,
-        }}>
-          <Image
-            source={CLEAR_ICON}
-            style={{tintColor: LightBlue2,}}
-          />
+          }}>
+          <Image source={CLEAR_ICON} style={{tintColor: LightBlue2}} />
         </TouchableOpacity>
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <Image source={DELETE_MODAL} style={{marginBottom: 16}} />

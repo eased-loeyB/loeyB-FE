@@ -1,7 +1,8 @@
 import React from 'react';
 import {Image, View} from 'react-native';
-import {HAND} from '../../../../assets';
-import {convertHeight, convertWidth} from '../../../../utils';
+
+import {HAND} from '~/assets';
+import {convertHeight, convertWidth} from '~/utils/design';
 
 export const LastImage = () => {
   return (

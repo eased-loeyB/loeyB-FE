@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
 import {
   Image,
@@ -7,21 +6,19 @@ import {
   StyleProp,
   StyleSheet,
   Text,
-  TextInput, TextStyle,
+  TextInput,
+  TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
 } from 'react-native';
-import {getTextInputTheme, TextInputVariant} from './colorPalattes';
-import {
-  convertHeight,
-  convertWidth,
-  ErrorColors,
-  GrayColors,
-  LightBlue,
-  LightBlue2,
-  TextColors,
-} from '../../utils';
+
+import {isEmpty} from 'lodash';
+
+import {LightBlue2, TextColors, GrayColors, LightBlue} from '~/utils/Colors';
+import {convertWidth, convertHeight} from '~/utils/design';
+
+import {TextInputVariant} from './colorPalattes';
 
 export interface TextFieldProps {
   value: string;
@@ -82,14 +79,22 @@ const TextField = ({
   };
 
   useEffect(() => {
-    if (!_.isEmpty(errorMsg)) {
+    if (!isEmpty(errorMsg)) {
       setCurrentVariant('error');
     }
   }, [currentVariant]);
 
   return (
     <View>
-      <View style={[{borderWidth: editable ? 1 : 0, borderRadius: 8, borderColor: 'white'}, customWrapperContainer]}>
+      <View
+        style={[
+          {
+            borderWidth: editable ? 1 : 0,
+            borderRadius: 8,
+            borderColor: 'white',
+          },
+          customWrapperContainer,
+        ]}>
         <View
           style={{
             width: '100%',
@@ -97,7 +102,7 @@ const TextField = ({
             position: 'absolute',
             opacity: 0.08,
             backgroundColor: LightBlue2,
-            borderRadius: 8
+            borderRadius: 8,
           }}
         />
         <View style={[styles.textField, containerStyle]}>

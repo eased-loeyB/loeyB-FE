@@ -1,6 +1,7 @@
+import {StyleProp} from 'react-native';
+
 import {LightBlue2} from './Colors';
 import {convertFontSize} from './design';
-import {StyleProp} from 'react-native';
 
 export const CommonStyles: StyleProp<any> = {
   title: {
@@ -12,5 +13,5 @@ export const CommonStyles: StyleProp<any> = {
     color: LightBlue2,
     fontWeight: '400',
     fontSize: convertFontSize(14),
-  }
+  },
 };

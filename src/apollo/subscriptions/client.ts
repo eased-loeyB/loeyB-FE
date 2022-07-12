@@ -1,20 +1,19 @@
-import {
-  END_POINT,
-  loadAccessToken,
-  removeAccessToken,
-  ToastService,
-  WSS_END_POINT,
-} from '../../utils';
+import {DeviceEventEmitter} from 'react-native';
+
 import {ApolloClient, ApolloLink, from, HttpLink, split} from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
 import {onError} from '@apollo/client/link/error';
-import {IS_LOGGED_IN} from '../queries/isLoggedIn';
 import {WebSocketLink} from '@apollo/client/link/ws';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {SubscriptionClient} from 'subscriptions-transport-ws';
+
+import {END_POINT, WSS_END_POINT} from '~/config/baseurl';
+import {loadAccessToken, removeAccessToken} from '~/utils/asyncstorage';
+import {TOKEN_EXPIRED} from '~/utils/Events';
+import ToastService from '~/utils/ToastService';
+
 import {cache} from '../cache';
-import {DeviceEventEmitter} from 'react-native';
-import {TOKEN_EXPIRED} from '../../utils';
+import {IS_LOGGED_IN} from '../queries/isLoggedIn';
 
 let _client: ApolloClient<any>;
 let webSocketClient: SubscriptionClient;

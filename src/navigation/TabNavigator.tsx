@@ -1,11 +1,12 @@
+import React from 'react';
+import {Platform, Text} from 'react-native';
+
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {SafeAreaProviderCompat} from '@react-navigation/elements';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {EdgeInsets} from 'react-native-safe-area-context';
+
 import {MainStyles} from './styles';
-import {Text} from 'react-native';
-import {Platform} from 'react-native';
 
 const Tab = createBottomTabNavigator();
 

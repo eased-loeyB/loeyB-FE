@@ -1,16 +1,19 @@
-import {createStackNavigator} from '@react-navigation/stack';
 import React from 'react';
-import {Welcome} from '../../screens/auth_stack/welcome';
-import {FirstMemory} from '../../screens/memore_stack/first_memory';
-import {InputName} from '../../screens/auth_stack/input_name';
-import {SelectCategory} from '../../screens/auth_stack/select_category';
+
+import {createStackNavigator} from '@react-navigation/stack';
+
+import {InputName} from '~/screens/auth_stack/input_name';
+import {SelectCategory} from '~/screens/auth_stack/select_category';
+import {Welcome} from '~/screens/auth_stack/welcome';
+import {FirstMemory} from '~/screens/memore_stack/first_memory';
+
 import {NameScreenAuthStack} from './AuthStack';
 
 const Stack = createStackNavigator();
 export const MainStackName = {
   Welcome: 'Welcome',
   FIRST_MEMORY: 'FIRST_MEMORY',
-    CAMERA: 'CAMERA',
+  CAMERA: 'CAMERA',
 };
 
 export const MainStack = () => {

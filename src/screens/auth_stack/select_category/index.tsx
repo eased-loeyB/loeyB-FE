@@ -1,28 +1,19 @@
 import React, {useState} from 'react';
 import {
-  Alert,
-  Image,
   Keyboard,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import BackgroundCommon from '../../../components/BackgroundCommon';
-import TextField from '../../../components/text_field';
-import {
-  convertHeight,
-  convertWidth,
-  deviceHeight,
-  deviceWidth,
-} from '../../../utils';
-import {CommonStyles} from '../../../utils/Styles';
-import {Button} from '../../../components/button';
-import _ from 'lodash';
-import {BACKGROUND_INPUT_NAME, FOOD, GOOGLE_LOGIN} from '../../../assets';
-import {validateEmail} from '../../../utils/Validate';
-import {NameScreenAuthStack} from '../../../navigation/stacks';
-import {navigate, push} from '../../../navigation';
+
+import BackgroundCommon from '~/components/BackgroundCommon';
+import {Button} from '~/components/button';
+import {navigate} from '~/navigation';
+import {MainStackName} from '~/navigation/stacks/MainStack';
+import {convertHeight, convertWidth} from '~/utils/design';
+import {CommonStyles} from '~/utils/Styles';
+
 import {Category, SubCategoryProps} from './child';
 import {
   healthCategory,
@@ -36,7 +27,6 @@ import {
   workCategory,
   workTitle,
 } from './Const';
-import {MainStackName} from '../../../navigation/stacks/MainStack';
 import {
   AreaCategoryInput,
   useRegisterCategories,
@@ -50,8 +40,10 @@ export const SelectCategory = ({route}) => {
   const [social, setSocial] = useState<SubCategoryProps[]>([]);
   const [life, setLife] = useState<SubCategoryProps[]>([]);
   const [work, setWork] = useState<SubCategoryProps[]>([]);
-  const {updateData, data, loading, error, errorCode, responseData} =
-    useRegisterCategories(userName ?? '', email ?? 'huytd2510@gmail.com');
+  const {updateData} = useRegisterCategories(
+    userName ?? '',
+    email ?? 'huytd2510@gmail.com',
+  );
 
   const canNext =
     health.length + mind.length + social.length + life.length + work.length >=
@@ -135,7 +127,7 @@ export const SelectCategory = ({route}) => {
             <Button
               title={'Next'}
               callback={() => {
-                submitData()
+                submitData();
                 navigate(MainStackName.Welcome, {userName});
               }}
               enable={canNext}

@@ -1,35 +1,37 @@
 import React, {useEffect, useState} from 'react';
 import {Keyboard, Text, TouchableWithoutFeedback, View} from 'react-native';
-import BackgroundCommon from '../../../components/BackgroundCommon';
-import TextField from '../../../components/text_field';
+
+import {isEmpty} from 'lodash';
+
+import {getApolloClient} from '~/apollo/client';
+import {IS_LOGGED_IN} from '~/apollo/queries/isLoggedIn';
+import BackgroundCommon from '~/components/BackgroundCommon';
+import {Button} from '~/components/button';
+import TextField from '~/components/text_field';
+import {isSuccessResponse} from '~/models/CommonResponse';
+import {push} from '~/navigation';
+import {NameScreenAuthStack} from '~/navigation/stacks';
+import {convertHeight, convertWidth} from '~/utils/design';
 import {
-  convertHeight,
-  convertWidth,
+  loadCustomerToken,
+  saveCustomerToken,
   saveExpiresIn,
   saveRefreshToken,
-} from '../../../utils';
-import {CommonStyles} from '../../../utils/Styles';
-import {Button} from '../../../components/button';
-import _ from 'lodash';
-import {validateEmail} from '../../../utils/Validate';
-import {navigate, push} from '../../../navigation';
-import {NameScreenAuthStack} from '../../../navigation/stacks';
+} from '~/utils/storage';
+import {CommonStyles} from '~/utils/Styles';
+import ToastService from '~/utils/ToastService';
+import {validateEmail} from '~/utils/Validate';
+
 import {useRegisterUser} from '../hooks/useRegisterUser';
-import ToastService from '../../../utils/ToastService';
-import {isSuccessResponse} from '../../../models/CommonResponse';
-import {getApolloClient} from '../../../apollo/client';
-import {loadCustomerToken, saveCustomerToken} from '../../../utils/storage';
-import {IS_LOGGED_IN} from '../../../apollo/queries/isLoggedIn';
 
 // @ts-ignore
 export const RegisterWithPass = ({route}) => {
-  const {email: paramEmail, code} = route?.params;
+  const {email: paramEmail} = route?.params;
   const [email, setEmail] = useState(paramEmail ?? '');
   const [pass, setPass] = useState('');
   const [rePass, setRePass] = useState('');
-  const isValidEmail = validateEmail(email) && !_.isEmpty(email);
-  const {registerUser, data, loading, error, errorCode, responseData} =
-    useRegisterUser();
+  const isValidEmail = validateEmail(email) && !isEmpty(email);
+  const {registerUser, responseData} = useRegisterUser();
 
   const saveToken = async (responseData: any) => {
     const client = await getApolloClient();
@@ -61,9 +63,9 @@ export const RegisterWithPass = ({route}) => {
   }, [responseData]);
 
   const canNext =
-    !_.isEmpty(pass) &&
+    !isEmpty(pass) &&
     pass.length >= 8 &&
-    !_.isEmpty(rePass) &&
+    !isEmpty(rePass) &&
     rePass.length >= 8;
   return (
     <BackgroundCommon haveFilter={true} canGoBack={true}>
@@ -87,7 +89,7 @@ export const RegisterWithPass = ({route}) => {
                 placeholder={'Email'}
                 customTextInputStyle={{color: '#A7DAF6'}}
                 errorMsg={
-                  !isValidEmail && !_.isEmpty(email)
+                  !isValidEmail && !isEmpty(email)
                     ? 'Email format is incorrect'
                     : ''
                 }

@@ -1,9 +1,10 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Image, View, Animated, Easing} from 'react-native';
-import {navigate} from '../../navigation';
-import {NameScreenAuthStack} from '../../navigation/stacks';
-import BackgroundCommon from '../../components/BackgroundCommon';
-import {SPLASH_IMAGE} from '../../assets';
+import React, {useEffect, useRef} from 'react';
+import {View, Animated, Easing} from 'react-native';
+
+import {SPLASH_IMAGE} from '~/assets';
+import BackgroundCommon from '~/components/BackgroundCommon';
+import {navigate} from '~/navigation';
+import {NameScreenAuthStack} from '~/navigation/stacks';
 
 export const Splash = () => {
   const opacity = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
@@ -25,7 +26,7 @@ export const Splash = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      navigate(NameScreenAuthStack.LOGIN, {})
+      navigate(NameScreenAuthStack.LOGIN, {});
     }, 3000);
   }, []);
   return (

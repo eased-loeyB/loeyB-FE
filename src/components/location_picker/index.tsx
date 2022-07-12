@@ -1,6 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
-  FlatList,
   Image,
   ScrollView,
   StyleSheet,
@@ -8,20 +7,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Modal from 'react-native-modal';
-import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
-import dayjs, {Dayjs} from 'dayjs';
-import {
-  CommonColors,
-  convertFontSize,
-  convertHeight,
-  convertWidth,
-  DarkBlue,
-  deviceWidth,
-  LightBlue2,
-} from '../../utils';
+
+import Modal, {ModalProps} from 'react-native-modal';
+
+import {CLEAR_ICON, PUBLIC} from '~/assets';
+import {DarkBlue, LightBlue2} from '~/utils/Colors';
+import {convertHeight, convertWidth, deviceWidth} from '~/utils/design';
+
 import {useGetCity} from './useGetCity';
-import {CLEAR_ICON, PUBLIC} from '../../assets';
 
 export interface MyDatePickerProps {
   open: boolean;
@@ -32,17 +25,19 @@ export interface MyDatePickerProps {
 
 export const LocationPicker = (props: MyDatePickerProps) => {
   const {city} = useGetCity();
-  const scrollViewRef = useRef();
-  const handleScrollTo = p => {
+  const scrollViewRef = useRef<ScrollView>(null);
+  const handleScrollTo: ModalProps['scrollTo'] = p => {
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollTo(p);
     }
   };
+
   useEffect(() => {
     if (city) {
       props.callback(city[0]);
     }
   }, [city]);
+
   return (
     <Modal
       isVisible={props.open}
@@ -65,9 +60,7 @@ export const LocationPicker = (props: MyDatePickerProps) => {
           borderRadius: 24,
           paddingTop: 15,
         }}>
-        <ScrollView
-          ref={r => (scrollViewRef.current = r)}
-          scrollEventThrottle={16}>
+        <ScrollView ref={scrollViewRef} scrollEventThrottle={16}>
           {(city ?? []).map(item => {
             const isSelected = props.city === item;
             return (

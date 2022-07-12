@@ -1,12 +1,13 @@
-import {useQuery} from '@apollo/client';
 import {useState} from 'react';
-import {FETCH_REGISTER_CATEGORY_AND_TAG} from 'apollo/queries/memory';
+
+import {useQuery} from '@apollo/client';
+
+import {FETCH_REGISTER_CATEGORY_AND_TAG} from '~/apollo/queries/memory';
+import {isSuccessResponse} from '~/models/CommonResponse';
 import {
   RegisterCategoryAndTag,
   RegisterCategoryAndTagResponse,
-} from 'models/Memory/register_category_and_tag';
-import {isSuccessResponse} from 'models/CommonResponse';
-
+} from '~/models/Memory/register_category_and_tag';
 
 export const useFetchRegisteredCategoryAndTag = () => {
   const [errorCode, setErrorCode] = useState('');

@@ -1,15 +1,4 @@
 import React from 'react';
-import {CLEAR_ICON, Fonts} from '../assets';
-import {
-  CommonColors,
-  convertFontSize,
-  convertHeight,
-  convertWidth,
-  deviceWidth,
-  ErrorColors,
-  TextColors,
-} from '../utils';
-import ToastService from '../utils/ToastService';
 import {
   Image,
   ImageSourcePropType,
@@ -18,6 +7,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
+import {CLEAR_ICON} from '~/assets';
+import {ErrorColors, TextColors, CommonColors} from '~/utils/Colors';
+import {
+  deviceWidth,
+  convertWidth,
+  convertHeight,
+  convertFontSize,
+} from '~/utils/design';
+import ToastService from '~/utils/ToastService';
 
 interface SnackBarProps {
   text: string;

@@ -1,15 +1,12 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import Modal from 'react-native-modal';
-import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
+
 import dayjs, {Dayjs} from 'dayjs';
-import {
-  CommonColors,
-  convertFontSize,
-  convertHeight,
-  convertWidth,
-  DarkBlue,
-} from '../../utils';
+import {Calendar} from 'react-native-calendars';
+import Modal from 'react-native-modal';
+
+import {DarkBlue} from '~/utils/Colors';
+import {convertHeight, convertWidth, convertFontSize} from '~/utils/design';
 
 export interface MyDatePickerProps {
   open: boolean;
@@ -19,7 +16,7 @@ export interface MyDatePickerProps {
 }
 
 export const MyDatePicker = (props: MyDatePickerProps) => {
-    console.log("props.date.toString()", props.date.toString());
+  console.log('props.date.toString()', props.date.toString());
   return (
     <Modal
       swipeDirection={['down']}

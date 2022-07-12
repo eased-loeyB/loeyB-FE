@@ -4,7 +4,7 @@ import {
   GrayColors,
   PrimaryColors,
   TextColors,
-} from '../../utils';
+} from '~/utils/Colors';
 
 type TextFieldColorPalettes = {
   borderColor: string;
@@ -26,10 +26,10 @@ const inactive: TextFieldColorPalettes = {
   backgroundColor: CommonColors.White,
 };
 
-const disable: TextFieldColorPalettes = {
-  borderColor: GrayColors.Gray300,
-  backgroundColor: CommonColors.White,
-};
+// const disable: TextFieldColorPalettes = {
+//   borderColor: GrayColors.Gray300,
+//   backgroundColor: CommonColors.White,
+// };
 
 const error: TextFieldColorPalettes = {
   borderColor: ErrorColors.Main,

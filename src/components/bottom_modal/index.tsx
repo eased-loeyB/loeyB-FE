@@ -1,19 +1,16 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Dimensions} from 'react-native';
+import React, {useCallback, useState} from 'react';
+import {View, StyleSheet} from 'react-native';
+
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
-  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
 } from 'react-native-reanimated';
-import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-import {
-  convertHeight,
-  deviceHeight,
-  deviceWidth,
-  LightBlue2,
-} from '../../utils';
+
+import {LightBlue2} from '~/utils/Colors';
+import {deviceHeight, deviceWidth, convertHeight} from '~/utils/design';
+
 const MAX_TRANSLATE_Y = -deviceHeight + 150;
 
 export const BottomModal = () => {
@@ -44,7 +41,6 @@ export const BottomModal = () => {
         // runOnJS(() => {
         //   setExpand(true);
         // })
-
       }
     });
 
@@ -59,7 +55,7 @@ export const BottomModal = () => {
   const textStyles = useAnimatedStyle(() => {
     const expanded = translateY.value === MAX_TRANSLATE_Y;
     return {
-      opacity: expanded ?  0 : 1
+      opacity: expanded ? 0 : 1,
     };
   });
 
@@ -72,7 +68,8 @@ export const BottomModal = () => {
       <Animated.View style={[styles.box, rBottomSheetStyle]}>
         <View style={{height: 4, width: 66}} />
         {!expand && (
-          <Animated.Text style={[{marginTop: 10, color: LightBlue2}, textStyles]}>
+          <Animated.Text
+            style={[{marginTop: 10, color: LightBlue2}, textStyles]}>
             Swipe up to save
           </Animated.Text>
         )}
@@ -81,9 +78,7 @@ export const BottomModal = () => {
             height: deviceHeight,
             width: deviceWidth,
           }}
-        >
-          
-        </View>
+        />
       </Animated.View>
     </GestureDetector>
   );
