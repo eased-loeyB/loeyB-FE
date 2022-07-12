@@ -16,15 +16,15 @@ import {
   convertHeight,
   convertFontSize,
 } from '~/utils/design';
-import ToastService from '~/utils/ToastService';
 
 interface SnackBarProps {
   text: string;
   error?: boolean;
   icon?: ImageSourcePropType;
+  onClose?: () => void;
 }
 
-const SnackBar = ({text, error, icon = CLEAR_ICON}: SnackBarProps) => {
+const SnackBar = ({text, error, icon = CLEAR_ICON, onClose}: SnackBarProps) => {
   return (
     <View style={styles.container}>
       <View
@@ -42,11 +42,7 @@ const SnackBar = ({text, error, icon = CLEAR_ICON}: SnackBarProps) => {
           </Text>
         </View>
 
-        <TouchableOpacity
-          style={styles.iconSection}
-          onPress={() => {
-            ToastService.close();
-          }}>
+        <TouchableOpacity style={styles.iconSection} onPress={onClose}>
           <Image
             source={icon}
             resizeMode="contain"
