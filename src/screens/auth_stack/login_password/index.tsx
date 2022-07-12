@@ -12,6 +12,7 @@ import {Button} from '~/components/button';
 import TextField from '~/components/text_field';
 import {AuthResponse} from '~/models/Auth';
 import {isSuccessResponse} from '~/models/CommonResponse';
+import {getDeviceToken} from '~/services/notifications';
 import {convertHeight, convertWidth} from '~/utils/design';
 import {
   loadCustomerToken,
@@ -103,11 +104,13 @@ export const LoginWithPassword = ({route}) => {
             <View style={{marginTop: 28}}>
               <Button
                 title={'Login'}
-                callback={() => {
+                callback={async () => {
+                  const deviceToken = await getDeviceToken();
                   login({
                     variables: {
-                      email: email,
-                      password: password,
+                      email,
+                      password,
+                      deviceToken,
                     },
                   });
                 }}
