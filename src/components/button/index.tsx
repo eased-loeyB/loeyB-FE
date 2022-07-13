@@ -1,12 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import {View, Image, Text, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
-import {
-  convertFontSize,
-  convertHeight,
-  convertWidth,
-  LightBlue,
-  LightBlue2,
-} from '../../utils';
+import React from 'react';
+import {View, Text, TouchableWithoutFeedback} from 'react-native';
+
+import {LightBlue} from '~/utils/Colors';
+import {convertWidth, convertFontSize} from '~/utils/design';
 
 export interface ButtonProps {
   title: String;

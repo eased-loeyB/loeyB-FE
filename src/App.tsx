@@ -1,22 +1,26 @@
 import React, {useState, useEffect} from 'react';
-import {Provider} from 'react-redux';
+// @ts-ignore
+import {DeviceEventEmitter, LogBox, Platform, View} from 'react-native';
+
 import {ApolloClient, ApolloLink} from '@apollo/client';
 import {ApolloProvider} from '@apollo/react-hooks';
-import {ApplicationNavigator} from './navigation';
-// @ts-ignore
 import apolloLogger from 'apollo-link-logger';
-import {getApolloClient} from './apollo/client';
-import {DeviceEventEmitter, LogBox, Platform, View} from 'react-native';
 import 'dayjs/locale/ko';
-import './translations';
 import dayjs from 'dayjs';
-import {create, toastConfig, UPDATE_TOKEN} from './utils';
-import Toast from 'react-native-toast-message';
-import {setCustomText} from 'react-native-global-props';
-//import {Fonts} from './assets';
-import store from './store';
-import BackgroundCommon from './components/BackgroundCommon';
 import 'react-native-gesture-handler';
+import {setCustomText} from 'react-native-global-props';
+import Toast from 'react-native-toast-message';
+import {Provider} from 'react-redux';
+
+import {getApolloClient} from './apollo/client';
+//import {Fonts} from './assets';
+import './translations';
+import BackgroundCommon from './components/BackgroundCommon';
+import {ApplicationNavigator} from './navigation';
+import store from './store';
+import {create} from './utils/design';
+import {UPDATE_TOKEN} from './utils/Events';
+import {toastConfig} from './utils/ToastService';
 
 ApolloLink.from([apolloLogger]);
 LogBox.ignoreLogs([

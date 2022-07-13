@@ -1,8 +1,10 @@
-import {useMutation} from '@apollo/client';
-import {REQUEST_REGISTER_CODE} from '../../../../apollo/mutations/auth';
 import {useEffect, useState} from 'react';
-import ToastService from '../../../../utils/ToastService';
-import {isSuccessResponse} from '../../../../models/CommonResponse';
+
+import {useMutation} from '@apollo/client';
+
+import {REQUEST_REGISTER_CODE} from '~/apollo/mutations/auth';
+import {isSuccessResponse} from '~/models/CommonResponse';
+import ToastService from '~/utils/ToastService';
 
 export interface GetDataProps {
   email?: string;
@@ -37,8 +39,8 @@ export const useGetData = (params: GetDataProps) => {
   }, []);
 
   const getContentData = () => {
-    return data?.requestEmailVerificationCode
-  }
+    return data?.requestEmailVerificationCode;
+  };
 
   return {requestCode, data, loading, error, errorCode, getContentData};
 };

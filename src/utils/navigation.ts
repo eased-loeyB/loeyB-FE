@@ -1,6 +1,7 @@
-import {navigationRef} from '../navigation/Root';
-import {StackActions} from '@react-navigation/routers';
 import {TabActions} from '@react-navigation/native';
+import {StackActions} from '@react-navigation/routers';
+
+import {navigationRef} from '~/navigation/Root';
 
 export const navigation = () => navigationRef.current!;
 

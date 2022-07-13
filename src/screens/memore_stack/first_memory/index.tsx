@@ -1,18 +1,19 @@
 import React, {useState} from 'react';
 import {
   Image,
-  Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {convertHeight, convertWidth, LightBlue2} from '../../../utils';
-import BackgroundCommon from '../../../components/BackgroundCommon';
+
+import dayjs from 'dayjs';
+import {isEmpty} from 'lodash';
+import Swiper from 'react-native-swiper';
+
 import {
   CAMERA,
   CLEAR_ICON,
@@ -24,19 +25,16 @@ import {
   TRASH,
   VIDEO_CAMERA,
   VIEW_CAROUSEL,
-} from '../../../assets';
-import dayjs from 'dayjs';
-import {
-  ChooseMultiple,
-  FileAttachment,
-  OpenCamera,
-} from '../../../utils/Camera';
-import _ from 'lodash';
-import {MyDatePicker} from '../../../components/date_picker';
-import {LocationPicker} from '../../../components/location_picker';
+} from '~/assets';
+import BackgroundCommon from '~/components/BackgroundCommon';
+import {BottomModal} from '~/components/bottom_modal';
+import {MyDatePicker} from '~/components/date_picker';
+import {LocationPicker} from '~/components/location_picker';
+import {ChooseMultiple, FileAttachment, OpenCamera} from '~/utils/Camera';
+import {LightBlue2} from '~/utils/Colors';
+import {convertHeight, convertWidth} from '~/utils/design';
+
 import {DeleteModal} from '../../tutorial_stack/delete_modal';
-import Swiper from 'react-native-swiper';
-import {BottomModal} from '../../../components/bottom_modal';
 
 export const FirstMemory = () => {
   const [image, setImage] = useState<FileAttachment[]>();
@@ -101,7 +99,7 @@ export const FirstMemory = () => {
                 <TouchableOpacity
                   onPress={async () => {
                     await OpenCamera('video', async res => {
-                      if (!_.isEmpty(res)) {
+                      if (!isEmpty(res)) {
                         // setImage(res[0]);
                       }
                     });

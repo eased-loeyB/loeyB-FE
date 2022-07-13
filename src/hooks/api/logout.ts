@@ -1,10 +1,12 @@
 import {useLazyQuery, useQuery} from '@apollo/client';
-import {REMOVE_DEVICE_TOKEN} from '../../apollo/queries/auth';
-import {getDeviceToken} from '../../services/notifications';
-import {disConnectSubscription} from '../../apollo/client';
-import {LoeybUserResponse} from '../../models/User';
-import {FETCH_LOEYB_USER} from '../../apollo/queries/profile';
-import {isIOS, removeAccessToken} from '../../utils';
+
+import {disConnectSubscription} from '~/apollo/client';
+import {REMOVE_DEVICE_TOKEN} from '~/apollo/queries/auth';
+import {FETCH_LOEYB_USER} from '~/apollo/queries/profile';
+import {LoeybUserResponse} from '~/models/User';
+import {getDeviceToken} from '~/services/notifications';
+import {removeAccessToken} from '~/utils/asyncstorage';
+import {isIOS} from '~/utils/device';
 //import notifee from '@notifee/react-native';
 
 export const useLogout = () => {

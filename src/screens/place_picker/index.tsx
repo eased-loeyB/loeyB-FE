@@ -1,28 +1,22 @@
 import React, {useCallback, useMemo, useRef} from 'react';
-import {
-  FlatList,
-  Image,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {convertHeight, DarkBlue, LightBlue2} from '../../utils';
-import {PUBLIC} from '../../assets';
+import {StyleSheet, View} from 'react-native';
+
 import BottomSheet from '@gorhom/bottom-sheet';
+
+import {DarkBlue} from '~/utils/Colors';
+import {convertHeight} from '~/utils/design';
 
 export const PlacePicker = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['25%', '50%'], []);
 
-  const data = [
-    'Seoul, Korea',
-    'Seoul, Korea',
-    'Seoul, Korea',
-    'Seoul, Korea',
-    'Seoul, Korea',
-  ];
+  // const data = [
+  //   'Seoul, Korea',
+  //   'Seoul, Korea',
+  //   'Seoul, Korea',
+  //   'Seoul, Korea',
+  //   'Seoul, Korea',
+  // ];
   const handleSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
   }, []);

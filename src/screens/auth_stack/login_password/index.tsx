@@ -1,45 +1,36 @@
 import React, {useState} from 'react';
-import {
-  Alert,
-  Image,
-  Keyboard,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import BackgroundCommon from '../../../components/BackgroundCommon';
-import TextField from '../../../components/text_field';
-import {convertHeight, convertWidth} from '../../../utils';
-import {CommonStyles} from '../../../utils/Styles';
-import {Button} from '../../../components/button';
-import _ from 'lodash';
-import {GOOGLE_LOGIN} from '../../../assets';
-import {validateEmail, validatePassword} from '../../../utils/Validate';
+import {Keyboard, Text, TouchableWithoutFeedback, View} from 'react-native';
+
 import {useLazyQuery} from '@apollo/client';
-import {AUTHENTICATE} from '../../../apollo/queries/auth';
-import Toast from 'react-native-toast-message';
-import ToastService from '../../../utils/ToastService';
-import {AuthResponse} from '../../../models/Auth';
-import {isSuccessResponse} from '../../../models/CommonResponse';
-import {push} from '../../../navigation';
-import {NameScreenAuthStack} from '../../../navigation/stacks';
-import {getApolloClient} from '../../../apollo/client';
+import {isEmpty} from 'lodash';
+
+import {getApolloClient} from '~/apollo/client';
+import {AUTHENTICATE} from '~/apollo/queries/auth';
+import {IS_LOGGED_IN} from '~/apollo/queries/isLoggedIn';
+import BackgroundCommon from '~/components/BackgroundCommon';
+import {Button} from '~/components/button';
+import TextField from '~/components/text_field';
+import {AuthResponse} from '~/models/Auth';
+import {isSuccessResponse} from '~/models/CommonResponse';
+import {convertHeight, convertWidth} from '~/utils/design';
 import {
   loadCustomerToken,
   saveCustomerToken,
   saveExpiresIn,
   saveRefreshToken,
-} from '../../../utils/storage';
-import {IS_LOGGED_IN} from '../../../apollo/queries/isLoggedIn';
+} from '~/utils/storage';
+import {CommonStyles} from '~/utils/Styles';
+import ToastService from '~/utils/ToastService';
+import {validateEmail, validatePassword} from '~/utils/Validate';
 
 // @ts-ignore
 export const LoginWithPassword = ({route}) => {
   const [email, setEmail] = useState(route?.params?.email ?? '');
   const [password, setPassword] = useState('');
-  const isValidEmail = validateEmail(email) && !_.isEmpty(email);
-  const isValidPassword = validatePassword(password) && !_.isEmpty(password);
+  const isValidEmail = validateEmail(email) && !isEmpty(email);
+  const isValidPassword = validatePassword(password) && !isEmpty(password);
 
-  const [login, {loading, error, data}] = useLazyQuery<{
+  const [login] = useLazyQuery<{
     authenticate: AuthResponse;
   }>(AUTHENTICATE, {
     onCompleted: async res => {
@@ -88,7 +79,7 @@ export const LoginWithPassword = ({route}) => {
                 onTextChange={value => setEmail(value)}
                 placeholder={'Email'}
                 errorMsg={
-                  !isValidEmail && !_.isEmpty(email)
+                  !isValidEmail && !isEmpty(email)
                     ? 'Email format is incorrect'
                     : ''
                 }
@@ -101,7 +92,7 @@ export const LoginWithPassword = ({route}) => {
                   onTextChange={value => setPassword(value)}
                   placeholder={'Password'}
                   errorMsg={
-                    !isValidPassword && !_.isEmpty(password)
+                    !isValidPassword && !isEmpty(password)
                       ? 'Not 8 characters yet'
                       : ''
                   }

@@ -1,6 +1,5 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
-  Alert,
   Image,
   Keyboard,
   StyleSheet,
@@ -8,18 +7,20 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import BackgroundCommon from '../../../components/BackgroundCommon';
+
+import {BACKGROUND_INPUT_NAME, BACKGROUND_WELCOME} from '~/assets';
+import BackgroundCommon from '~/components/BackgroundCommon';
+import {Button} from '~/components/button';
+import {push} from '~/navigation';
+import {MainStackName} from '~/navigation/stacks/MainStack';
 import {
   convertHeight,
   convertWidth,
   deviceHeight,
   deviceWidth,
-} from '../../../utils';
-import {CommonStyles} from '../../../utils/Styles';
-import {Button} from '../../../components/button';
-import {BACKGROUND_INPUT_NAME, BACKGROUND_WELCOME} from '../../../assets';
-import {push} from '../../../navigation';
-import {MainStackName} from '../../../navigation/stacks/MainStack';
+} from '~/utils/design';
+import {CommonStyles} from '~/utils/Styles';
+
 // @ts-ignore
 export const Welcome = ({route}) => {
   const {userName} = route?.params;

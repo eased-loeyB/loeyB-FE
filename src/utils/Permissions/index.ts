@@ -1,8 +1,8 @@
+import {isEmpty} from 'lodash';
 import {request, requestMultiple, RESULTS} from 'react-native-permissions';
-import _ from 'lodash';
 
 export async function checkMultiplePermissions(permissions: any[]) {
-  if (_.isEmpty(permissions)) {
+  if (isEmpty(permissions)) {
     return true;
   }
   let isPermissionGranted = false;

@@ -1,7 +1,9 @@
-import {useMutation} from '@apollo/client';
 import {useState} from 'react';
-import {REGISTER_USER} from '../../../apollo/mutations/auth';
-import {isSuccessResponse} from '../../../models/CommonResponse';
+
+import {useMutation} from '@apollo/client';
+
+import {REGISTER_USER} from '~/apollo/mutations/auth';
+import {isSuccessResponse} from '~/models/CommonResponse';
 
 export const useRegisterUser = () => {
   const [errorCode, setErrorCode] = useState('');

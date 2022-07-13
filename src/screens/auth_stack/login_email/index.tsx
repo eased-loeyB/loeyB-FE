@@ -7,42 +7,45 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import BackgroundCommon from '../../../components/BackgroundCommon';
-import TextField from '../../../components/text_field';
-import {convertHeight, convertWidth, create} from '../../../utils';
-import {CommonStyles} from '../../../utils/Styles';
-import {Button} from '../../../components/button';
-import _ from 'lodash';
-import {GOOGLE_LOGIN} from '../../../assets';
-import {validateEmail} from '../../../utils/Validate';
-import {NameScreenAuthStack} from '../../../navigation/stacks';
-import {push} from '../../../navigation';
-import {useGetData} from '../register/useGetData';
+
+import {useKeyboard} from '@react-native-community/hooks';
 import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import {useKeyboard} from '@react-native-community/hooks';
-import {useGoogleLogin} from './hook/useGoogleLogin';
-import {isSuccessResponse} from '../../../models/CommonResponse';
-import {getApolloClient} from '../../../apollo/client';
+import {isEmpty} from 'lodash';
+
+import {getApolloClient} from '~/apollo/client';
+import {IS_LOGGED_IN} from '~/apollo/queries/isLoggedIn';
+import {GOOGLE_LOGIN} from '~/assets';
+import BackgroundCommon from '~/components/BackgroundCommon';
+import {Button} from '~/components/button';
+import TextField from '~/components/text_field';
+import {AuthData} from '~/models/Auth';
+import {isSuccessResponse} from '~/models/CommonResponse';
+import {push} from '~/navigation';
+import {NameScreenAuthStack} from '~/navigation/stacks';
+import {convertHeight, convertWidth} from '~/utils/design';
 import {
   loadCustomerToken,
   saveCustomerToken,
   saveExpiresIn,
   saveRefreshToken,
-} from '../../../utils/storage';
-import {IS_LOGGED_IN} from '../../../apollo/queries/isLoggedIn';
-import ToastService from '../../../utils/ToastService';
+} from '~/utils/storage';
+import {CommonStyles} from '~/utils/Styles';
+import ToastService from '~/utils/ToastService';
+import {validateEmail} from '~/utils/Validate';
+
+import {useGetData} from '../register/useGetData';
+import {useGoogleLogin} from './hook/useGoogleLogin';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
   const isValidEmail = validateEmail(email);
   const keyboard = useKeyboard();
-  const {data, loading, error, requestCode, errorCode, getContentData} =
-    useGetData({
-      email: email,
-    });
+  const {data, requestCode, getContentData} = useGetData({
+    email: email,
+  });
 
   const {request: googleLogin, responseData: resGoogleLogin} = useGoogleLogin();
 
@@ -61,11 +64,15 @@ export const Login = () => {
     }
   }, [data]);
 
-  const saveToken = async (data: any) => {
+  const saveToken = async ({
+    accessToken,
+    refreshToken,
+    expiresIn,
+  }: AuthData) => {
     const client = await getApolloClient();
-    await saveCustomerToken(data.accessToken);
-    await saveRefreshToken(data.refreshToken);
-    await saveExpiresIn(`${data.expiresIn}`);
+    await saveCustomerToken(accessToken);
+    await saveRefreshToken(refreshToken);
+    await saveExpiresIn(`${expiresIn}`);
     let token = await loadCustomerToken();
 
     if (token) {
@@ -77,7 +84,7 @@ export const Login = () => {
         },
       });
     }
-    ToastService.showSuccess(`Welcome back`);
+    ToastService.showSuccess('Welcome back');
   };
 
   useEffect(() => {
@@ -110,9 +117,9 @@ export const Login = () => {
         },
       });
       // this.setState({ userInfo });
-    } catch (error) {
+    } catch (error: any) {
       Alert.alert('', 'Some things went wrong.');
-      console.log(error);
+      console.log(error ? JSON.stringify(error) : error);
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
       } else if (error.code === statusCodes.IN_PROGRESS) {
@@ -136,14 +143,16 @@ export const Login = () => {
               flex: 1,
             }}>
             <Text style={{...CommonStyles.title}}>Welcome to loeyB</Text>
-            <Text style={{...CommonStyles.subTitle, marginTop: 12}}>Input your email to login or signup</Text>
+            <Text style={{...CommonStyles.subTitle, marginTop: 12}}>
+              Input your email to login or signup
+            </Text>
             <View style={{marginTop: convertHeight(50)}}>
               <TextField
                 value={email}
                 onTextChange={value => setEmail(value)}
                 placeholder={'Email'}
                 errorMsg={
-                  !isValidEmail && !_.isEmpty(email)
+                  !isValidEmail && !isEmpty(email)
                     ? 'Email format is incorrect'
                     : ''
                 }
@@ -159,7 +168,7 @@ export const Login = () => {
                     },
                   });
                 }}
-                enable={!_.isEmpty(email)}
+                enable={!isEmpty(email)}
               />
             </View>
           </View>

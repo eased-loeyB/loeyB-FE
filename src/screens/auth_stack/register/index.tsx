@@ -1,25 +1,24 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Keyboard, Text, TouchableWithoutFeedback, View} from 'react-native';
-import BackgroundCommon from '../../../components/BackgroundCommon';
-import TextField from '../../../components/text_field';
-import {convertHeight, convertWidth} from '../../../utils';
-import {CommonStyles} from '../../../utils/Styles';
-import {Button} from '../../../components/button';
-import _ from 'lodash';
-import {validateEmail} from '../../../utils/Validate';
-import {navigate} from '../../../navigation';
-import {NameScreenAuthStack} from '../../../navigation/stacks';
-import {useMutation} from '@apollo/client';
-import {REQUEST_REGISTER_CODE} from '../../../apollo/mutations/auth';
-import {useGetData} from './useGetData';
+
+import {isEmpty} from 'lodash';
+
+import BackgroundCommon from '~/components/BackgroundCommon';
+import {Button} from '~/components/button';
+import TextField from '~/components/text_field';
+import {navigate} from '~/navigation';
+import {NameScreenAuthStack} from '~/navigation/stacks';
+import {convertHeight, convertWidth} from '~/utils/design';
+import {CommonStyles} from '~/utils/Styles';
+import {validateEmail} from '~/utils/Validate';
 
 // @ts-ignore
 export const Register = ({route}) => {
   const [email, setEmail] = useState(route?.params?.email ?? '');
   const [code, setCode] = useState('');
-  const isValidEmail = validateEmail(email) && !_.isEmpty(email);
+  const isValidEmail = validateEmail(email) && !isEmpty(email);
 
-  const isValidCode = !_.isEmpty(code);
+  const isValidCode = !isEmpty(code);
 
   const canNext = isValidEmail && isValidCode;
   return (
@@ -42,7 +41,7 @@ export const Register = ({route}) => {
                 onTextChange={value => setEmail(value)}
                 placeholder={'Email'}
                 errorMsg={
-                  !isValidEmail && !_.isEmpty(email)
+                  !isValidEmail && !isEmpty(email)
                     ? 'Email format is incorrect'
                     : ''
                 }
@@ -55,9 +54,7 @@ export const Register = ({route}) => {
                   onTextChange={value => setCode(value)}
                   placeholder={'Code'}
                   errorMsg={
-                    !isValidCode && !_.isEmpty(code)
-                      ? 'Not 6 characters yet'
-                      : ''
+                    !isValidCode && !isEmpty(code) ? 'Not 6 characters yet' : ''
                   }
                 />
               </View>

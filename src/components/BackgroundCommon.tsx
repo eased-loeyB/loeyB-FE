@@ -1,7 +1,5 @@
 import React, {memo} from 'react';
-import {convertWidth, deviceHeight, deviceWidth} from '../utils';
 import {
-  Animated,
   Image,
   ImageRequireSource,
   ImageStyle,
@@ -10,12 +8,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {ARROW_BACK, FILTER_IMAGE, SPLASH_IMAGE} from '../assets';
+
 // @ts-ignore
 import RadialGradient from 'react-native-radial-gradient';
 import {Edge, SafeAreaView} from 'react-native-safe-area-context';
-import {goBack} from '../navigation';
-import {CommonStyles} from '../utils/Styles';
+
+import {ARROW_BACK, FILTER_IMAGE} from '~/assets';
+import {goBack} from '~/navigation';
+import {convertWidth, deviceHeight, deviceWidth} from '~/utils/design';
+import {CommonStyles} from '~/utils/Styles';
 
 export interface BackgroundCommonProps {
   children: JSX.Element;
@@ -60,7 +61,7 @@ const BackgroundCommon = ({
               </View>
             </TouchableOpacity>
             <Text style={CommonStyles.title}>{title}</Text>
-            <View  style={{width: 30}}/>
+            <View style={{width: 30}} />
           </View>
         )}
         {children}
@@ -77,9 +78,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingLeft: 24,
   },
-  iconBack: {
-
-  },
+  iconBack: {},
 });
 
 export default memo(BackgroundCommon);

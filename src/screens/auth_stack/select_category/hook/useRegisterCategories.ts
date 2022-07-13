@@ -1,7 +1,9 @@
-import {useMutation} from '@apollo/client';
 import {useState} from 'react';
-import {isSuccessResponse} from '../../../../models/CommonResponse';
-import {REGISTER_CATEGORIES} from '../../../../apollo/mutations/memory';
+
+import {useMutation} from '@apollo/client';
+
+import {REGISTER_CATEGORIES} from '~/apollo/mutations/memory';
+import {isSuccessResponse} from '~/models/CommonResponse';
 
 export type LoeybAreaType = 'HEALTH' | 'MIND' | 'SOCIAL' | 'HOBBY' | 'WORK';
 

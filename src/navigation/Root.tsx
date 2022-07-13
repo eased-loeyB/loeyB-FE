@@ -1,8 +1,10 @@
 import * as React from 'react';
+
 import {NavigationContainerRef} from '@react-navigation/native';
 import {StackActions} from '@react-navigation/routers';
-import {navigation} from '../utils/navigation';
-import _ from 'lodash';
+import {findIndex} from 'lodash';
+
+import {navigation} from '~/utils/navigation';
 
 export const navigationRef = React.createRef<NavigationContainerRef<any>>();
 
@@ -27,7 +29,7 @@ export function goBackToScreen(name: string) {
     const routes = navigationRef.current?.getState().routes;
     if ((routes ?? []).length > 0) {
       // @ts-ignore
-      const indexScreenWillBack = _.findIndex(
+      const indexScreenWillBack = findIndex(
         // @ts-ignore
         routes[0]!.state.routes,
         item => item.name === name,

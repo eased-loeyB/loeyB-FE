@@ -1,39 +1,38 @@
 import React, {useEffect, useState} from 'react';
 import {
-  Alert,
   Image,
   Keyboard,
   Text,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import BackgroundCommon from '../../../components/BackgroundCommon';
-import TextField from '../../../components/text_field';
+
+import {isEmpty} from 'lodash';
+
+import {BACKGROUND_INPUT_NAME} from '~/assets';
+import BackgroundCommon from '~/components/BackgroundCommon';
+import {Button} from '~/components/button';
+import TextField from '~/components/text_field';
+import {navigate} from '~/navigation';
+import {NameScreenAuthStack} from '~/navigation/stacks';
 import {
   convertHeight,
   convertWidth,
   deviceHeight,
   deviceWidth,
-} from '../../../utils';
-import {CommonStyles} from '../../../utils/Styles';
-import {Button} from '../../../components/button';
-import _ from 'lodash';
-import {BACKGROUND_INPUT_NAME, GOOGLE_LOGIN} from '../../../assets';
-import {validateEmail} from '../../../utils/Validate';
-import {NameScreenAuthStack} from '../../../navigation/stacks';
-import {navigate, push} from '../../../navigation';
+} from '~/utils/design';
+import {CommonStyles} from '~/utils/Styles';
+
 import {useSetName} from '../hooks/useSetName';
-import {isSuccessResponse} from '../../../models/CommonResponse';
 
 export const InputName = () => {
   const [name, setName] = useState('');
-  const isValidName = !_.isEmpty(name) && name.length < 31;
+  const isValidName = !isEmpty(name) && name.length < 31;
 
-  const {request: requestSetName, responseData, errorCode} = useSetName();
+  const {responseData, errorCode} = useSetName();
 
   useEffect(() => {
     if (responseData) {
-
       // if (isSuccessResponse(responseData)) {
       //   navigate(NameScreenAuthStack.SELECT_CATEGORY, {userName: name});
       // }
@@ -80,7 +79,7 @@ export const InputName = () => {
                 }}
                 customTextInputStyle={{color: 'black', textAlign: 'center'}}
                 errorMsg={
-                  !isValidName && !_.isEmpty(name) ? 'Invalid name format' : ''
+                  !isValidName && !isEmpty(name) ? 'Invalid name format' : ''
                 }
               />
             </View>
@@ -89,7 +88,7 @@ export const InputName = () => {
             <Button
               title={'Next'}
               callback={() => {
-                  navigate(NameScreenAuthStack.SELECT_CATEGORY, {userName: name});
+                navigate(NameScreenAuthStack.SELECT_CATEGORY, {userName: name});
                 // requestSetName({
                 //   variables: {
                 //     username: name,

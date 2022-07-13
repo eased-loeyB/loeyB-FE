@@ -1,6 +1,7 @@
-import {createStackNavigator} from '@react-navigation/stack';
 import React from 'react';
-import {TabNavigator} from './TabNavigator';
+
+import {createStackNavigator} from '@react-navigation/stack';
+
 import {MainStack} from './stacks/MainStack';
 
 export const MainNavigatorStackName = {

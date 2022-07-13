@@ -1,16 +1,12 @@
-import {createStackNavigator} from '@react-navigation/stack';
 import React from 'react';
-import {Login} from '../../screens/auth_stack/login_email';
-import {LoginWithPassword} from '../../screens/auth_stack/login_password';
-import {Register} from '../../screens/auth_stack/register';
-import {InputName} from '../../screens/auth_stack/input_name';
-import {SelectCategory} from '../../screens/auth_stack/select_category';
-import {Splash} from '../../screens/splash';
-import {RegisterWithPass} from '../../screens/auth_stack/register_with_pass';
-import {FirstMemory} from '../../screens/memore_stack/first_memory';
-import {MainStackName} from './MainStack';
-import {CameraPage} from '../../components/camera/CameraPage';
-import {MyCamera} from '../../components/rn_camera';
+
+import {createStackNavigator} from '@react-navigation/stack';
+
+import {Login} from '~/screens/auth_stack/login_email';
+import {LoginWithPassword} from '~/screens/auth_stack/login_password';
+import {Register} from '~/screens/auth_stack/register';
+import {RegisterWithPass} from '~/screens/auth_stack/register_with_pass';
+import {Splash} from '~/screens/splash';
 
 const Stack = createStackNavigator();
 export const NameScreenAuthStack = {

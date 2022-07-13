@@ -1,9 +1,11 @@
 import React from 'react';
-import {ERROR_ICON} from '../assets';
-import {SnackBar} from '../components';
-import i18n from 'i18next';
 import {ImageSourcePropType} from 'react-native';
+
+import i18n from 'i18next';
 import Toast from 'react-native-toast-message';
+
+import {ERROR_ICON} from '~/assets';
+import SnackBar from '~/components/SnackBar';
 
 export const toastConfig = {
   custom_toast: ({text1, props}: any) => <SnackBar text={text1} {...props} />,

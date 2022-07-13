@@ -1,17 +1,17 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {
   FlatList,
   Image,
   ImageRequireSource,
   StyleProp,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  ViewStyle,
 } from 'react-native';
-import {convertFontSize, convertHeight, convertWidth} from '../../../../utils';
-import _ from 'lodash';
+
+import {find, remove} from 'lodash';
+
+import {convertFontSize, convertHeight, convertWidth} from '~/utils/design';
 
 export interface SubCategoryProps {
   title: string;
@@ -54,17 +54,14 @@ export const Category = (props: CategoryProps) => {
         keyExtractor={item => `${item.title}`}
         extraData={focusUpdate}
         renderItem={({item}) => {
-          const isSelected = !!_.find(
-              selected,
-            i => i.title === item.title,
-          );
+          const isSelected = !!find(selected, i => i.title === item.title);
           return CategoryItem(
             item,
             isSelected,
             () => {
               const currentList = [...selected];
               if (isSelected) {
-                _.remove(currentList, i => i.title === item.title);
+                remove(currentList, i => i.title === item.title);
               } else {
                 currentList.push(item);
               }

@@ -1,4 +1,3 @@
-import {SubCategoryProps} from './child';
 import {
   ART,
   AWARDS,
@@ -21,7 +20,9 @@ import {
   SKILLS,
   SPORT,
   THOUGHT,
-} from '../../../assets';
+} from '~/assets';
+
+import {SubCategoryProps} from './child';
 
 export const healthTitle = 'HEALTH';
 export const healthCategory: SubCategoryProps[] = [

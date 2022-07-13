@@ -1,4 +1,6 @@
 import {Alert, Platform} from 'react-native';
+
+import ImagePicker, {Options} from 'react-native-image-crop-picker';
 import {
   CameraOptions,
   ImagePickerResponse,
@@ -6,9 +8,9 @@ import {
   MediaType,
 } from 'react-native-image-picker';
 import {PERMISSIONS} from 'react-native-permissions';
-import ImagePicker, {Options} from 'react-native-image-crop-picker';
-import {isAndroid11orHigher} from '../device';
 import uuid from 'react-native-uuid';
+
+import {isAndroid11orHigher} from '../device';
 import {checkMultiplePermissions} from '../Permissions';
 
 export interface FileAttachment {
@@ -23,7 +25,7 @@ const callback = (
   imagePickerRes: ImagePickerResponse,
   callbackResult: (result: FileAttachment[]) => void,
 ) => {
-  const {didCancel, errorCode, errorMessage, assets} = imagePickerRes;
+  const {errorCode, assets} = imagePickerRes;
   // handle errorss
   switch (errorCode) {
     case 'camera_unavailable': {
@@ -40,7 +42,7 @@ const callback = (
     }
   }
   console.log('puit', imagePickerRes);
-  const result = (imagePickerRes.assets ?? []).map(item => {
+  const result = (assets ?? []).map(item => {
     return {
       id: uuid.v4(),
       uri: item.uri,
@@ -75,15 +77,17 @@ export async function OpenCamera(
   const permissionGranted = await checkMultiplePermissions(permissions);
 
   if (permissionGranted) {
-    console.log("permissionGranted", permissionGranted);
+    console.log('permissionGranted', permissionGranted);
     launchCamera(options, imagePickerRes => {
-      console.log("Res", imagePickerRes);
+      console.log('Res', imagePickerRes);
       callback(imagePickerRes, callbackResult);
-    }).then(temp => {
-      console.log("launchImageLibrary", temp);
-    }).catch(e => {
-      console.log("log", e);
-    });
+    })
+      .then(temp => {
+        console.log('launchImageLibrary', temp);
+      })
+      .catch(e => {
+        console.log('log', e);
+      });
     // openCamera(options).then((imagePickerRes) => {
     //   console.log("Res", imagePickerRes);
     //   callback(imagePickerRes, callbackResult);
