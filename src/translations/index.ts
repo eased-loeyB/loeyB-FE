@@ -1,6 +1,8 @@
+import {NativeModules, Platform} from 'react-native';
+
 import i18n from 'i18next';
 import {initReactI18next} from 'react-i18next';
-import {NativeModules, Platform} from 'react-native';
+
 import * as resources from './resources';
 
 export let deviceLanguage =
@@ -14,6 +16,7 @@ if (!Platform.isTesting && deviceLanguage === 'vi_VN') {
 }
 
 i18n.use(initReactI18next).init({
+  compatibilityJSON: 'v3',
   fallbackLng: 'ko',
   resources: {
     ...Object.entries(resources).reduce(

@@ -1,31 +1,17 @@
 import React from 'react';
-import {ERROR_ICON} from '../assets';
-import {SnackBar} from '../components';
-import i18n from 'i18next';
 import {ImageSourcePropType} from 'react-native';
+
+import i18n from 'i18next';
 import Toast from 'react-native-toast-message';
 
-export const toastConfig = {
-  custom_toast: ({text1, props}: any) => <SnackBar text={text1} {...props} />,
-};
+import {ERROR_ICON} from '~/assets';
+import SnackBar from '~/components/SnackBar';
 
-export interface SnackBarProps {
-  text: string;
-  type: string;
-  position?: 'top' | 'bottom';
-  text1?: string;
-  text2?: string;
-  visibilityTime?: number;
-  autoHide?: boolean;
-  topOffset?: number;
-  bottomOffset?: number;
-  props?: {
-    [key: string]: any;
-  };
-  onShow?: () => void;
-  onHide?: () => void;
-  onPress?: () => void;
-}
+export const toastConfig = {
+  custom_toast: ({text1, props}: any) => (
+    <SnackBar text={text1} onClose={ToastService.close} {...props} />
+  ),
+};
 
 export interface ToastProps {
   isError: boolean;

@@ -1,6 +1,8 @@
 import {StyleSheet} from 'react-native';
-import {CommonColors, convertFontSize, ErrorColors} from '../utils';
-import {Fonts} from '../assets';
+
+import {Fonts} from '~/assets';
+import {CommonColors, ErrorColors} from '~/utils/Colors';
+import {convertFontSize} from '~/utils/design';
 
 export const MainStyles = StyleSheet.create({
   tabBarBadgeStyle: {

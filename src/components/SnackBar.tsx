@@ -1,15 +1,4 @@
 import React from 'react';
-import {CLEAR_ICON, Fonts} from '../assets';
-import {
-  CommonColors,
-  convertFontSize,
-  convertHeight,
-  convertWidth,
-  deviceWidth,
-  ErrorColors,
-  TextColors,
-} from '../utils';
-import ToastService from '../utils/ToastService';
 import {
   Image,
   ImageSourcePropType,
@@ -19,13 +8,23 @@ import {
   View,
 } from 'react-native';
 
+import {CLEAR_ICON} from '~/assets';
+import {ErrorColors, TextColors, CommonColors} from '~/utils/Colors';
+import {
+  deviceWidth,
+  convertWidth,
+  convertHeight,
+  convertFontSize,
+} from '~/utils/design';
+
 interface SnackBarProps {
   text: string;
   error?: boolean;
   icon?: ImageSourcePropType;
+  onClose?: () => void;
 }
 
-const SnackBar = ({text, error, icon = CLEAR_ICON}: SnackBarProps) => {
+const SnackBar = ({text, error, icon = CLEAR_ICON, onClose}: SnackBarProps) => {
   return (
     <View style={styles.container}>
       <View
@@ -43,11 +42,7 @@ const SnackBar = ({text, error, icon = CLEAR_ICON}: SnackBarProps) => {
           </Text>
         </View>
 
-        <TouchableOpacity
-          style={styles.iconSection}
-          onPress={() => {
-            ToastService.close();
-          }}>
+        <TouchableOpacity style={styles.iconSection} onPress={onClose}>
           <Image
             source={icon}
             resizeMode="contain"
@@ -93,7 +88,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentText: {
-    fontFamily: Fonts.Regular,
     fontWeight: '400',
     fontSize: convertFontSize(13),
     letterSpacing: -0.1,

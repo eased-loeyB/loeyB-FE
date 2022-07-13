@@ -1,17 +1,22 @@
-import {END_POINT, WSS_END_POINT} from '../config/baseurl';
-import {loadAccessToken, removeAccessToken, TOKEN_EXPIRED} from '../utils';
-import ToastService from '../utils/ToastService';
+import {DeviceEventEmitter} from 'react-native';
+
 import {ApolloClient, ApolloLink, from, HttpLink, split} from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
 import {onError} from '@apollo/client/link/error';
 import {WebSocketLink} from '@apollo/client/link/ws';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {SubscriptionClient} from 'subscriptions-transport-ws';
-import {DeviceEventEmitter} from 'react-native';
+
+import {END_POINT, WSS_END_POINT} from '~/config/baseurl';
+import {loadAccessToken, removeAccessToken} from '~/utils/asyncstorage';
+import {TOKEN_EXPIRED} from '~/utils/Events';
+import ToastService from '~/utils/ToastService';
+
 import {cache} from './cache';
 import {IS_LOGGED_IN} from './queries/isLoggedIn';
 
 let _client: ApolloClient<any>;
+let webSocketClient: SubscriptionClient;
 
 export async function getApolloClient(
   focusUpdate = false,
@@ -73,16 +78,13 @@ export async function getApolloClient(
   console.log('Endpoint', END_POINT);
   const httpLink = ApolloLink.from([new HttpLink({uri: END_POINT})]);
 
-  const webSocketClient: SubscriptionClient = new SubscriptionClient(
-    WSS_END_POINT,
-    {
-      lazy: true,
-      reconnect: true,
-      connectionParams: () => {
-        return {Authorization: token ? `Bearer ${token}` : ''};
-      },
+  webSocketClient = new SubscriptionClient(WSS_END_POINT, {
+    lazy: true,
+    reconnect: true,
+    connectionParams: () => {
+      return {Authorization: token ? `Bearer ${token}` : ''};
     },
-  );
+  });
 
   const webSocketLink = new WebSocketLink(webSocketClient);
 
@@ -129,3 +131,13 @@ export async function getApolloClient(
 
   return client;
 }
+
+export const disConnectSubscription = async () => {
+  if (_client) {
+    await _client.clearStore();
+    await _client.resetStore();
+  }
+  if (webSocketClient) {
+    webSocketClient.close(true);
+  }
+};

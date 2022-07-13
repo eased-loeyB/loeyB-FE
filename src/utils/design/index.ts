@@ -1,9 +1,11 @@
 import {Dimensions, PixelRatio, Platform} from 'react-native';
+
 import DeviceInfo from 'react-native-device-info';
-const WIDTH_DESIGN = 411;
-const HEIGHT_DESIGN = 731;
-const deviceHeight = Dimensions.get('window').height;
-const deviceWidth = Dimensions.get('window').width;
+
+const WIDTH_DESIGN = 375;
+const HEIGHT_DESIGN = 812;
+export const deviceHeight = Dimensions.get('window').height;
+export const deviceWidth = Dimensions.get('window').width;
 
 const CURRENT_RESOLUTION = Math.sqrt(
   deviceHeight * deviceHeight + deviceWidth * deviceWidth,
@@ -19,8 +21,6 @@ export const create = (
   );
   RESOLUTIONS_PROPORTION = CURRENT_RESOLUTION / DESIGN_RESOLUTION;
 };
-
-export {deviceHeight, deviceWidth};
 
 export const convertHeight = (height: number) => {
   return RESOLUTIONS_PROPORTION * height;

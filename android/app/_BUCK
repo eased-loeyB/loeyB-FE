@@ -35,7 +35,7 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "com.loeybfe",
+    package = "com.eased.loeyB",
 )
 
 android_resource(
