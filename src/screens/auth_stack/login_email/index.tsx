@@ -109,6 +109,7 @@ export const Login = () => {
   const signIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
+      await GoogleSignin.signIn();
       const currentUser = await GoogleSignin.getTokens();
       console.log('Respsone from google: => ', currentUser);
       googleLogin({

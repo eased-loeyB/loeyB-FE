@@ -8,26 +8,10 @@ import {ERROR_ICON} from '~/assets';
 import SnackBar from '~/components/SnackBar';
 
 export const toastConfig = {
-  custom_toast: ({text1, props}: any) => <SnackBar text={text1} {...props} />,
+  custom_toast: ({text1, props}: any) => (
+    <SnackBar text={text1} onClose={ToastService.close} {...props} />
+  ),
 };
-
-export interface SnackBarProps {
-  text: string;
-  type: string;
-  position?: 'top' | 'bottom';
-  text1?: string;
-  text2?: string;
-  visibilityTime?: number;
-  autoHide?: boolean;
-  topOffset?: number;
-  bottomOffset?: number;
-  props?: {
-    [key: string]: any;
-  };
-  onShow?: () => void;
-  onHide?: () => void;
-  onPress?: () => void;
-}
 
 export interface ToastProps {
   isError: boolean;
