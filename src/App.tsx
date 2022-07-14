@@ -9,6 +9,7 @@ import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
 import 'react-native-gesture-handler';
 import {setCustomText} from 'react-native-global-props';
+import Orientation from 'react-native-orientation-locker';
 import Toast from 'react-native-toast-message';
 import {Provider} from 'react-redux';
 
@@ -36,6 +37,8 @@ const App = () => {
   const [client, setClient] = useState<ApolloClient<any> | any>();
 
   useEffect(() => {
+    Orientation.lockToPortrait();
+
     const customTextProps = {
       style: {
         //   fontFamily: Fonts.Regular,
