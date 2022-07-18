@@ -100,9 +100,9 @@ export const Login = () => {
     GoogleSignin.configure({
       scopes: ['email'], // what API you want to access on behalf of the user, default is email and profile
       iosClientId:
-        '322865048963-tuq93lhan6395vnfr2ukpihum7qv2qp7.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
+        '306679295015-c789drrfrqo9ump3p1e7ge6sihuqjbk4.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
       webClientId:
-        '322865048963-j669ueha4prbomsg2d1u1ag0uknceen0.apps.googleusercontent.com',
+        '306679295015-0st1tna4koic7euj4h5ctt7ruu6q0lqg.apps.googleusercontent.com',
     });
   }, []);
 
