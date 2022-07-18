@@ -21,7 +21,7 @@ target 'loeyBFE' do
 
   permissions_path = '../node_modules/react-native-permissions/ios'
 
-
+  pod 'GoogleSignIn', '~> 6.1.0'
   pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
   pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse"
   pod 'Permission-MediaLibrary', :path => "#{permissions_path}/MediaLibrary"
