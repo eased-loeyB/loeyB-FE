@@ -10,7 +10,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "postinstall": "cd ./ios && pod install && cd ..",
     "clean:android": "cd ./android && ./gradlew clean && cd ..",
-    "clean:ios": "cd ./ios && xcodebuild clean && cd .."
+    "clean:ios": "cd ./ios && xcodebuild clean && cd ..",
+    "build:android": "cd ./android && ./gradlew clean && ./gradlew assembleDebug && cd .."
   },
   "dependencies": {
     "@apollo/client": "^3.5.10",

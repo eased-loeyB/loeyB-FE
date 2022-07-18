@@ -515,7 +515,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.eased.loeyB;
+				PRODUCT_BUNDLE_IDENTIFIER = com.eased.loeybfe;
 				PRODUCT_NAME = loeyBFE;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -542,7 +542,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.eased.loeyB;
+				PRODUCT_BUNDLE_IDENTIFIER = com.eased.loeybfe;
 				PRODUCT_NAME = loeyBFE;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
