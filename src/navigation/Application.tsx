@@ -6,12 +6,10 @@ import {useMutation, useQuery} from '@apollo/client';
 import messaging from '@react-native-firebase/messaging';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import Orientation from 'react-native-orientation-locker';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 import {REFRESH_TOKEN} from '~/apollo/mutations/auth';
 import {IsLoggedInDataType, IS_LOGGED_IN} from '~/apollo/queries/isLoggedIn';
-import {useLogout} from '~/hooks/api/logout';
 import {isSuccessResponse} from '~/models/CommonResponse';
 import {
   saveAccessToken,
@@ -19,6 +17,7 @@ import {
   saveExpiresIn,
   loadRefreshToken,
 } from '~/utils/asyncstorage';
+import {isIOS} from '~/utils/device';
 import {UPDATE_TOKEN, TOKEN_EXPIRED} from '~/utils/Events';
 import ToastService from '~/utils/ToastService';
 
@@ -37,7 +36,6 @@ const Stack = createStackNavigator();
 // @refresh reset
 const ApplicationNavigator = () => {
   const {loading, data} = useQuery<IsLoggedInDataType>(IS_LOGGED_IN);
-  const {logout} = useLogout();
 
   const [getRefreshToken] = useMutation(REFRESH_TOKEN, {
     onCompleted: async res => {
@@ -47,30 +45,50 @@ const ApplicationNavigator = () => {
         await saveExpiresIn(`${res.refresh.data.expiresIn}`);
 
         DeviceEventEmitter.emit(UPDATE_TOKEN);
-      } else {
-        await logout();
       }
     },
   });
 
-  useEffect(() => {
-    const event = DeviceEventEmitter.addListener(TOKEN_EXPIRED, async () => {
-      const refreshToken = await loadRefreshToken();
-      getRefreshToken({
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  };
+
+  const onRefreshToken = async () => {
+    const refreshToken = await loadRefreshToken();
+
+    if (refreshToken) {
+      await getRefreshToken({
         variables: {
           refreshToken,
         },
       });
-    });
+    }
+  };
+
+  useEffect(() => {
+    // always refersh accessToken in storage at every first launch
+    onRefreshToken();
+
+    /**
+     * iOS only needs to request permission for FCM
+     * @see https://rnfirebase.io/messaging/usage#ios---requesting-permissions
+     */
+    if (isIOS()) {
+      requestUserPermission();
+    }
+
+    const event = DeviceEventEmitter.addListener(TOKEN_EXPIRED, onRefreshToken);
 
     return () => {
       event.remove();
     };
-  }, []);
-
-  useEffect(() => {
-    Orientation.lockToPortrait();
-    requestUserPermission();
   }, []);
 
   useEffect(() => {
@@ -80,7 +98,7 @@ const ApplicationNavigator = () => {
         message: 'login.loginExpired',
       });
     }
-  }, []);
+  }, [data?.isLoginExpired]);
 
   // notifee.onBackgroundEvent(async ({type, detail}) => {
   //   const {notification, pressAction} = detail;
@@ -101,17 +119,6 @@ const ApplicationNavigator = () => {
   //     }
   //   });
   // }, []);
-
-  async function requestUserPermission() {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-    if (enabled) {
-      console.log('Authorization status:', authStatus);
-    }
-  }
 
   return (
     <SafeAreaProvider>
