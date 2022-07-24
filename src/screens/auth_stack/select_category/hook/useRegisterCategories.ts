@@ -38,7 +38,7 @@ export interface AreaCategoryInput {
   category: string;
 }
 
-export const useRegisterCategories = (email: string, name: string) => {
+export const useRegisterCategories = (name: string) => {
   const [errorCode, setErrorCode] = useState('');
   const [responseData, setResponeData] = useState();
 
@@ -61,7 +61,6 @@ export const useRegisterCategories = (email: string, name: string) => {
   const updateData = (areaCategory: AreaCategoryInput[]) => {
     registerUser({
       variables: {
-        email: email,
         name: name,
         areaCategory: areaCategory,
       },
