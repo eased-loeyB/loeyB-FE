@@ -28,3 +28,10 @@ export const REMOVE_DEVICE_TOKEN = gql`
     }
   }
 `;
+
+export const IS_LOGGED_IN = gql`
+  query IsUserLoggedIn {
+    isLoggedIn @client
+    isLoginExpired @client
+  }
+`;

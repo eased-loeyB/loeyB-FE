@@ -9,7 +9,9 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 import {REFRESH_TOKEN} from '~/apollo/mutations/auth';
-import {IsLoggedInDataType, IS_LOGGED_IN} from '~/apollo/queries/isLoggedIn';
+import {IS_LOGGED_IN} from '~/apollo/queries/auth';
+import {IsLoggedInDataType} from '~/apollo/types/auth';
+import {EventToken} from '~/apollo/types/event';
 import {isSuccessResponse} from '~/models/CommonResponse';
 import {
   saveAccessToken,
@@ -18,7 +20,6 @@ import {
   loadRefreshToken,
 } from '~/utils/asyncstorage';
 import {isIOS} from '~/utils/device';
-import {UPDATE_TOKEN, TOKEN_EXPIRED} from '~/utils/Events';
 import ToastService from '~/utils/ToastService';
 
 import {navigationRef} from './Root';
@@ -44,7 +45,7 @@ const ApplicationNavigator = () => {
         await saveRefreshToken(res.refresh.data.refreshToken);
         await saveExpiresIn(`${res.refresh.data.expiresIn}`);
 
-        DeviceEventEmitter.emit(UPDATE_TOKEN);
+        DeviceEventEmitter.emit(EventToken.UPDATE_TOKEN);
       }
     },
   });
@@ -84,7 +85,10 @@ const ApplicationNavigator = () => {
       requestUserPermission();
     }
 
-    const event = DeviceEventEmitter.addListener(TOKEN_EXPIRED, onRefreshToken);
+    const event = DeviceEventEmitter.addListener(
+      EventToken.TOKEN_EXPIRED,
+      onRefreshToken,
+    );
 
     return () => {
       event.remove();

@@ -4,9 +4,8 @@ import {Keyboard, Text, TouchableWithoutFeedback, View} from 'react-native';
 import {useLazyQuery} from '@apollo/client';
 import {isEmpty} from 'lodash';
 
-import {getApolloClient} from '~/apollo/client';
 import {AUTHENTICATE} from '~/apollo/queries/auth';
-import {IS_LOGGED_IN} from '~/apollo/queries/isLoggedIn';
+import {onLogin} from '~/apollo/utils/auth';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import TextField from '~/components/text_field';
@@ -36,20 +35,13 @@ export const LoginWithPassword = ({route}) => {
   }>(AUTHENTICATE, {
     onCompleted: async res => {
       if (isSuccessResponse(res.authenticate)) {
-        const client = await getApolloClient();
         await saveCustomerToken(res.authenticate.data.accessToken);
         await saveRefreshToken(res.authenticate.data.refreshToken);
         await saveExpiresIn(`${res.authenticate.data.expiresIn}`);
         let token = await loadCustomerToken();
 
         if (token) {
-          client.cache.writeQuery({
-            query: IS_LOGGED_IN,
-            data: {
-              isLoggedIn: true,
-              isLoginExpired: false,
-            },
-          });
+          onLogin();
         }
         ToastService.showSuccess(`Welcome back ${email}`);
       } else {

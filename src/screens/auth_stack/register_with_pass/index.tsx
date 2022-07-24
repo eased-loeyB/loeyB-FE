@@ -3,8 +3,7 @@ import {Keyboard, Text, TouchableWithoutFeedback, View} from 'react-native';
 
 import {isEmpty} from 'lodash';
 
-import {getApolloClient} from '~/apollo/client';
-import {IS_LOGGED_IN} from '~/apollo/queries/isLoggedIn';
+import {onLogin} from '~/apollo/utils/auth';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import TextField from '~/components/text_field';
@@ -34,20 +33,13 @@ export const RegisterWithPass = ({route}) => {
   const {registerUser, responseData} = useRegisterUser();
 
   const saveToken = async (responseData: any) => {
-    const client = await getApolloClient();
     await saveCustomerToken(responseData.data.accessToken);
     await saveRefreshToken(responseData.data.refreshToken);
     await saveExpiresIn(`${responseData.data.expiresIn}`);
     let token = await loadCustomerToken();
 
     if (token) {
-      client.cache.writeQuery({
-        query: IS_LOGGED_IN,
-        data: {
-          isLoggedIn: true,
-          isLoginExpired: false,
-        },
-      });
+      onLogin();
     }
   };
 
