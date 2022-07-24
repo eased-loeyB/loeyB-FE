@@ -1,8 +1,5 @@
-import {DeviceEventEmitter} from 'react-native';
-
 import {
   ApolloClient,
-  ApolloLink,
   from,
   HttpLink,
   NormalizedCacheObject,
@@ -16,12 +13,11 @@ import {Middleware, SubscriptionClient} from 'subscriptions-transport-ws';
 
 import {END_POINT, WSS_END_POINT} from '~/config/baseurl';
 import {loadAccessToken} from '~/utils/asyncstorage';
-import ToastService from '~/utils/ToastService';
 
 import {cache} from './cache';
 import {IS_LOGGED_IN} from './queries/auth';
-import {EventToken} from './types/event';
-import {onLogin, onLogout} from './utils/auth';
+import {onLogin} from './utils/auth';
+import {errorHandler} from './utils/error';
 
 let _client: ApolloClient<NormalizedCacheObject>;
 let webSocketClient: SubscriptionClient;
@@ -47,49 +43,9 @@ export async function getApolloClient(
     });
   }
 
-  const errorLink = onError(({graphQLErrors, networkError}) => {
-    if (graphQLErrors) {
-      console.debug(
-        'graphQLError',
-        graphQLErrors && JSON.stringify(graphQLErrors),
-      );
-      graphQLErrors.forEach(async ({message}) => {
-        let toastMessage: string;
+  const errorLink = onError(errorHandler);
 
-        switch (message) {
-          case EventToken.INVALID_TOKEN:
-            await onLogout();
-            toastMessage = 'commons.errors.token.invalid';
-            break;
-          case EventToken.TOKEN_EXPIRED:
-            DeviceEventEmitter.emit(message);
-            toastMessage = 'commons.errors.token.expired';
-            break;
-          default:
-            toastMessage = 'commons.errors.default';
-            break;
-        }
-
-        ToastService.show({
-          isError: true,
-          message: toastMessage,
-        });
-      });
-    }
-
-    if (networkError) {
-      console.debug(
-        'networkError',
-        networkError && JSON.stringify(networkError),
-      );
-      ToastService.show({
-        isError: true,
-        message: 'commons.errors.network',
-      });
-    }
-  });
-
-  const httpLink = ApolloLink.from([new HttpLink({uri: END_POINT})]);
+  const httpLink = new HttpLink({uri: END_POINT});
   console.debug('HTTP Endpoint', END_POINT);
 
   webSocketClient = new SubscriptionClient(WSS_END_POINT, {
