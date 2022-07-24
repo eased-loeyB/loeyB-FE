@@ -4,9 +4,8 @@ import {Keyboard, Text, TouchableWithoutFeedback, View} from 'react-native';
 import {useLazyQuery} from '@apollo/client';
 import {isEmpty} from 'lodash';
 
-import {getApolloClient} from '~/apollo/client';
 import {AUTHENTICATE} from '~/apollo/queries/auth';
-import {IS_LOGGED_IN} from '~/apollo/queries/isLoggedIn';
+import {saveToken} from '~/apollo/utils/auth';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import TextField from '~/components/text_field';
@@ -14,12 +13,6 @@ import {AuthResponse} from '~/models/Auth';
 import {isSuccessResponse} from '~/models/CommonResponse';
 import {getDeviceToken} from '~/services/notifications';
 import {convertHeight, convertWidth} from '~/utils/design';
-import {
-  loadCustomerToken,
-  saveCustomerToken,
-  saveExpiresIn,
-  saveRefreshToken,
-} from '~/utils/storage';
 import {CommonStyles} from '~/utils/Styles';
 import ToastService from '~/utils/ToastService';
 import {validateEmail, validatePassword} from '~/utils/Validate';
@@ -36,21 +29,7 @@ export const LoginWithPassword = ({route}) => {
   }>(AUTHENTICATE, {
     onCompleted: async res => {
       if (isSuccessResponse(res.authenticate)) {
-        const client = await getApolloClient();
-        await saveCustomerToken(res.authenticate.data.accessToken);
-        await saveRefreshToken(res.authenticate.data.refreshToken);
-        await saveExpiresIn(`${res.authenticate.data.expiresIn}`);
-        let token = await loadCustomerToken();
-
-        if (token) {
-          client.cache.writeQuery({
-            query: IS_LOGGED_IN,
-            data: {
-              isLoggedIn: true,
-              isLoginExpired: false,
-            },
-          });
-        }
+        saveToken(res.authenticate.data);
         ToastService.showSuccess(`Welcome back ${email}`);
       } else {
         ToastService.showError('The email or password is incorrect');

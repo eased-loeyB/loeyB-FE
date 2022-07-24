@@ -14,13 +14,13 @@ import Toast from 'react-native-toast-message';
 import {Provider} from 'react-redux';
 
 import {getApolloClient} from './apollo/client';
+import {EventToken} from './apollo/types/event';
 //import {Fonts} from './assets';
 import './translations';
 import BackgroundCommon from './components/BackgroundCommon';
 import {ApplicationNavigator} from './navigation';
 import store from './store';
 import {create} from './utils/design';
-import {UPDATE_TOKEN} from './utils/Events';
 import {toastConfig} from './utils/ToastService';
 
 ApolloLink.from([apolloLogger]);
@@ -55,11 +55,14 @@ const App = () => {
       .catch(e => console.log(e));
 
     dayjs.locale('ko');
-    const event = DeviceEventEmitter.addListener(UPDATE_TOKEN, () => {
-      getApolloClient(true)
-        .then(setClient)
-        .catch(e => console.log(e));
-    });
+    const event = DeviceEventEmitter.addListener(
+      EventToken.UPDATE_TOKEN,
+      () => {
+        getApolloClient(true)
+          .then(setClient)
+          .catch(e => console.log(e));
+      },
+    );
     return () => {
       event.remove();
     };

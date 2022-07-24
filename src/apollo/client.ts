@@ -1,40 +1,38 @@
-import {DeviceEventEmitter} from 'react-native';
-
-import {ApolloClient, ApolloLink, from, HttpLink, split} from '@apollo/client';
+import {
+  ApolloClient,
+  from,
+  HttpLink,
+  NormalizedCacheObject,
+  split,
+} from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
 import {onError} from '@apollo/client/link/error';
 import {WebSocketLink} from '@apollo/client/link/ws';
 import {getMainDefinition} from '@apollo/client/utilities';
-import {SubscriptionClient} from 'subscriptions-transport-ws';
+import {Middleware, SubscriptionClient} from 'subscriptions-transport-ws';
 
 import {END_POINT, WSS_END_POINT} from '~/config/baseurl';
-import {loadAccessToken, removeAccessToken} from '~/utils/asyncstorage';
-import {TOKEN_EXPIRED} from '~/utils/Events';
-import ToastService from '~/utils/ToastService';
+import {loadAccessToken} from '~/utils/asyncstorage';
 
 import {cache} from './cache';
-import {IS_LOGGED_IN} from './queries/isLoggedIn';
+import {IS_LOGGED_IN} from './queries/auth';
+import {onLogin} from './utils/auth';
+import {errorHandler} from './utils/error';
 
-let _client: ApolloClient<any>;
+let _client: ApolloClient<NormalizedCacheObject>;
 let webSocketClient: SubscriptionClient;
 
 export async function getApolloClient(
   focusUpdate = false,
-): Promise<ApolloClient<any>> {
+): Promise<ApolloClient<NormalizedCacheObject>> {
   if (_client && !focusUpdate) {
     return _client;
   }
-  const token = await loadAccessToken();
-  const accessToken = token || null;
 
-  if (accessToken !== null) {
-    cache.writeQuery({
-      query: IS_LOGGED_IN,
-      data: {
-        isLoggedIn: true,
-        isLoginExpired: false,
-      },
-    });
+  const accessToken = await loadAccessToken();
+
+  if (accessToken) {
+    onLogin();
   } else {
     cache.writeQuery({
       query: IS_LOGGED_IN,
@@ -45,51 +43,24 @@ export async function getApolloClient(
     });
   }
 
-  const errorLink = onError(({graphQLErrors, networkError}) => {
-    if (graphQLErrors) {
-      graphQLErrors.forEach(({message}) => {
-        async function autoLogout() {
-          await removeAccessToken();
-          cache.writeQuery({
-            query: IS_LOGGED_IN,
-            data: {
-              isLoggedIn: false,
-              isLoginExpired: true,
-            },
-          });
-        }
+  const errorLink = onError(errorHandler);
 
-        if (message === 'INVALID_TOKEN') {
-          autoLogout();
-        }
-        if (message === 'TOKEN_EXPIRED') {
-          DeviceEventEmitter.emit(TOKEN_EXPIRED);
-        }
-      });
-    }
-    console.log('networkError', networkError, graphQLErrors);
-    if (networkError) {
-      ToastService.show({
-        isError: true,
-        message: 'commons.networkError',
-      });
-    }
-  });
-  console.log('Endpoint', END_POINT);
-  const httpLink = ApolloLink.from([new HttpLink({uri: END_POINT})]);
+  const httpLink = new HttpLink({uri: END_POINT});
+  console.debug('HTTP Endpoint', END_POINT);
 
   webSocketClient = new SubscriptionClient(WSS_END_POINT, {
     lazy: true,
     reconnect: true,
     connectionParams: () => {
-      return {Authorization: token ? `Bearer ${token}` : ''};
+      return {Authorization: accessToken ? `Bearer ${accessToken}` : ''};
     },
   });
 
   const webSocketLink = new WebSocketLink(webSocketClient);
+  console.debug('WebSocket Endpoint', WSS_END_POINT);
 
-  const subscriptionAuthMiddleware = {
-    applyMiddleware: async (options: any, next: any) => {
+  const subscriptionAuthMiddleware: Middleware = {
+    applyMiddleware: async (options, next) => {
       const _token = await loadAccessToken();
       options.headers = {
         authorization: _token ? `Bearer ${_token}` : '',
@@ -132,7 +103,7 @@ export async function getApolloClient(
   return client;
 }
 
-export const disConnectSubscription = async () => {
+export async function disConnectSubscription() {
   if (_client) {
     await _client.clearStore();
     await _client.resetStore();
@@ -140,4 +111,4 @@ export const disConnectSubscription = async () => {
   if (webSocketClient) {
     webSocketClient.close(true);
   }
-};
+}
