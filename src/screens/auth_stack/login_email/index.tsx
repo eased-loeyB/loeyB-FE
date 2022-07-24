@@ -15,22 +15,15 @@ import {
 } from '@react-native-google-signin/google-signin';
 import {isEmpty} from 'lodash';
 
-import {onLogin} from '~/apollo/utils/auth';
+import {saveToken} from '~/apollo/utils/auth';
 import {GOOGLE_LOGIN} from '~/assets';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import TextField from '~/components/text_field';
-import {AuthData} from '~/models/Auth';
 import {isSuccessResponse} from '~/models/CommonResponse';
 import {push} from '~/navigation';
 import {NameScreenAuthStack} from '~/navigation/stacks';
 import {convertHeight, convertWidth} from '~/utils/design';
-import {
-  loadCustomerToken,
-  saveCustomerToken,
-  saveExpiresIn,
-  saveRefreshToken,
-} from '~/utils/storage';
 import {CommonStyles} from '~/utils/Styles';
 import ToastService from '~/utils/ToastService';
 import {validateEmail} from '~/utils/Validate';
@@ -63,27 +56,11 @@ export const Login = () => {
     }
   }, [data]);
 
-  const saveToken = async ({
-    accessToken,
-    refreshToken,
-    expiresIn,
-  }: AuthData) => {
-    await saveCustomerToken(accessToken);
-    await saveRefreshToken(refreshToken);
-    await saveExpiresIn(`${expiresIn}`);
-    let token = await loadCustomerToken();
-
-    if (token) {
-      onLogin();
-    }
-    ToastService.showSuccess('Welcome back');
-  };
-
   useEffect(() => {
-    // const responseData = getContentData();
     if (resGoogleLogin) {
       if (isSuccessResponse(resGoogleLogin)) {
         saveToken(resGoogleLogin.data);
+        ToastService.showSuccess('Welcome back');
       }
     }
   }, [resGoogleLogin]);

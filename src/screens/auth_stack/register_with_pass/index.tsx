@@ -3,25 +3,17 @@ import {Keyboard, Text, TouchableWithoutFeedback, View} from 'react-native';
 
 import {isEmpty} from 'lodash';
 
-import {onLogin} from '~/apollo/utils/auth';
+import {saveToken} from '~/apollo/utils/auth';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import TextField from '~/components/text_field';
-import {isSuccessResponse} from '~/models/CommonResponse';
+import {useRegisterUser} from '~/hooks/api/useRegisterUser';
 import {push} from '~/navigation';
 import {NameScreenAuthStack} from '~/navigation/stacks';
 import {convertHeight, convertWidth} from '~/utils/design';
-import {
-  loadCustomerToken,
-  saveCustomerToken,
-  saveExpiresIn,
-  saveRefreshToken,
-} from '~/utils/storage';
 import {CommonStyles} from '~/utils/Styles';
 import ToastService from '~/utils/ToastService';
 import {validateEmail} from '~/utils/Validate';
-
-import {useRegisterUser} from '../hooks/useRegisterUser';
 
 // @ts-ignore
 export const RegisterWithPass = ({route}) => {
@@ -32,25 +24,11 @@ export const RegisterWithPass = ({route}) => {
   const isValidEmail = validateEmail(email) && !isEmpty(email);
   const {registerUser, responseData} = useRegisterUser();
 
-  const saveToken = async (responseData: any) => {
-    await saveCustomerToken(responseData.data.accessToken);
-    await saveRefreshToken(responseData.data.refreshToken);
-    await saveExpiresIn(`${responseData.data.expiresIn}`);
-    let token = await loadCustomerToken();
-
-    if (token) {
-      onLogin();
-    }
-  };
-
   useEffect(() => {
     if (responseData) {
-      console.log(responseData);
-      if (isSuccessResponse(responseData)) {
-        saveToken(responseData);
-        ToastService.showSuccess('Welcome to loeyB');
-        push(NameScreenAuthStack.INPUT_NAME, {});
-      }
+      saveToken(responseData);
+      ToastService.showSuccess('Welcome to loeyB');
+      push(NameScreenAuthStack.INPUT_NAME, {});
     }
   }, [responseData]);
 

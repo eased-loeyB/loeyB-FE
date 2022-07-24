@@ -1,4 +1,10 @@
-import {removeAccessToken} from '~/utils/asyncstorage';
+import {AuthData} from '~/models/Auth';
+import {
+  removeAccessToken,
+  saveExpiresIn,
+  saveRefreshToken,
+} from '~/utils/asyncstorage';
+import {saveCustomerToken} from '~/utils/storage';
 
 import {cache} from '../cache';
 import {IS_LOGGED_IN} from '../queries/auth';
@@ -22,4 +28,16 @@ export async function onLogout() {
       isLoginExpired: true,
     },
   });
+}
+
+export async function saveToken({
+  accessToken,
+  refreshToken,
+  expiresIn,
+}: AuthData) {
+  await saveCustomerToken(accessToken);
+  await saveRefreshToken(refreshToken);
+  await saveExpiresIn(`${expiresIn}`);
+
+  onLogin();
 }

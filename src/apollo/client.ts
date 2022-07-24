@@ -32,10 +32,10 @@ export async function getApolloClient(
   if (_client && !focusUpdate) {
     return _client;
   }
-  const token = await loadAccessToken();
-  const accessToken = token || null;
 
-  if (accessToken !== null) {
+  const accessToken = await loadAccessToken();
+
+  if (accessToken) {
     onLogin();
   } else {
     cache.writeQuery({
@@ -96,7 +96,7 @@ export async function getApolloClient(
     lazy: true,
     reconnect: true,
     connectionParams: () => {
-      return {Authorization: token ? `Bearer ${token}` : ''};
+      return {Authorization: accessToken ? `Bearer ${accessToken}` : ''};
     },
   });
 

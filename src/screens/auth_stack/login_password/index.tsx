@@ -5,7 +5,7 @@ import {useLazyQuery} from '@apollo/client';
 import {isEmpty} from 'lodash';
 
 import {AUTHENTICATE} from '~/apollo/queries/auth';
-import {onLogin} from '~/apollo/utils/auth';
+import {saveToken} from '~/apollo/utils/auth';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import TextField from '~/components/text_field';
@@ -13,12 +13,6 @@ import {AuthResponse} from '~/models/Auth';
 import {isSuccessResponse} from '~/models/CommonResponse';
 import {getDeviceToken} from '~/services/notifications';
 import {convertHeight, convertWidth} from '~/utils/design';
-import {
-  loadCustomerToken,
-  saveCustomerToken,
-  saveExpiresIn,
-  saveRefreshToken,
-} from '~/utils/storage';
 import {CommonStyles} from '~/utils/Styles';
 import ToastService from '~/utils/ToastService';
 import {validateEmail, validatePassword} from '~/utils/Validate';
@@ -35,14 +29,7 @@ export const LoginWithPassword = ({route}) => {
   }>(AUTHENTICATE, {
     onCompleted: async res => {
       if (isSuccessResponse(res.authenticate)) {
-        await saveCustomerToken(res.authenticate.data.accessToken);
-        await saveRefreshToken(res.authenticate.data.refreshToken);
-        await saveExpiresIn(`${res.authenticate.data.expiresIn}`);
-        let token = await loadCustomerToken();
-
-        if (token) {
-          onLogin();
-        }
+        saveToken(res.authenticate.data);
         ToastService.showSuccess(`Welcome back ${email}`);
       } else {
         ToastService.showError('The email or password is incorrect');
