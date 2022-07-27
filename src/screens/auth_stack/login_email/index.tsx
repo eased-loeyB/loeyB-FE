@@ -13,7 +13,6 @@ import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import {isEmpty} from 'lodash';
 
 import {saveToken} from '~/apollo/utils/auth';
 import {GOOGLE_LOGIN} from '~/assets';
@@ -105,11 +104,10 @@ export const Login = () => {
   return (
     <BackgroundCommon haveFilter={true}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{flex: 1, alignItems: 'center'}}>
+        <View style={{flex: 1, paddingHorizontal: convertWidth(16)}}>
           <View
             style={{
               marginTop: convertHeight(216),
-              paddingHorizontal: convertWidth(24),
               flex: 1,
             }}>
             <Text style={{...CommonStyles.title}}>Welcome to loeyB</Text>
@@ -122,9 +120,7 @@ export const Login = () => {
                 onTextChange={value => setEmail(value)}
                 placeholder={'Email'}
                 errorMsg={
-                  !isValidEmail && !isEmpty(email)
-                    ? 'Email format is incorrect'
-                    : ''
+                  !!email && !isValidEmail ? 'Email format is incorrect' : ''
                 }
               />
             </View>
@@ -138,7 +134,7 @@ export const Login = () => {
                     },
                   });
                 }}
-                enable={!isEmpty(email)}
+                enable={!!email && isValidEmail}
               />
             </View>
           </View>

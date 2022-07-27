@@ -43,7 +43,7 @@ const BackgroundCommon = ({
       colors={['#272F5C', '#13132D', '#08070F']}
       stops={[0, 0.55, 1]}
       center={[deviceWidth / 2, deviceHeight / 2]}
-      radius={convertWidth(375)}>
+      radius={convertWidth(deviceWidth)}>
       {haveFilter && (
         <Image
           source={filterBG ?? FILTER_IMAGE}
@@ -55,13 +55,10 @@ const BackgroundCommon = ({
         edges={edges ?? ['bottom', 'left', 'right', 'top']}>
         {canGoBack && (
           <View style={styles.container}>
-            <TouchableOpacity onPress={() => goBack()}>
-              <View style={styles.iconBack}>
-                <Image source={ARROW_BACK} />
-              </View>
+            <TouchableOpacity style={styles.iconBack} onPress={() => goBack()}>
+              <Image source={ARROW_BACK} />
             </TouchableOpacity>
             <Text style={CommonStyles.title}>{title}</Text>
-            <View style={{width: 30}} />
           </View>
         )}
         {children}
@@ -73,12 +70,17 @@ const BackgroundCommon = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    paddingTop: 38,
-    paddingBottom: 20,
+    paddingTop: 24,
+    paddingBottom: 24,
     justifyContent: 'space-between',
-    paddingLeft: 24,
+    paddingLeft: 16,
+    paddingRight: 16,
   },
-  iconBack: {},
+  iconBack: {
+    position: 'absolute',
+    top: 48,
+    left: 24,
+  },
 });
 
 export default memo(BackgroundCommon);
