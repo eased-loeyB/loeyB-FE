@@ -13,6 +13,7 @@ import {BACKGROUND_INPUT_NAME} from '~/assets';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import TextField from '~/components/text_field';
+import {useSetName} from '~/hooks/api/useSetName';
 import {navigate} from '~/navigation';
 import {NameScreenAuthStack} from '~/navigation/stacks';
 import {
@@ -22,8 +23,6 @@ import {
   deviceWidth,
 } from '~/utils/design';
 import {CommonStyles} from '~/utils/Styles';
-
-import {useSetName} from '../hooks/useSetName';
 
 export const InputName = () => {
   const [name, setName] = useState('');

@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {
   Keyboard,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
@@ -71,7 +72,7 @@ export const SelectCategory = ({route}) => {
               }}>
               what do you want to organize?
             </Text>
-            <Text style={styles.subTitle}>Select atleast 3 categories</Text>
+            <Text style={styles.subTitle}>Select at least 3 categories</Text>
 
             <View
               style={{
@@ -80,49 +81,57 @@ export const SelectCategory = ({route}) => {
               }}
             />
           </View>
-
-          <View style={{flex: 1, flexDirection: 'row'}}>
-            <Category
-              title={healthTitle}
-              child={healthCategory}
-              style={{color: '#F65454'}}
-              callback={data => {
-                setHealth(data);
-              }}
-            />
-            <Category
-              title={mindTitle}
-              child={mindCategory}
-              style={{color: '#F6DD56'}}
-              callback={data => {
-                setMind(data);
-              }}
-            />
-            <Category
-              title={socialTitle}
-              child={socialCategory}
-              style={{color: '#8AE58B'}}
-              callback={data => {
-                setSocial(data);
-              }}
-            />
-            <Category
-              title={lifeTitle}
-              child={lifeCategory}
-              style={{color: '#49DFE9'}}
-              callback={data => {
-                setLife(data);
-              }}
-            />
-            <Category
-              title={workTitle}
-              child={workCategory}
-              style={{color: '#BE4FC8'}}
-              callback={data => {
-                setWork(data);
-              }}
-            />
-          </View>
+          <ScrollView
+            style={{
+              width: '100%',
+            }}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+              }}>
+              <Category
+                title={healthTitle}
+                child={healthCategory}
+                style={{color: '#F65454'}}
+                callback={data => {
+                  setHealth(data);
+                }}
+              />
+              <Category
+                title={mindTitle}
+                child={mindCategory}
+                style={{color: '#F6DD56'}}
+                callback={data => {
+                  setMind(data);
+                }}
+              />
+              <Category
+                title={socialTitle}
+                child={socialCategory}
+                style={{color: '#8AE58B'}}
+                callback={data => {
+                  setSocial(data);
+                }}
+              />
+              <Category
+                title={lifeTitle}
+                child={lifeCategory}
+                style={{color: '#49DFE9'}}
+                callback={data => {
+                  setLife(data);
+                }}
+              />
+              <Category
+                title={workTitle}
+                child={workCategory}
+                style={{color: '#BE4FC8'}}
+                callback={data => {
+                  setWork(data);
+                }}
+              />
+            </View>
+          </ScrollView>
           <View style={{marginTop: 28}}>
             <Button
               title={'Next'}

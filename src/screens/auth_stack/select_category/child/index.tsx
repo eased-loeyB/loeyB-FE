@@ -52,6 +52,7 @@ export const Category = (props: CategoryProps) => {
       <FlatList
         data={props.child ?? []}
         keyExtractor={item => `${item.title}`}
+        scrollEnabled={false}
         extraData={focusUpdate}
         renderItem={({item}) => {
           const isSelected = !!find(selected, i => i.title === item.title);
