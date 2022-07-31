@@ -48,7 +48,6 @@ export const useRegisterCategories = (email: string, name: string) => {
       fetchPolicy: 'no-cache',
       notifyOnNetworkStatusChange: true,
       onCompleted: res => {
-        console.log('Res', res);
         if (isSuccessResponse(res.registerUser)) {
           setResponeData(res.requestEmailVerificationCode);
         } else {
@@ -61,7 +60,6 @@ export const useRegisterCategories = (email: string, name: string) => {
   const updateData = (areaCategory: AreaCategoryInput[]) => {
     registerUser({
       variables: {
-        email: email,
         name: name,
         areaCategory: areaCategory,
       },
