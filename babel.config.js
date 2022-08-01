@@ -1,5 +1,6 @@
 const presets = ['module:metro-react-native-babel-preset'];
 const plugins = [
+  'bable-plugin-styled-components',
   'react-native-reanimated/plugin',
   [
     'module-resolver',
