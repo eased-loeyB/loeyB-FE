@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, TouchableWithoutFeedback} from 'react-native';
 
 import {LightBlue} from '~/utils/Colors';
-import {convertWidth, convertFontSize} from '~/utils/design';
+import {convertFontSize} from '~/utils/design';
 
 export interface ButtonProps {
   title: String;
@@ -16,7 +16,6 @@ export const Button = (props: ButtonProps) => {
       <View
         style={{
           backgroundColor: LightBlue,
-          width: convertWidth(324),
           height: 60,
           opacity: props.enable ? 1 : 0.3,
           borderRadius: 16,

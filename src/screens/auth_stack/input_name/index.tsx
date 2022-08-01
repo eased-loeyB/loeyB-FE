@@ -1,29 +1,26 @@
 import React, {useEffect, useState} from 'react';
 import {
-  Image,
   Keyboard,
+  StyleSheet,
   Text,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
 
 import {isEmpty} from 'lodash';
+import {rgba} from 'polished';
+// @ts-ignore
+import RadialGradient from 'react-native-radial-gradient';
 
-import {BACKGROUND_INPUT_NAME} from '~/assets';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import TextField from '~/components/text_field';
+import {useSetName} from '~/hooks/api/useSetName';
 import {navigate} from '~/navigation';
 import {NameScreenAuthStack} from '~/navigation/stacks';
-import {
-  convertHeight,
-  convertWidth,
-  deviceHeight,
-  deviceWidth,
-} from '~/utils/design';
+import {LightBlue, LightBlue2} from '~/utils/Colors';
+import {convertFontSize, convertHeight, convertWidth} from '~/utils/design';
 import {CommonStyles} from '~/utils/Styles';
-
-import {useSetName} from '../hooks/useSetName';
 
 export const InputName = () => {
   const [name, setName] = useState('');
@@ -41,33 +38,48 @@ export const InputName = () => {
   return (
     <BackgroundCommon haveFilter={true}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{flex: 1, alignItems: 'center'}}>
-          <View
-            style={{
-              position: 'absolute',
-              top: deviceHeight / 2 - 170,
-              left: deviceWidth / 2 - 114,
-            }}>
-            <Image source={BACKGROUND_INPUT_NAME} />
+        <View style={CommonStyles.flexCenter}>
+          <View style={{position: 'absolute', top: convertHeight(80)}}>
+            <Text style={styles.title}>Hi</Text>
+            <Text style={styles.title}>What is your name?</Text>
           </View>
-          <View
-            style={{
-              marginTop: convertHeight(140),
-              paddingHorizontal: convertWidth(24),
-              flex: 1,
-              alignItems: 'center',
-            }}>
-            <Text style={{...CommonStyles.title}}>Hi</Text>
-            <Text
-              style={{...CommonStyles.title, marginTop: 7, marginBottom: 50}}>
-              What is your name?
-            </Text>
+          <View style={CommonStyles.flexCenter}>
             <View
               style={{
-                marginTop: convertHeight(66),
-                minWidth: convertWidth(150),
-              }}>
+                ...styles.circle,
+                width: convertWidth(232),
+                height: convertHeight(232),
+                borderWidth: convertWidth(16),
+                borderColor: rgba(LightBlue, 0.12),
+              }}
+            />
+            <View
+              style={{
+                ...styles.circle,
+                width: convertWidth(200),
+                height: convertHeight(200),
+                borderWidth: convertWidth(12),
+                borderColor: rgba(LightBlue, 0.3),
+              }}
+            />
+            <RadialGradient
+              style={{
+                ...CommonStyles.flexCenter,
+                ...styles.circle,
+                width: convertWidth(176),
+                height: convertHeight(176),
+                overflow: 'hidden',
+                backgroundColor: LightBlue,
+              }}
+              colors={[rgba(LightBlue2, 0), rgba(LightBlue2, 1)]}
+              center={[convertWidth(88), convertHeight(88)]}
+              radius={convertWidth(176)}>
               <TextField
+                containerStyle={{
+                  width: convertWidth(140),
+                  height: convertHeight(36),
+                  backgroundColor: 'transparent',
+                }}
                 value={name}
                 onTextChange={value => setName(value)}
                 placeholder={'Write your name'}
@@ -77,12 +89,16 @@ export const InputName = () => {
                   borderWidth: 0,
                   borderBottomWidth: 1,
                 }}
-                customTextInputStyle={{color: 'black', textAlign: 'center'}}
+                customTextInputStyle={{
+                  color: 'black',
+                  textAlign: 'center',
+                  fontSize: convertFontSize(12),
+                }}
                 errorMsg={
                   !isValidName && !isEmpty(name) ? 'Invalid name format' : ''
                 }
               />
-            </View>
+            </RadialGradient>
           </View>
           <View style={{marginTop: 28}}>
             <Button
@@ -103,3 +119,15 @@ export const InputName = () => {
     </BackgroundCommon>
   );
 };
+
+const styles = StyleSheet.create({
+  title: {
+    ...CommonStyles.title,
+    textAlign: 'center',
+  },
+  circle: {
+    position: 'absolute',
+    backgroundColor: 'transparent',
+    borderRadius: 9999,
+  },
+});

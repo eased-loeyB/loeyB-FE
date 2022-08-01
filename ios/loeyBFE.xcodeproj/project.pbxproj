@@ -43,7 +43,7 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = loeyBFE/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		88C042070E332A48253FE172 /* libPods-loeyBFE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-loeyBFE.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A12C4073320CD0E7CFF5718 /* Pods-loeyBFE.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-loeyBFE.debug.xcconfig"; path = "Target Support Files/Pods-loeyBFE/Pods-loeyBFE.debug.xcconfig"; sourceTree = "<group>"; };
-		A602404228858D5F0010CB5D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A602404228858D5F0010CB5D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "loeyBFE/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A6EBA341E0C935CFF6E3F654 /* Pods-loeyBFE.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-loeyBFE.release.xcconfig"; path = "Target Support Files/Pods-loeyBFE/Pods-loeyBFE.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */

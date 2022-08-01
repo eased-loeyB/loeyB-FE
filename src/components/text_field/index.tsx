@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 
 import {isEmpty} from 'lodash';
+import {rgba} from 'polished';
 
 import {LightBlue2, TextColors, GrayColors, LightBlue} from '~/utils/Colors';
 import {convertWidth, convertHeight} from '~/utils/design';
@@ -118,6 +119,7 @@ const TextField = ({
           <TextInput
             style={[
               styles.textInput,
+              !editable && styles.errorText,
               customTextInputStyle,
               iconLeft === undefined
                 ? {paddingHorizontal: convertWidth(16)}
@@ -172,11 +174,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: convertHeight(48),
+    backgroundColor: rgba(LightBlue2, 0.08),
   },
   textInput: {
     flex: 1,
     backgroundColor: 'transparent',
-    color: 'white',
+    color: LightBlue2,
   },
   icon: {
     padding: 12,

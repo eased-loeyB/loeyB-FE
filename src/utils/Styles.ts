@@ -14,4 +14,9 @@ export const CommonStyles: StyleProp<any> = {
     fontWeight: '400',
     fontSize: convertFontSize(14),
   },
+  flexCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 };
