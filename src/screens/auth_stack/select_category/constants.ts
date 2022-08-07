@@ -22,7 +22,7 @@ import {
   THOUGHT,
 } from '~/assets';
 
-import {SubCategoryProps} from './child';
+import {SubCategoryProps} from './Category/CategoryItem';
 
 export const healthTitle = 'HEALTH';
 export const healthCategory: SubCategoryProps[] = [

@@ -1,13 +1,41 @@
 import React, {useState} from 'react';
-import {Keyboard, Text, TouchableWithoutFeedback, View} from 'react-native';
+import {Keyboard, TouchableWithoutFeedback} from 'react-native';
+
+import styled from 'styled-components/native';
 
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import TextField from '~/components/text_field';
 import {navigate} from '~/navigation';
 import {NameScreenAuthStack} from '~/navigation/stacks';
-import {convertHeight, convertWidth} from '~/utils/design';
-import {CommonStyles} from '~/utils/Styles';
+import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
+
+const PageWrapper = styled.View`
+  flex: 1;
+  padding: 0 16px;
+  margin-top: 60px;
+`;
+
+const Subtitle = styled.Text`
+  ${SubtitleStyle}
+`;
+
+const Title = styled.Text`
+  ${TitleStyle}
+  margin-top: 12px;
+`;
+
+const EmailInputWrapper = styled.View`
+  margin-top: 48px;
+`;
+
+const CodeInputWrapper = styled.View`
+  margin-top: 12px;
+`;
+
+const ButtonWrapper = styled.View`
+  margin-top: 28px;
+`;
 
 // @ts-ignore
 export const Register = ({route}) => {
@@ -20,28 +48,21 @@ export const Register = ({route}) => {
   return (
     <BackgroundCommon haveFilter={true} canGoBack={true}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View
-          style={{
-            marginTop: convertHeight(58),
-            paddingHorizontal: convertWidth(16),
-            flex: 1,
-          }}>
-          <Text style={CommonStyles.subTitle}>Sign up</Text>
-          <Text style={{...CommonStyles.title, marginTop: 12}}>
-            Verify your email
-          </Text>
-          <View style={{marginTop: convertHeight(46)}}>
+        <PageWrapper>
+          <Subtitle>Sign up</Subtitle>
+          <Title>Verify your email</Title>
+          <EmailInputWrapper>
             <TextField value={email} editable={false} />
-          </View>
-          <View style={{marginTop: convertHeight(10)}}>
+          </EmailInputWrapper>
+          <CodeInputWrapper>
             <TextField
               value={code}
               onTextChange={value => setCode(value)}
               placeholder={'Code'}
               errorMsg={!!code && !isValidCode ? 'Not 6 characters yet' : ''}
             />
-          </View>
-          <View style={{marginTop: 28}}>
+          </CodeInputWrapper>
+          <ButtonWrapper>
             <Button
               title={'Verify'}
               callback={() => {
@@ -52,8 +73,8 @@ export const Register = ({route}) => {
               }}
               enable={canNext}
             />
-          </View>
-        </View>
+          </ButtonWrapper>
+        </PageWrapper>
       </TouchableWithoutFeedback>
     </BackgroundCommon>
   );

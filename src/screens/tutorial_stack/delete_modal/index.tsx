@@ -1,17 +1,62 @@
 import React from 'react';
-import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {Image} from 'react-native';
 
 import Modal from 'react-native-modal';
+import styled from 'styled-components/native';
 
 import {CLEAR_ICON, DELETE_MODAL} from '~/assets';
-import {DarkBlue, LightBlue2} from '~/utils/Colors';
-import {convertWidth, convertHeight} from '~/utils/design';
+import {ColorMap} from '~/utils/Colors';
+import {ContainerStyle} from '~/utils/Styles';
 
 export interface DeleteModalProps {
   open: boolean;
   dismiss: () => void;
   callback: () => void;
 }
+
+const Wrapper = styled.View`
+  width: 324px;
+  height: 270px;
+  background-color: ${ColorMap.DarkBlue};
+  border-radius: 50px;
+  align-items: center;
+`;
+
+const ClearButton = styled.TouchableOpacity`
+  position: absolute;
+  top: 28px;
+  right: 32px;
+`;
+
+const Container = styled.View`
+  ${ContainerStyle}
+`;
+
+const DeleteIcon = styled.Image`
+  margin-bottom: 16px;
+`;
+
+const AlertText = styled.Text`
+  color: ${ColorMap.LightBlue2};
+  width: 252px;
+  text-align: center;
+`;
+
+const ConfirmButton = styled.TouchableOpacity`
+  width: 324px;
+  height: 64px;
+  background-color: ${ColorMap.LightBlue2};
+  align-items: center;
+  justify-content: center;
+  border-bottom-left-radius: 50px;
+  border-bottom-right-radius: 50px;
+`;
+
+const ConfirmText = styled.Text`
+  color: ${ColorMap.Navy};
+  font-weight: 600;
+  font-size: 18px;
+`;
 
 export const DeleteModal = (props: DeleteModalProps) => {
   return (
@@ -20,46 +65,20 @@ export const DeleteModal = (props: DeleteModalProps) => {
       onDismiss={() => {
         props.dismiss();
       }}>
-      <View
-        style={{
-          width: convertWidth(325),
-          height: convertHeight(270),
-          backgroundColor: DarkBlue,
-          borderRadius: 50,
-          alignItems: 'center',
-        }}>
-        <TouchableOpacity
-          onPress={props.dismiss}
-          style={{
-            position: 'absolute',
-            top: 29,
-            right: 32,
-          }}>
-          <Image source={CLEAR_ICON} style={{tintColor: LightBlue2}} />
-        </TouchableOpacity>
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <Image source={DELETE_MODAL} style={{marginBottom: 16}} />
-          <Text style={{color: LightBlue2, width: 251, textAlign: 'center'}}>
+      <Wrapper>
+        <ClearButton onPress={props.dismiss}>
+          <Image source={CLEAR_ICON} style={{tintColor: ColorMap.LightBlue2}} />
+        </ClearButton>
+        <Container>
+          <DeleteIcon source={DELETE_MODAL} />
+          <AlertText>
             Are you sure to delete this image from your device album
-          </Text>
-        </View>
-        <TouchableOpacity onPress={props.callback}>
-          <View
-            style={{
-              width: convertWidth(325),
-              height: convertHeight(65),
-              backgroundColor: LightBlue2,
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderBottomLeftRadius: 50,
-              borderBottomRightRadius: 50,
-            }}>
-            <Text style={{color: '#051329', fontWeight: '600', fontSize: 18}}>
-              Delete from device album
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+          </AlertText>
+        </Container>
+        <ConfirmButton onPress={props.callback}>
+          <ConfirmText>Delete from device album</ConfirmText>
+        </ConfirmButton>
+      </Wrapper>
     </Modal>
   );
 };

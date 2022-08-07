@@ -1,13 +1,36 @@
 import React, {useEffect, useRef} from 'react';
-import {View, Animated, Easing} from 'react-native';
+import {Animated, Easing} from 'react-native';
+
+import styled from 'styled-components/native';
 
 import {SPLASH_IMAGE} from '~/assets';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {navigate} from '~/navigation';
 import {NameScreenAuthStack} from '~/navigation/stacks';
+import {ContainerStyle} from '~/utils/Styles';
+
+const Container = styled.View`
+  ${ContainerStyle}
+`;
+
+const SplashImage = styled(Animated.Image)<{opacity: Animated.Value}>`
+  opacity: ${({opacity}) => Number(opacity) || 0};
+`;
 
 export const Splash = () => {
   const opacity = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
+
+  useEffect(() => {
+    const timeoutId: NodeJS.Timeout = setTimeout(() => {
+      navigate(NameScreenAuthStack.LOGIN, {});
+    }, 3000);
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     Animated.timing(opacity, {
@@ -18,22 +41,11 @@ export const Splash = () => {
     }).start();
   }, [opacity]);
 
-  const animatedStyles = [
-    {
-      opacity,
-    },
-  ];
-
-  useEffect(() => {
-    setTimeout(() => {
-      navigate(NameScreenAuthStack.LOGIN, {});
-    }, 3000);
-  }, []);
   return (
     <BackgroundCommon>
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Animated.Image source={SPLASH_IMAGE} style={animatedStyles} />
-      </View>
+      <Container>
+        <SplashImage source={SPLASH_IMAGE} opacity={opacity} />
+      </Container>
     </BackgroundCommon>
   );
 };

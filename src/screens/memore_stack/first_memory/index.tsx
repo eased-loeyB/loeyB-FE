@@ -1,18 +1,10 @@
 import React, {useState} from 'react';
-import {
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Image, Platform, TouchableOpacity} from 'react-native';
 
 import dayjs from 'dayjs';
 import {isEmpty} from 'lodash';
 import Swiper from 'react-native-swiper';
+import styled from 'styled-components/native';
 
 import {
   CAMERA,
@@ -31,10 +23,81 @@ import {BottomModal} from '~/components/bottom_modal';
 import {MyDatePicker} from '~/components/date_picker';
 import {LocationPicker} from '~/components/location_picker';
 import {ChooseMultiple, FileAttachment, OpenCamera} from '~/utils/Camera';
-import {LightBlue2} from '~/utils/Colors';
-import {convertHeight, convertWidth} from '~/utils/design';
+import {ColorMap} from '~/utils/Colors';
 
 import {DeleteModal} from '../../tutorial_stack/delete_modal';
+import IconButton from './IconButton';
+
+const PageWrapper = styled.KeyboardAvoidingView`
+  flex: 1;
+`;
+
+const Base = styled.View`
+  flex: 1;
+  align-items: center;
+`;
+
+const ImageContainer = styled.View`
+  width: 100%;
+  height: 412px;
+  margin-top: 16px;
+  padding: 0 16px;
+`;
+
+const StyledImage = styled.Image`
+  flex: 1;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+`;
+
+const ClearButton = styled.TouchableOpacity`
+  position: absolute;
+  top: 20px;
+  right: 24px;
+`;
+
+const Icon = styled.Image`
+  position: absolute;
+  bottom: 148px;
+  right: 4px;
+`;
+
+const TrashIcon = styled(Icon)`
+  bottom: 108px;
+`;
+
+const SearchIcon = styled(Icon)`
+  bottom: 64px;
+`;
+
+const LastPageIcon = styled(Icon)`
+  bottom: 24px;
+`;
+
+const InformationContainer = styled.View`
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 14px;
+  padding: 0 16px;
+`;
+
+const TextInputContainer = styled.View`
+  flex: 1;
+  width: 100%;
+  margin-top: 12px;
+  padding: 0 16px;
+`;
+
+const StyledTextInput = styled.TextInput`
+  background-color: rgba(244, 250, 255, 0.04);
+  width: 100%;
+  height: 100%;
+  margin-bottom: 30px;
+  padding: 12px 10px;
+  color: ${ColorMap.White};
+`;
 
 export const FirstMemory = () => {
   const [image, setImage] = useState<FileAttachment[]>();
@@ -48,274 +111,142 @@ export const FirstMemory = () => {
 
   return (
     <BackgroundCommon edges={['top', 'right', 'left']}>
-      <View style={{flex: 1}}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={keyboardVerticalOffset}
-          style={{flex: 1}}>
-          <View
-            style={{
-              flex: 1,
-              alignItems: 'center',
-            }}>
-            {!textMode && (
-              <View style={styles.containerImage}>
-                <Swiper>
-                  {(image ?? [])?.map(i => {
-                    console.log('i', i);
-                    return (
-                      <Image
-                        source={{
-                          uri: i ? i.uri : 'https://picsum.photos/343/412',
-                        }}
-                        style={styles.image}
-                      />
-                    );
-                  })}
-                </Swiper>
-                <TouchableOpacity
-                  style={styles.imageClear}
-                  onPress={() => {
-                    setTextMode(true);
-                  }}>
-                  <Image source={CLEAR_ICON} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={async () => {
-                    await OpenCamera('photo', async res => {
-                      console.log('tempp', [...(image ?? []), ...res]);
-                      setImage([...(image ?? []), ...res]);
-                    });
-                  }}>
-                  <Image
-                    source={CAMERA}
-                    style={{
-                      position: 'absolute',
-                      bottom: 187,
-                      right: 5,
+      <PageWrapper
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={keyboardVerticalOffset}>
+        <Base>
+          {!textMode && (
+            <ImageContainer>
+              <Swiper>
+                {(image ?? [])?.map(i => (
+                  <StyledImage
+                    source={{
+                      uri: i ? i.uri : 'https://picsum.photos/343/412',
                     }}
                   />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={async () => {
-                    await OpenCamera('video', async res => {
-                      if (!isEmpty(res)) {
-                        // setImage(res[0]);
-                      }
-                    });
-                  }}>
-                  <Image
-                    source={VIDEO_CAMERA}
-                    style={{
-                      position: 'absolute',
-                      bottom: 147,
-                      right: 5,
-                    }}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setOpenDeleteModal(true)}>
-                  <Image
-                    source={TRASH}
-                    style={{
-                      position: 'absolute',
-                      bottom: 107,
-                      right: 5,
-                    }}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={async () => {
-                    await ChooseMultiple('any', result => {
-                      setImage([...(image ?? []), ...result]);
-                    });
-                  }}>
-                  <Image
-                    source={SEARCH}
-                    style={{
-                      position: 'absolute',
-                      bottom: 63,
-                      right: 5,
-                    }}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Image
-                    source={LAST_PAGE}
-                    style={{position: 'absolute', bottom: 23, right: 5}}
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-            {!textMode && (
-              <View style={styles.containerInformation}>
-                <Timer
-                  callback={() => setOpenTimePicker(!openTimePicker)}
-                  date={date}
+                ))}
+              </Swiper>
+              <ClearButton
+                onPress={() => {
+                  setTextMode(true);
+                }}>
+                <Image
+                  source={CLEAR_ICON}
+                  style={{tintColor: ColorMap.White}}
                 />
-                <Location
-                  callback={() => setCityPicker(!openCityPicker)}
-                  city={city}
-                />
-                <Star callback={() => {}} />
-              </View>
-            )}
-            <View style={styles.containerTextInput}>
-              <TextInput
-                multiline={true}
-                style={styles.textInput}
-                placeholder={'Write about the experience'}
-                placeholderTextColor={LightBlue2}
-              />
-            </View>
-            {textMode && (
-              <View style={styles.containerInformation}>
-                <Timer
-                  callback={() => setOpenTimePicker(!openTimePicker)}
-                  date={date}
-                />
-                <Location
-                  callback={() => setCityPicker(!openCityPicker)}
-                  city={city}
-                />
-                <Carousel
-                  callback={() => {
-                    setTextMode(!textMode);
-                  }}
-                />
-              </View>
-            )}
-            <MyDatePicker
-              callback={d => {
-                setDate(dayjs(d));
-                console.log('da', dayjs(d).toString());
-                setOpenTimePicker(false);
-              }}
-              open={openTimePicker}
-              date={date}
-              dismiss={() => {
-                setOpenTimePicker(false);
-              }}
+              </ClearButton>
+              <TouchableOpacity
+                onPress={async () => {
+                  await OpenCamera('photo', async res => {
+                    console.log('tempp', [...(image ?? []), ...res]);
+                    setImage([...(image ?? []), ...res]);
+                  });
+                }}>
+                <Icon source={CAMERA} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={async () => {
+                  await OpenCamera('video', async res => {
+                    if (!isEmpty(res)) {
+                      // setImage(res[0]);
+                    }
+                  });
+                }}>
+                <Icon source={VIDEO_CAMERA} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setOpenDeleteModal(true)}>
+                <TrashIcon source={TRASH} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={async () => {
+                  await ChooseMultiple('any', result => {
+                    setImage([...(image ?? []), ...result]);
+                  });
+                }}>
+                <SearchIcon source={SEARCH} />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <LastPageIcon source={LAST_PAGE} />
+              </TouchableOpacity>
+            </ImageContainer>
+          )}
+          {!textMode && (
+            <InformationContainer>
+              <IconButton
+                iconSrc={TIME}
+                callback={() => setOpenTimePicker(!openTimePicker)}>
+                {dayjs(date).format('YYYY.MM.DD')}
+              </IconButton>
+              <IconButton
+                iconSrc={PUBLIC}
+                callback={() => setCityPicker(!openCityPicker)}>
+                {city}, Korea
+              </IconButton>
+              <IconButton iconSrc={loeyB}> 1</IconButton>
+            </InformationContainer>
+          )}
+          <TextInputContainer>
+            <StyledTextInput
+              multiline={true}
+              placeholder={'Write about the experience'}
+              placeholderTextColor={ColorMap.LightBlue2}
             />
-            <LocationPicker
-              dismiss={() => {
-                setCityPicker(false);
-              }}
-              callback={c => {
-                setCity(c);
-                setCityPicker(false);
-              }}
-              city={city}
-              open={openCityPicker}
-            />
-            <DeleteModal
-              callback={() => {
-                setOpenDeleteModal(false);
-                setImage(undefined);
-              }}
-              open={openDeleteModal}
-              dismiss={() => setOpenDeleteModal(false)}
-            />
-          </View>
-        </KeyboardAvoidingView>
+          </TextInputContainer>
+          {textMode && (
+            <InformationContainer>
+              <IconButton
+                iconSrc={TIME}
+                callback={() => setOpenTimePicker(!openTimePicker)}>
+                {dayjs(date).format('YYYY.MM.DD')}
+              </IconButton>
+              <IconButton
+                iconSrc={PUBLIC}
+                callback={() => setCityPicker(!openCityPicker)}>
+                {city}, Korea
+              </IconButton>
+              <IconButton
+                iconSrc={VIEW_CAROUSEL}
+                callback={() => {
+                  setTextMode(!textMode);
+                }}>
+                {' 1'}
+              </IconButton>
+            </InformationContainer>
+          )}
+          <MyDatePicker
+            callback={d => {
+              setDate(dayjs(d));
+              console.log('da', dayjs(d).toString());
+              setOpenTimePicker(false);
+            }}
+            open={openTimePicker}
+            date={date}
+            dismiss={() => {
+              setOpenTimePicker(false);
+            }}
+          />
+          <LocationPicker
+            dismiss={() => {
+              setCityPicker(false);
+            }}
+            callback={c => {
+              setCity(c);
+              setCityPicker(false);
+            }}
+            city={city}
+            open={openCityPicker}
+          />
+          <DeleteModal
+            callback={() => {
+              setOpenDeleteModal(false);
+              setImage(undefined);
+            }}
+            open={openDeleteModal}
+            dismiss={() => setOpenDeleteModal(false)}
+          />
+        </Base>
         <BottomModal />
-      </View>
+      </PageWrapper>
     </BackgroundCommon>
   );
 };
-
-interface ItemProps {
-  callback: () => void;
-  date?: dayjs.Dayjs;
-  city?: string;
-}
-
-const Timer = (props: ItemProps) => {
-  return (
-    <TouchableOpacity
-      style={{flexDirection: 'row', alignItems: 'center'}}
-      onPress={props.callback}>
-      <Image source={TIME} style={{marginRight: 5}} />
-      <Text style={{color: 'white'}}>
-        {dayjs(props.date).format('YYYY.MM.DD')}
-      </Text>
-    </TouchableOpacity>
-  );
-};
-
-const Location = (props: ItemProps) => {
-  return (
-    <TouchableOpacity
-      onPress={props.callback}
-      style={{flexDirection: 'row', alignItems: 'center'}}>
-      <Image source={PUBLIC} style={{marginRight: 5}} />
-      <Text style={{color: 'white'}}> {props.city}, Korea</Text>
-    </TouchableOpacity>
-  );
-};
-
-const Star = (props: ItemProps) => {
-  return (
-    <TouchableOpacity onPress={props.callback}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Image source={loeyB} style={{marginRight: 5}} />
-        <Text style={{color: 'white'}}> 1</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
-
-const Carousel = (props: ItemProps) => {
-  return (
-    <TouchableOpacity onPress={props.callback}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Image source={VIEW_CAROUSEL} style={{marginRight: 5}} />
-        <Text style={{color: 'white'}}> 1</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
-
-const styles = StyleSheet.create({
-  image: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    flex: 1,
-    // width: convertWidth(343),
-    // height: convertHeight(412),
-  },
-  containerImage: {
-    width: '100%',
-    height: convertHeight(412),
-    marginTop: convertHeight(18),
-    paddingHorizontal: convertWidth(16),
-  },
-  textInput: {
-    backgroundColor: 'rgba(244, 250, 255, 0.04)',
-    width: '100%',
-    height: '100%',
-    marginBottom: 30,
-    paddingHorizontal: 10,
-    paddingVertical: 13,
-    color: 'white',
-  },
-  containerInformation: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginTop: convertHeight(14),
-    paddingHorizontal: convertWidth(16),
-  },
-  imageClear: {
-    position: 'absolute',
-    top: 21,
-    right: 22,
-    tintColor: 'white',
-  },
-  containerTextInput: {
-    flex: 1,
-    width: '100%',
-    marginTop: convertHeight(12),
-    paddingHorizontal: convertWidth(16),
-  },
-});

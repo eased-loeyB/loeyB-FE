@@ -1,18 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {
-  Alert,
-  Image,
-  Keyboard,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import {Alert, Image, Keyboard, TouchableWithoutFeedback} from 'react-native';
 
 import {useKeyboard} from '@react-native-community/hooks';
 import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import styled from 'styled-components/native';
 
 import {saveToken} from '~/apollo/utils/auth';
 import {GOOGLE_LOGIN} from '~/assets';
@@ -22,13 +16,39 @@ import TextField from '~/components/text_field';
 import {isSuccessResponse} from '~/models/CommonResponse';
 import {push} from '~/navigation';
 import {NameScreenAuthStack} from '~/navigation/stacks';
-import {convertHeight, convertWidth} from '~/utils/design';
-import {CommonStyles} from '~/utils/Styles';
+import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
 import ToastService from '~/utils/ToastService';
 import {validateEmail} from '~/utils/Validate';
 
 import {useGetData} from '../register/useGetData';
 import {useGoogleLogin} from './hook/useGoogleLogin';
+
+const PageWrapper = styled.View`
+  flex: 1;
+  padding: 0 16px;
+`;
+
+const Container = styled.View`
+  flex: 1;
+  margin-top: 216px;
+`;
+
+const Title = styled.Text`
+  ${TitleStyle}
+`;
+
+const Subtitle = styled.Text`
+  ${SubtitleStyle}
+  margin-top: 12px;
+`;
+
+const InputWrapper = styled.View`
+  margin-top: 50px;
+`;
+
+const LoginButtonWrapper = styled.View`
+  margin-top: 28px;
+`;
 
 export const Login = () => {
   const [email, setEmail] = useState('');
@@ -104,17 +124,11 @@ export const Login = () => {
   return (
     <BackgroundCommon haveFilter={true}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{flex: 1, paddingHorizontal: convertWidth(16)}}>
-          <View
-            style={{
-              marginTop: convertHeight(216),
-              flex: 1,
-            }}>
-            <Text style={{...CommonStyles.title}}>Welcome to loeyB</Text>
-            <Text style={{...CommonStyles.subTitle, marginTop: 12}}>
-              Input your email to login or signup
-            </Text>
-            <View style={{marginTop: convertHeight(50)}}>
+        <PageWrapper>
+          <Container>
+            <Title>Welcome to loeyB</Title>
+            <Subtitle>Input your email to login or signup</Subtitle>
+            <InputWrapper>
               <TextField
                 value={email}
                 onTextChange={value => setEmail(value)}
@@ -123,8 +137,8 @@ export const Login = () => {
                   !!email && !isValidEmail ? 'Email format is incorrect' : ''
                 }
               />
-            </View>
-            <View style={{marginTop: 28}}>
+            </InputWrapper>
+            <LoginButtonWrapper>
               <Button
                 title={'Continue'}
                 callback={() => {
@@ -136,14 +150,14 @@ export const Login = () => {
                 }}
                 enable={!!email && isValidEmail}
               />
-            </View>
-          </View>
+            </LoginButtonWrapper>
+          </Container>
           {!keyboard.keyboardShown && (
             <TouchableWithoutFeedback onPress={signIn}>
               <Image source={GOOGLE_LOGIN} />
             </TouchableWithoutFeedback>
           )}
-        </View>
+        </PageWrapper>
       </TouchableWithoutFeedback>
     </BackgroundCommon>
   );

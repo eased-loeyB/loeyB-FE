@@ -1,15 +1,25 @@
-import {StyleSheet} from 'react-native';
+import {Platform, StyleSheet} from 'react-native';
+
+import {SafeAreaProviderCompat} from '@react-navigation/elements';
+import {EdgeInsets} from 'react-native-safe-area-context';
 
 import {Fonts} from '~/assets';
-import {CommonColors, ErrorColors} from '~/utils/Colors';
+import {ColorMap} from '~/utils/Colors';
 import {convertFontSize} from '~/utils/design';
+
+const getPaddingBottom = (insets: EdgeInsets) => {
+  if (Platform.OS === 'android') {
+    return 0;
+  }
+  return Math.max(insets.bottom - Platform.select({ios: 4, default: 0}), 0);
+};
 
 export const MainStyles = StyleSheet.create({
   tabBarBadgeStyle: {
-    backgroundColor: ErrorColors.Base,
+    backgroundColor: ColorMap.ErrorBase,
     fontFamily: Fonts.Medium,
     fontSize: convertFontSize(11),
-    color: CommonColors.White,
+    color: ColorMap.White,
     letterSpacing: -0.1,
   },
   tabBarStyle: {
@@ -20,19 +30,22 @@ export const MainStyles = StyleSheet.create({
     shadowColor: 'transparent',
     shadowRadius: 0,
     elevation: 0,
+    paddingBottom: getPaddingBottom(
+      SafeAreaProviderCompat.initialMetrics.insets,
+    ),
   },
   dotIcon: {
     width: 4,
     height: 4,
-    backgroundColor: ErrorColors.Base_2,
+    backgroundColor: ColorMap.ErrorBase02,
     position: 'absolute',
     top: 0,
     right: 0,
     borderRadius: 45,
   },
   badgeStyle: {
-    backgroundColor: ErrorColors.Base_2,
-    color: CommonColors.White,
+    backgroundColor: ColorMap.ErrorBase02,
+    color: ColorMap.White,
     fontSize: convertFontSize(11),
     fontFamily: Fonts.Medium,
     fontWeight: '500',

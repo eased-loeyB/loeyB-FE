@@ -1,10 +1,4 @@
-import {
-  CommonColors,
-  ErrorColors,
-  GrayColors,
-  PrimaryColors,
-  TextColors,
-} from '~/utils/Colors';
+import {ColorMap} from '~/utils/Colors';
 
 type TextFieldColorPalettes = {
   borderColor: string;
@@ -12,28 +6,28 @@ type TextFieldColorPalettes = {
 };
 
 const primary: TextFieldColorPalettes = {
-  borderColor: PrimaryColors.Primary500,
-  backgroundColor: CommonColors.White,
+  borderColor: ColorMap.Primary500,
+  backgroundColor: ColorMap.White,
 };
 
 const active: TextFieldColorPalettes = {
-  borderColor: TextColors.Primary,
-  backgroundColor: CommonColors.White,
+  borderColor: ColorMap.Primary,
+  backgroundColor: ColorMap.White,
 };
 
 const inactive: TextFieldColorPalettes = {
-  borderColor: GrayColors.Gray300,
-  backgroundColor: CommonColors.White,
+  borderColor: ColorMap.Gray300,
+  backgroundColor: ColorMap.White,
 };
 
 // const disable: TextFieldColorPalettes = {
-//   borderColor: GrayColors.Gray300,
-//   backgroundColor: CommonColors.White,
+//   borderColor: ColorMap.Gray300,
+//   backgroundColor: ColorMap.White,
 // };
 
 const error: TextFieldColorPalettes = {
-  borderColor: ErrorColors.Main,
-  backgroundColor: ErrorColors.Background,
+  borderColor: ColorMap.ErrorMain,
+  backgroundColor: ColorMap.ErrorBackground,
 };
 
 export type TextInputVariant = 'primary' | 'error' | 'active' | 'inactive';

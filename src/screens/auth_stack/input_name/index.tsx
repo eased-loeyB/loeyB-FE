@@ -1,16 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {
-  Keyboard,
-  StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import {Keyboard, StyleSheet, TouchableWithoutFeedback} from 'react-native';
 
 import {isEmpty} from 'lodash';
 import {rgba} from 'polished';
 // @ts-ignore
 import RadialGradient from 'react-native-radial-gradient';
+import styled, {css} from 'styled-components/native';
 
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
@@ -18,9 +13,58 @@ import TextField from '~/components/text_field';
 import {useSetName} from '~/hooks/api/useSetName';
 import {navigate} from '~/navigation';
 import {NameScreenAuthStack} from '~/navigation/stacks';
-import {LightBlue, LightBlue2} from '~/utils/Colors';
+import {ColorMap} from '~/utils/Colors';
 import {convertFontSize, convertHeight, convertWidth} from '~/utils/design';
-import {CommonStyles} from '~/utils/Styles';
+import {ContainerStyle, TitleStyle} from '~/utils/Styles';
+
+const Container = styled.View`
+  ${ContainerStyle}
+`;
+
+const TitleWrapper = styled.View`
+  position: absolute;
+  top: 80px;
+`;
+
+const Title = styled.Text`
+  ${TitleStyle}
+  text-align: center;
+`;
+
+const CircleStyle = css`
+  position: absolute;
+  background-color: transparent;
+  border-radius: 9999px;
+`;
+
+const FirstCircle = styled.View`
+  ${CircleStyle}
+  width: 232px;
+  height: 232px;
+  border-width: 16px;
+  border-color: ${rgba(ColorMap.LightBlue, 0.12)};
+`;
+
+const SecondCircle = styled.View`
+  ${CircleStyle}
+  width: 200;
+  height: 200px;
+  border-width: 12px;
+  border-color: ${rgba(ColorMap.LightBlue, 0.3)};
+`;
+
+const InnerCircle = styled(RadialGradient)`
+  ${ContainerStyle}
+  ${CircleStyle}
+  width: 176px;
+  height: 176px;
+  overflow: hidden;
+  background-color: ${ColorMap.LightBlue};
+`;
+
+const ButtonWrapper = styled.View`
+  margin-top: 28px;
+`;
 
 export const InputName = () => {
   const [name, setName] = useState('');
@@ -38,69 +82,36 @@ export const InputName = () => {
   return (
     <BackgroundCommon haveFilter={true}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={CommonStyles.flexCenter}>
-          <View style={{position: 'absolute', top: convertHeight(80)}}>
-            <Text style={styles.title}>Hi</Text>
-            <Text style={styles.title}>What is your name?</Text>
-          </View>
-          <View style={CommonStyles.flexCenter}>
-            <View
-              style={{
-                ...styles.circle,
-                width: convertWidth(232),
-                height: convertHeight(232),
-                borderWidth: convertWidth(16),
-                borderColor: rgba(LightBlue, 0.12),
-              }}
-            />
-            <View
-              style={{
-                ...styles.circle,
-                width: convertWidth(200),
-                height: convertHeight(200),
-                borderWidth: convertWidth(12),
-                borderColor: rgba(LightBlue, 0.3),
-              }}
-            />
-            <RadialGradient
-              style={{
-                ...CommonStyles.flexCenter,
-                ...styles.circle,
-                width: convertWidth(176),
-                height: convertHeight(176),
-                overflow: 'hidden',
-                backgroundColor: LightBlue,
-              }}
-              colors={[rgba(LightBlue2, 0), rgba(LightBlue2, 1)]}
+        <Container>
+          <TitleWrapper>
+            <Title>Hi</Title>
+            <Title>What is your name?</Title>
+          </TitleWrapper>
+          <Container>
+            <FirstCircle />
+            <SecondCircle />
+            <InnerCircle
+              colors={[
+                rgba(ColorMap.LightBlue2, 0),
+                rgba(ColorMap.LightBlue2, 1),
+              ]}
               center={[convertWidth(88), convertHeight(88)]}
               radius={convertWidth(176)}>
               <TextField
-                containerStyle={{
-                  width: convertWidth(140),
-                  height: convertHeight(36),
-                  backgroundColor: 'transparent',
-                }}
                 value={name}
                 onTextChange={value => setName(value)}
                 placeholder={'Write your name'}
                 maxLength={30}
-                customWrapperContainer={{
-                  borderBottomColor: 'black',
-                  borderWidth: 0,
-                  borderBottomWidth: 1,
-                }}
-                customTextInputStyle={{
-                  color: 'black',
-                  textAlign: 'center',
-                  fontSize: convertFontSize(12),
-                }}
+                containerStyle={styles.textFieldContainer}
+                customWrapperContainer={styles.textFieldWrapper}
+                customTextInputStyle={styles.textInput}
                 errorMsg={
                   !isValidName && !isEmpty(name) ? 'Invalid name format' : ''
                 }
               />
-            </RadialGradient>
-          </View>
-          <View style={{marginTop: 28}}>
+            </InnerCircle>
+          </Container>
+          <ButtonWrapper>
             <Button
               title={'Next'}
               callback={() => {
@@ -113,21 +124,27 @@ export const InputName = () => {
               }}
               enable={isValidName}
             />
-          </View>
-        </View>
+          </ButtonWrapper>
+        </Container>
       </TouchableWithoutFeedback>
     </BackgroundCommon>
   );
 };
 
 const styles = StyleSheet.create({
-  title: {
-    ...CommonStyles.title,
-    textAlign: 'center',
+  textFieldWrapper: {
+    borderWidth: 0,
+    borderBottomColor: ColorMap.Black,
+    borderBottomWidth: 1,
   },
-  circle: {
-    position: 'absolute',
+  textFieldContainer: {
+    width: convertWidth(140),
+    height: convertHeight(36),
     backgroundColor: 'transparent',
-    borderRadius: 9999,
+  },
+  textInput: {
+    color: ColorMap.Black,
+    textAlign: 'center',
+    fontSize: convertFontSize(12),
   },
 });

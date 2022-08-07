@@ -4,20 +4,16 @@ import {
   ImageSourcePropType,
   KeyboardType,
   StyleProp,
-  StyleSheet,
-  Text,
-  TextInput,
   TextStyle,
-  TouchableOpacity,
   View,
   ViewStyle,
 } from 'react-native';
 
 import {isEmpty} from 'lodash';
 import {rgba} from 'polished';
+import styled from 'styled-components/native';
 
-import {LightBlue2, TextColors, GrayColors, LightBlue} from '~/utils/Colors';
-import {convertWidth, convertHeight} from '~/utils/design';
+import {ColorMap} from '~/utils/Colors';
 
 import {TextInputVariant} from './colorPalattes';
 
@@ -45,6 +41,52 @@ export interface TextFieldProps {
   secureTextEntry?: boolean;
   customWrapperContainer?: ViewStyle;
 }
+
+const Wrapper = styled.View<Pick<TextFieldProps, 'editable'>>`
+  border-width: ${({editable}) => (editable ? 1 : 0)}px;
+  border-radius: 8px;
+  border-color: ${ColorMap.White};
+`;
+
+const TextInputOverlay = styled.View`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-color: ${rgba(ColorMap.LightBlue2, 0.08)};
+  border-radius: 8px;
+`;
+
+const Container = styled.View`
+  height: 48px;
+  flex-direction: row;
+  align-items: center;
+  background-color: ${rgba(ColorMap.LightBlue2, 0.08)};
+  border-radius: 8px;
+`;
+
+const IconButton = styled.TouchableOpacity`
+  padding: 12px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const TextInput = styled.TextInput<
+  Pick<TextFieldProps, 'editable' | 'iconLeft'>
+>`
+  flex: 1;
+  background-color: transparent;
+  color: ${({editable}) =>
+    editable ? ColorMap.LightBlue2 : ColorMap.LightBlue};
+  ${({iconLeft}) => iconLeft === undefined && 'padding: 0 16px;'};
+`;
+
+const ErrorMessageWrapper = styled.View`
+  margin-top: 4px;
+`;
+
+const ErrorMessage = styled.Text`
+  color: ${ColorMap.LightBlue};
+`;
 
 const TextField = ({
   value,
@@ -87,46 +129,22 @@ const TextField = ({
 
   return (
     <View>
-      <View
-        style={[
-          {
-            borderWidth: editable ? 1 : 0,
-            borderRadius: 8,
-            borderColor: 'white',
-          },
-          customWrapperContainer,
-        ]}>
-        <View
-          style={{
-            width: '100%',
-            height: '100%',
-            position: 'absolute',
-            opacity: 0.08,
-            backgroundColor: LightBlue2,
-            borderRadius: 8,
-          }}
-        />
-        <View style={[styles.textField, containerStyle]}>
+      <Wrapper style={customWrapperContainer}>
+        <TextInputOverlay />
+        <Container style={containerStyle}>
           {iconLeft && (
-            <TouchableOpacity style={styles.icon} onPress={onLeftPress}>
+            <IconButton onPress={onLeftPress}>
               <Image
                 source={iconLeft}
-                style={{tintColor: TextColors.Secondary}}
+                style={{tintColor: ColorMap.Secondary}}
               />
-            </TouchableOpacity>
+            </IconButton>
           )}
 
           <TextInput
-            style={[
-              styles.textInput,
-              !editable && styles.errorText,
-              customTextInputStyle,
-              iconLeft === undefined
-                ? {paddingHorizontal: convertWidth(16)}
-                : null,
-            ]}
+            style={customTextInputStyle}
             placeholder={placeholder}
-            placeholderTextColor={GrayColors.Gray600}
+            placeholderTextColor={ColorMap.Gray600}
             multiline={multiline}
             value={value}
             defaultValue={defaultValue}
@@ -147,49 +165,23 @@ const TextField = ({
           />
 
           {iconRight && (
-            <TouchableOpacity style={styles.icon} onPress={onRightPress}>
+            <IconButton onPress={onRightPress}>
               <Image
                 source={iconRight}
-                style={{tintColor: TextColors.Secondary}}
+                style={{tintColor: ColorMap.Secondary}}
               />
-            </TouchableOpacity>
+            </IconButton>
           )}
-        </View>
-      </View>
+        </Container>
+      </Wrapper>
       {/* ERROR MSG */}
       {errorMsg && errorMsg?.length > 0 ? (
-        <View style={styles.error}>
-          <Text style={styles.errorText}>{errorMsg}</Text>
-        </View>
+        <ErrorMessageWrapper>
+          <ErrorMessage>{errorMsg}</ErrorMessage>
+        </ErrorMessageWrapper>
       ) : null}
     </View>
   );
 };
 
 export default TextField;
-
-const styles = StyleSheet.create({
-  textField: {
-    borderRadius: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: convertHeight(48),
-    backgroundColor: rgba(LightBlue2, 0.08),
-  },
-  textInput: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    color: LightBlue2,
-  },
-  icon: {
-    padding: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  error: {
-    marginTop: 3,
-  },
-  errorText: {
-    color: LightBlue,
-  },
-});

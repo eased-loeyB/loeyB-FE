@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 
-export const useGetCity = () => {
-  const [city, setCity] = useState([]);
+export const useGetCities = () => {
+  const [cities, setCities] = useState<string[]>([]);
   console.log(
     'body',
     JSON.stringify({
@@ -22,8 +22,8 @@ export const useGetCity = () => {
       .then(response => response.json())
       .then(res => {
         console.log('res', res);
-        setCity(res?.data);
+        setCities(res?.data);
       });
   }, []);
-  return {city};
+  return {cities};
 };

@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View} from 'react-native';
 
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
@@ -7,9 +7,29 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
+import styled from 'styled-components/native';
 
-import {LightBlue2} from '~/utils/Colors';
-import {deviceHeight, deviceWidth, convertHeight} from '~/utils/design';
+import {ColorMap} from '~/utils/Colors';
+import {deviceHeight, deviceWidth} from '~/utils/design';
+
+const Base = styled(Animated.View)`
+  height: 100px;
+  width: 100%;
+  align-items: center;
+  padding-top: 10px;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+`;
+
+const Handle = styled.View`
+  width: 66px;
+  height: 4px;
+`;
+
+const Text = styled(Animated.Text)`
+  color: ${ColorMap.LightBlue2};
+  margin-top: 10px;
+`;
 
 const MAX_TRANSLATE_Y = -deviceHeight + 150;
 
@@ -65,34 +85,16 @@ export const BottomModal = () => {
 
   return (
     <GestureDetector gesture={gesture}>
-      <Animated.View style={[styles.box, rBottomSheetStyle]}>
-        <View style={{height: 4, width: 66}} />
-        {!expand && (
-          <Animated.Text
-            style={[{marginTop: 10, color: LightBlue2}, textStyles]}>
-            Swipe up to save
-          </Animated.Text>
-        )}
+      <Base style={rBottomSheetStyle}>
+        <Handle />
+        {!expand && <Text style={textStyles}>Swipe up to save</Text>}
         <View
           style={{
             height: deviceHeight,
             width: deviceWidth,
           }}
         />
-      </Animated.View>
+      </Base>
     </GestureDetector>
   );
 };
-
-const styles = StyleSheet.create({
-  box: {
-    height: convertHeight(100),
-    //  position: 'absolute',
-    width: '100%',
-    alignItems: 'center',
-    paddingTop: 10,
-    // top: SCREEN_HIGHT,
-    borderTopRightRadius: 50,
-    borderTopLeftRadius: 50,
-  },
-});

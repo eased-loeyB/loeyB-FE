@@ -1,21 +1,11 @@
 import React from 'react';
-import {
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ImageSourcePropType} from 'react-native';
+
+import styled from 'styled-components/native';
 
 import {CLEAR_ICON} from '~/assets';
-import {ErrorColors, TextColors, CommonColors} from '~/utils/Colors';
-import {
-  deviceWidth,
-  convertWidth,
-  convertHeight,
-  convertFontSize,
-} from '~/utils/design';
+import {ColorMap} from '~/utils/Colors';
+import {deviceWidth} from '~/utils/design';
 
 interface SnackBarProps {
   text: string;
@@ -24,72 +14,62 @@ interface SnackBarProps {
   onClose?: () => void;
 }
 
+type StyleProps = Pick<SnackBarProps, 'error'>;
+
+const Container = styled.View`
+  width: ${deviceWidth};
+`;
+
+const ContentRow = styled.View<StyleProps>`
+  flex: 1;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0 16px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  background-color: ${({error}) =>
+    error ? ColorMap.ErrorLight : ColorMap.Primary};
+`;
+
+const MessageSection = styled.View`
+  flex: 1;
+`;
+
+const ContentText = styled.Text<StyleProps>`
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.1;
+  color: ${({error}) => (error ? ColorMap.ErrorMain : ColorMap.White)};
+`;
+
+const IconButton = styled.TouchableOpacity`
+  width: 28px;
+  aspect-ratio: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Icon = styled.Image<StyleProps>`
+  width: 24px;
+  height: 24px;
+  tint-color: ${({error}) => (error ? ColorMap.ErrorMain : ColorMap.White)};
+`;
+
 const SnackBar = ({text, error, icon = CLEAR_ICON, onClose}: SnackBarProps) => {
   return (
-    <View style={styles.container}>
-      <View
-        style={[
-          styles.contentRow,
-          {backgroundColor: error ? ErrorColors.Light : TextColors.Primary},
-        ]}>
-        <View style={styles.messageSection}>
-          <Text
-            style={[
-              styles.contentText,
-              {color: error ? ErrorColors.Main : CommonColors.White},
-            ]}>
-            {text}
-          </Text>
-        </View>
+    <Container>
+      <ContentRow error={error}>
+        <MessageSection>
+          <ContentText error={error}>{text}</ContentText>
+        </MessageSection>
 
-        <TouchableOpacity style={styles.iconSection} onPress={onClose}>
-          <Image
-            source={icon}
-            resizeMode="contain"
-            style={[
-              styles.iconSectionImg,
-              {tintColor: error ? ErrorColors.Main : CommonColors.White},
-            ]}
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
+        <IconButton onPress={onClose}>
+          <Icon source={icon} resizeMode="contain" error={error} />
+        </IconButton>
+      </ContentRow>
+    </Container>
   );
 };
 
 export default SnackBar;
-
-const styles = StyleSheet.create({
-  container: {
-    width: deviceWidth,
-  },
-  contentRow: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    marginHorizontal: convertWidth(16),
-    paddingHorizontal: convertWidth(20),
-    paddingVertical: convertHeight(12),
-    borderRadius: 8,
-  },
-  iconSection: {
-    width: convertWidth(28),
-    aspectRatio: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  iconSectionImg: {
-    width: 24,
-    height: 24,
-    tintColor: CommonColors.White,
-  },
-  messageSection: {
-    flex: 1,
-  },
-  contentText: {
-    fontWeight: '400',
-    fontSize: convertFontSize(13),
-    letterSpacing: -0.1,
-  },
-});

@@ -1,10 +1,21 @@
 import React, {useCallback, useMemo, useRef} from 'react';
-import {StyleSheet, View} from 'react-native';
 
 import BottomSheet from '@gorhom/bottom-sheet';
+import styled from 'styled-components/native';
 
-import {DarkBlue} from '~/utils/Colors';
-import {convertHeight} from '~/utils/design';
+import {ColorMap} from '~/utils/Colors';
+
+const Container = styled.View`
+  flex: 1;
+  padding: 24px;
+  background-color: gray;
+`;
+
+const Wrapper = styled.View`
+  width: 100%;
+  height: 328px;
+  background-color: ${ColorMap.DarkBlue};
+`;
 
 export const PlacePicker = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -22,18 +33,13 @@ export const PlacePicker = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <Container>
       <BottomSheet
         ref={bottomSheetRef}
         index={1}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}>
-        <View
-          style={{
-            width: '100%',
-            height: convertHeight(327),
-            backgroundColor: DarkBlue,
-          }}>
+        <Wrapper>
           {/*<FlatList*/}
           {/*  data={data}*/}
           {/*  renderItem={({item}) => {*/}
@@ -49,20 +55,8 @@ export const PlacePicker = () => {
           {/*    );*/}
           {/*  }}*/}
           {/*/>*/}
-        </View>
+        </Wrapper>
       </BottomSheet>
-    </View>
+    </Container>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    backgroundColor: 'grey',
-  },
-  contentContainer: {
-    flex: 1,
-    alignItems: 'center',
-  },
-});

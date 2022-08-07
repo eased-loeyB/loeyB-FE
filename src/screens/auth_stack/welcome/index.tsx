@@ -1,25 +1,40 @@
 import React from 'react';
-import {
-  Image,
-  Keyboard,
-  StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import {Keyboard, TouchableWithoutFeedback} from 'react-native';
+
+import styled from 'styled-components/native';
 
 import {BACKGROUND_INPUT_NAME, BACKGROUND_WELCOME} from '~/assets';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import {push} from '~/navigation';
 import {MainStackName} from '~/navigation/stacks/MainStack';
-import {
-  convertHeight,
-  convertWidth,
-  deviceHeight,
-  deviceWidth,
-} from '~/utils/design';
-import {CommonStyles} from '~/utils/Styles';
+import {deviceHeight, deviceWidth} from '~/utils/design';
+import {TitleStyle} from '~/utils/Styles';
+
+const Container = styled.View`
+  flex: 1;
+  align-items: center;
+`;
+
+const CircleWrapper = styled.View`
+  position: absolute;
+  top: ${deviceHeight / 2 - 250}px;
+  left: ${deviceWidth / 2 - 190}px;
+`;
+
+const CircleImage = styled.Image`
+  width: 152px;
+  aspect-ratio: 1;
+`;
+
+const Title = styled.Text`
+  ${TitleStyle}
+  text-align: center;
+`;
+
+const ButtonWrapper = styled.View`
+  margin-top: 28px;
+`;
 
 // @ts-ignore
 export const Welcome = ({route}) => {
@@ -33,31 +48,19 @@ export const Welcome = ({route}) => {
       filterBG={BACKGROUND_WELCOME}
       customFiler={{top: 150}}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{flex: 1, alignItems: 'center'}}>
-          <View style={{flex: 1, alignItems: 'center'}}>
-            <View
-              style={{
-                position: 'absolute',
-                top: deviceHeight / 2 - convertWidth(250),
-                left: deviceWidth / 2 - convertWidth(190),
-              }}>
-              <Image
-                source={BACKGROUND_INPUT_NAME}
-                style={{width: convertWidth(153), aspectRatio: 1}}
-              />
-            </View>
-            <View style={styles.container}>
-              <Text
-                style={{
-                  ...CommonStyles.title,
-                  textAlign: 'center',
-                }}>
+        <Container>
+          <Container>
+            <CircleWrapper>
+              <CircleImage source={BACKGROUND_INPUT_NAME} />
+            </CircleWrapper>
+            <Container>
+              <Title>
                 Welcome to loeyB
                 {`\n ${userName}`}
-              </Text>
-            </View>
-          </View>
-          <View style={{marginTop: 28}}>
+              </Title>
+            </Container>
+          </Container>
+          <ButtonWrapper>
             <Button
               title={'Next'}
               callback={() => {
@@ -65,20 +68,9 @@ export const Welcome = ({route}) => {
               }}
               enable={true}
             />
-          </View>
-        </View>
+          </ButtonWrapper>
+        </Container>
       </TouchableWithoutFeedback>
     </BackgroundCommon>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-  },
-  subTitle: {
-    ...CommonStyles.subTitle,
-    marginTop: convertHeight(17),
-    textAlign: 'center',
-  },
-});

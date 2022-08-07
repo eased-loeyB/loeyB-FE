@@ -1,20 +1,16 @@
 import React, {useState} from 'react';
-import {
-  Keyboard,
-  StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import {Keyboard, TouchableWithoutFeedback} from 'react-native';
+
+import styled from 'styled-components/native';
 
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import {navigate} from '~/navigation';
 import {MainStackName} from '~/navigation/stacks/MainStack';
-import {convertHeight, convertWidth} from '~/utils/design';
-import {CommonStyles} from '~/utils/Styles';
+import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
 
-import {Category, SubCategoryProps} from './child';
+import Category from './Category';
+import {SubCategoryProps} from './Category/CategoryItem';
 import {
   healthCategory,
   healthTitle,
@@ -26,11 +22,41 @@ import {
   socialTitle,
   workCategory,
   workTitle,
-} from './Const';
+} from './constants';
 import {
   AreaCategoryInput,
   useRegisterCategories,
 } from './hook/useRegisterCategories';
+
+const PageWrapper = styled.View`
+  flex: 1;
+  align-items: center;
+`;
+
+const TitleContainer = styled.View`
+  align-items: center;
+  padding: 0 24px 48px;
+`;
+
+const Title = styled.Text`
+  ${TitleStyle}
+  text-align: center;
+`;
+
+const Subtitle = styled.Text`
+  ${SubtitleStyle}
+  text-align: center;
+  margin-top: 16px;
+`;
+
+const Container = styled.View`
+  flex: 1;
+  flex-direction: row;
+`;
+
+const ButtonWrapper = styled.View`
+  margin-top: 28px;
+`;
 
 // @ts-ignore
 export const SelectCategory = ({route}) => {
@@ -62,30 +88,17 @@ export const SelectCategory = ({route}) => {
   return (
     <BackgroundCommon haveFilter={true} canGoBack={true} title={userName ?? ''}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{flex: 1, alignItems: 'center'}}>
-          <View style={styles.container}>
-            <Text
-              style={{
-                ...CommonStyles.title,
-                textAlign: 'center',
-              }}>
-              what do you want to organize?
-            </Text>
-            <Text style={styles.subTitle}>Select atleast 3 categories</Text>
+        <PageWrapper>
+          <TitleContainer>
+            <Title>what do you want to organize?</Title>
+            <Subtitle>Select atleast 3 categories</Subtitle>
+          </TitleContainer>
 
-            <View
-              style={{
-                marginTop: convertHeight(50),
-                minWidth: convertWidth(150),
-              }}
-            />
-          </View>
-
-          <View style={{flex: 1, flexDirection: 'row'}}>
+          <Container>
             <Category
               title={healthTitle}
               child={healthCategory}
-              style={{color: '#F65454'}}
+              color={'#F65454'}
               callback={data => {
                 setHealth(data);
               }}
@@ -93,7 +106,7 @@ export const SelectCategory = ({route}) => {
             <Category
               title={mindTitle}
               child={mindCategory}
-              style={{color: '#F6DD56'}}
+              color="#F6DD56"
               callback={data => {
                 setMind(data);
               }}
@@ -101,7 +114,7 @@ export const SelectCategory = ({route}) => {
             <Category
               title={socialTitle}
               child={socialCategory}
-              style={{color: '#8AE58B'}}
+              color="#8AE58B"
               callback={data => {
                 setSocial(data);
               }}
@@ -109,7 +122,7 @@ export const SelectCategory = ({route}) => {
             <Category
               title={lifeTitle}
               child={lifeCategory}
-              style={{color: '#49DFE9'}}
+              color="#49DFE9"
               callback={data => {
                 setLife(data);
               }}
@@ -117,13 +130,13 @@ export const SelectCategory = ({route}) => {
             <Category
               title={workTitle}
               child={workCategory}
-              style={{color: '#BE4FC8'}}
+              color="#BE4FC8"
               callback={data => {
                 setWork(data);
               }}
             />
-          </View>
-          <View style={{marginTop: 28}}>
+          </Container>
+          <ButtonWrapper>
             <Button
               title={'Next'}
               callback={() => {
@@ -132,21 +145,9 @@ export const SelectCategory = ({route}) => {
               }}
               enable={canNext}
             />
-          </View>
-        </View>
+          </ButtonWrapper>
+        </PageWrapper>
       </TouchableWithoutFeedback>
     </BackgroundCommon>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: convertWidth(24),
-    alignItems: 'center',
-  },
-  subTitle: {
-    ...CommonStyles.subTitle,
-    marginTop: convertHeight(17),
-    textAlign: 'center',
-  },
-});

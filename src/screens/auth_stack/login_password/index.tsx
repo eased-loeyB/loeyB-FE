@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
-import {Keyboard, Text, TouchableWithoutFeedback, View} from 'react-native';
+import {Keyboard, TouchableWithoutFeedback} from 'react-native';
 
 import {useLazyQuery} from '@apollo/client';
 import {isEmpty} from 'lodash';
+import styled from 'styled-components/native';
 
 import {AUTHENTICATE} from '~/apollo/queries/auth';
 import {saveToken} from '~/apollo/utils/auth';
@@ -12,10 +13,36 @@ import TextField from '~/components/text_field';
 import {AuthResponse} from '~/models/Auth';
 import {isSuccessResponse} from '~/models/CommonResponse';
 import {getDeviceToken} from '~/services/notifications';
-import {convertHeight, convertWidth} from '~/utils/design';
-import {CommonStyles} from '~/utils/Styles';
+import {TitleStyle} from '~/utils/Styles';
 import ToastService from '~/utils/ToastService';
 import {validateEmail, validatePassword} from '~/utils/Validate';
+
+const PageWrapper = styled.View`
+  flex: 1;
+  align-items: center;
+`;
+
+const Container = styled.View`
+  flex: 1;
+  padding: 0 24px;
+  margin-top: 60px;
+`;
+
+const Title = styled.Text`
+  ${TitleStyle}
+`;
+
+const EmailInputWrapper = styled.View`
+  margin-top: 66px;
+`;
+
+const PasswordInputWrapper = styled.View`
+  margin-top: 12px;
+`;
+
+const ButtonWrapper = styled.View`
+  margin-top: 28px;
+`;
 
 // @ts-ignore
 export const LoginWithPassword = ({route}) => {
@@ -45,15 +72,10 @@ export const LoginWithPassword = ({route}) => {
   return (
     <BackgroundCommon haveFilter={true} canGoBack={true}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{flex: 1, alignItems: 'center'}}>
-          <View
-            style={{
-              marginTop: convertHeight(58),
-              paddingHorizontal: convertWidth(24),
-              flex: 1,
-            }}>
-            <Text style={{...CommonStyles.title}}>Login</Text>
-            <View style={{marginTop: convertHeight(66)}}>
+        <PageWrapper>
+          <Container>
+            <Title>Login</Title>
+            <EmailInputWrapper>
               <TextField
                 value={email}
                 onTextChange={value => setEmail(value)}
@@ -64,9 +86,9 @@ export const LoginWithPassword = ({route}) => {
                     : ''
                 }
               />
-            </View>
+            </EmailInputWrapper>
             {isValidEmail && (
-              <View style={{marginTop: convertHeight(10)}}>
+              <PasswordInputWrapper>
                 <TextField
                   value={password}
                   onTextChange={value => setPassword(value)}
@@ -78,9 +100,9 @@ export const LoginWithPassword = ({route}) => {
                   }
                   secureTextEntry={true}
                 />
-              </View>
+              </PasswordInputWrapper>
             )}
-            <View style={{marginTop: 28}}>
+            <ButtonWrapper>
               <Button
                 title={'Login'}
                 callback={async () => {
@@ -95,9 +117,9 @@ export const LoginWithPassword = ({route}) => {
                 }}
                 enable={canNext}
               />
-            </View>
-          </View>
-        </View>
+            </ButtonWrapper>
+          </Container>
+        </PageWrapper>
       </TouchableWithoutFeedback>
     </BackgroundCommon>
   );

@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {Keyboard, Text, TouchableWithoutFeedback, View} from 'react-native';
+import {Keyboard, StyleSheet, TouchableWithoutFeedback} from 'react-native';
 
 import {isEmpty} from 'lodash';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import styled from 'styled-components/native';
 
 import {saveToken} from '~/apollo/utils/auth';
 import BackgroundCommon from '~/components/BackgroundCommon';
@@ -11,10 +12,36 @@ import TextField from '~/components/text_field';
 import {useRegisterUser} from '~/hooks/api/useRegisterUser';
 import {push} from '~/navigation';
 import {NameScreenAuthStack} from '~/navigation/stacks';
-import {convertHeight, convertWidth} from '~/utils/design';
-import {CommonStyles} from '~/utils/Styles';
+import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
 import ToastService from '~/utils/ToastService';
 import {validatePassword} from '~/utils/Validate';
+
+const PageWrapper = styled.View`
+  flex: 1;
+  padding: 0 24px;
+  margin-top: 60px;
+`;
+
+const Subtitle = styled.Text`
+  ${SubtitleStyle}
+`;
+
+const Title = styled.Text`
+  ${TitleStyle}
+  margin-top: 12px;
+`;
+
+const EmailInputWrapper = styled.View`
+  margin-top: 48px;
+`;
+
+const PasswordInputWrapper = styled.View`
+  margin-top: 16px;
+`;
+
+const ButtonWrapper = styled.View`
+  margin-top: 28px;
+`;
 
 // @ts-ignore
 export const RegisterWithPass = ({route}) => {
@@ -40,23 +67,16 @@ export const RegisterWithPass = ({route}) => {
     <BackgroundCommon haveFilter={true} canGoBack={true}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAwareScrollView
-          contentContainerStyle={{flex: 1}}
+          contentContainerStyle={styles.container}
           extraHeight={36}
           extraScrollHeight={36}>
-          <View
-            style={{
-              marginTop: convertHeight(58),
-              paddingHorizontal: convertWidth(24),
-              flex: 1,
-            }}>
-            <Text style={CommonStyles.subTitle}>Sign up</Text>
-            <Text style={{...CommonStyles.title, marginTop: 12}}>
-              Create your password
-            </Text>
-            <View style={{marginTop: convertHeight(46)}}>
+          <PageWrapper>
+            <Subtitle>Sign up</Subtitle>
+            <Title>Create your password</Title>
+            <EmailInputWrapper>
               <TextField value={email} editable={false} />
-            </View>
-            <View style={{marginTop: convertHeight(16)}}>
+            </EmailInputWrapper>
+            <PasswordInputWrapper>
               <TextField
                 value={pass}
                 onTextChange={value => setPass(value)}
@@ -67,15 +87,15 @@ export const RegisterWithPass = ({route}) => {
                     : ''
                 }
               />
-            </View>
-            <View style={{marginTop: convertHeight(16)}}>
+            </PasswordInputWrapper>
+            <PasswordInputWrapper>
               <TextField
                 value={rePass}
                 onTextChange={value => setRePass(value)}
                 placeholder={'Check password'}
               />
-            </View>
-            <View style={{marginTop: 28}}>
+            </PasswordInputWrapper>
+            <ButtonWrapper>
               <Button
                 title={'Done'}
                 callback={() => {
@@ -92,10 +112,16 @@ export const RegisterWithPass = ({route}) => {
                 }}
                 enable={canNext}
               />
-            </View>
-          </View>
+            </ButtonWrapper>
+          </PageWrapper>
         </KeyboardAwareScrollView>
       </TouchableWithoutFeedback>
     </BackgroundCommon>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

@@ -1,12 +1,11 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
 
 import dayjs, {Dayjs} from 'dayjs';
 import {Calendar} from 'react-native-calendars';
 import Modal from 'react-native-modal';
+import styled from 'styled-components/native';
 
-import {DarkBlue} from '~/utils/Colors';
-import {convertHeight, convertWidth, convertFontSize} from '~/utils/design';
+import {ColorMap} from '~/utils/Colors';
 
 export interface MyDatePickerProps {
   open: boolean;
@@ -15,18 +14,41 @@ export interface MyDatePickerProps {
   date: Dayjs;
 }
 
+const Base = styled(Modal)`
+  justify-content: flex-end;
+  margin: 0;
+`;
+
+const CalendarWrapper = styled.View`
+  padding-bottom: 50px;
+  background-color: ${ColorMap.DarkBlue};
+`;
+
+const Header = styled.View`
+  width: 150px;
+  height: 38px;
+  margin-top: 10px;
+  background-color: rgba(229, 249, 255, 0.08);
+  border-radius: 8px;
+`;
+
+const HeaderText = styled.Text`
+  font-size: 20px;
+  font-weight: 700;
+  color: ${ColorMap.White};
+`;
+
 export const MyDatePicker = (props: MyDatePickerProps) => {
   console.log('props.date.toString()', props.date.toString());
   return (
-    <Modal
+    <Base
       swipeDirection={['down']}
       isVisible={props.open}
       onDismiss={() => {
         props.dismiss();
       }}
-      onSwipeComplete={props.dismiss}
-      style={styles.view}>
-      <View style={{paddingBottom: 50, backgroundColor: DarkBlue}}>
+      onSwipeComplete={props.dismiss}>
+      <CalendarWrapper>
         <Calendar
           current={props.date.toString()}
           // Handler which gets executed on day press. Default = undefined
@@ -38,25 +60,9 @@ export const MyDatePicker = (props: MyDatePickerProps) => {
           enableSwipeMonths={true}
           renderHeader={d => {
             return (
-              <View
-                style={{
-                  marginTop: 10,
-                  backgroundColor: 'rgba(229, 249, 255, 0.08)',
-                  borderRadius: 8,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: convertHeight(38),
-                  width: convertWidth(150),
-                }}>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontWeight: '700',
-                    fontSize: convertFontSize(20),
-                  }}>
-                  {dayjs(d).format('MM-YYYY')}
-                </Text>
-              </View>
+              <Header>
+                <HeaderText>{dayjs(d).format('MM-YYYY')}</HeaderText>
+              </Header>
             );
           }}
           theme={{
@@ -82,14 +88,7 @@ export const MyDatePicker = (props: MyDatePickerProps) => {
             textDayHeaderFontSize: 16,
           }}
         />
-      </View>
-    </Modal>
+      </CalendarWrapper>
+    </Base>
   );
 };
-
-const styles = StyleSheet.create({
-  view: {
-    justifyContent: 'flex-end',
-    margin: 0,
-  },
-});

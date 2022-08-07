@@ -1,8 +1,9 @@
 import React from 'react';
-import {View, Text, TouchableWithoutFeedback} from 'react-native';
+import {TouchableWithoutFeedback} from 'react-native';
 
-import {LightBlue} from '~/utils/Colors';
-import {convertFontSize} from '~/utils/design';
+import styled from 'styled-components/native';
+
+import {ColorMap} from '~/utils/Colors';
 
 export interface ButtonProps {
   title: String;
@@ -10,27 +11,25 @@ export interface ButtonProps {
   enable: boolean;
 }
 
-export const Button = (props: ButtonProps) => {
+const Wrapper = styled.View<Pick<ButtonProps, 'enable'>>`
+  height: 60px;
+  opacity: ${({enable}) => (enable ? 1 : 0.3)};
+  border-radius: 16px;
+  background-color: ${ColorMap.LightBlue};
+`;
+
+const ButtonText = styled.Text`
+  font-size: 18px;
+  font-weight: 700;
+  color: ${ColorMap.NavyNightsky};
+`;
+
+export const Button = ({callback, enable, title}: ButtonProps) => {
   return (
-    <TouchableWithoutFeedback onPress={props.callback} disabled={!props.enable}>
-      <View
-        style={{
-          backgroundColor: LightBlue,
-          height: 60,
-          opacity: props.enable ? 1 : 0.3,
-          borderRadius: 16,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Text
-          style={{
-            color: '#0D1648',
-            fontWeight: '700',
-            fontSize: convertFontSize(18),
-          }}>
-          {props.title}
-        </Text>
-      </View>
+    <TouchableWithoutFeedback onPress={callback} disabled={!enable}>
+      <Wrapper enable={enable}>
+        <ButtonText>{title}</ButtonText>
+      </Wrapper>
     </TouchableWithoutFeedback>
   );
 };
