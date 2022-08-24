@@ -3,9 +3,9 @@ import {gql, TypedDocumentNode} from '@apollo/client';
 import {
   AuthenticationInput,
   AuthenticationOutput,
+  Output,
   VerifyEmailVerificationCodeInput,
 } from '~/apollo/generated';
-import {CommonResponse} from '~/models';
 
 export const AUTHENTICATE: TypedDocumentNode<
   AuthenticationOutput,
@@ -36,7 +36,7 @@ export const AUTHENTICATE: TypedDocumentNode<
 `;
 
 export const VERIFY_EMAIL_VERIFICATION_CODE: TypedDocumentNode<
-  CommonResponse,
+  Output,
   VerifyEmailVerificationCodeInput
 > = gql`
   query verifyEmailVerificationCode($email: String!, $code: String!) {
