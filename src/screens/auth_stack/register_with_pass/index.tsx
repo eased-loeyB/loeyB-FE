@@ -1,15 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Keyboard, StyleSheet, TouchableWithoutFeedback} from 'react-native';
 
 import {isEmpty} from 'lodash';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import styled from 'styled-components/native';
 
+import {useRegisterUserMutation} from '~/apollo/generated';
 import {saveToken} from '~/apollo/utils/auth';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import TextField from '~/components/text_field';
-import {useRegisterUser} from '~/hooks/api/useRegisterUser';
 import {push} from '~/navigation';
 import {NameScreenAuthStack} from '~/navigation/stacks';
 import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
@@ -48,15 +48,17 @@ export const RegisterWithPass = ({route}) => {
   const email = route?.params?.email ?? '';
   const [pass, setPass] = useState('');
   const [rePass, setRePass] = useState('');
-  const {registerUser, responseData} = useRegisterUser();
-
-  useEffect(() => {
-    if (responseData) {
-      saveToken(responseData);
-      ToastService.showSuccess('Welcome to loeyB');
-      push(NameScreenAuthStack.INPUT_NAME, {});
-    }
-  }, [responseData]);
+  const [registerUser] = useRegisterUserMutation({
+    fetchPolicy: 'no-cache',
+    notifyOnNetworkStatusChange: true,
+    onCompleted: async ({registerUser: {data}}) => {
+      if (data) {
+        await saveToken(data);
+        ToastService.showSuccess('Welcome to loeyB');
+        push(NameScreenAuthStack.INPUT_NAME, {});
+      }
+    },
+  });
 
   const canNext =
     !isEmpty(pass) &&

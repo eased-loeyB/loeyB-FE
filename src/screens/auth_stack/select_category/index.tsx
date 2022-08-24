@@ -3,6 +3,11 @@ import {Keyboard, TouchableWithoutFeedback} from 'react-native';
 
 import styled from 'styled-components/native';
 
+import {
+  AreaCategoryInput,
+  LoeybAreaType,
+  useRegisterCategoriesMutation,
+} from '~/apollo/generated';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import {navigate} from '~/navigation';
@@ -23,10 +28,6 @@ import {
   workCategory,
   workTitle,
 } from './constants';
-import {
-  AreaCategoryInput,
-  useRegisterCategories,
-} from './hook/useRegisterCategories';
 
 const PageWrapper = styled.View`
   flex: 1;
@@ -60,29 +61,43 @@ const ButtonWrapper = styled.View`
 
 // @ts-ignore
 export const SelectCategory = ({route}) => {
-  const {userName, email} = route?.params;
+  const {userName} = route?.params;
   const [health, setHealth] = useState<SubCategoryProps[]>([]);
   const [mind, setMind] = useState<SubCategoryProps[]>([]);
   const [social, setSocial] = useState<SubCategoryProps[]>([]);
   const [life, setLife] = useState<SubCategoryProps[]>([]);
   const [work, setWork] = useState<SubCategoryProps[]>([]);
-  const {updateData} = useRegisterCategories(
-    userName ?? '',
-    email ?? 'huytd2510@gmail.com',
-  );
+  const [registerCategories] = useRegisterCategoriesMutation({
+    fetchPolicy: 'no-cache',
+    notifyOnNetworkStatusChange: true,
+  });
 
   const canNext =
     health.length + mind.length + social.length + life.length + work.length >=
     3;
 
   const submitData = () => {
-    const dataSubmit: AreaCategoryInput[] = [];
-    health.forEach(h => dataSubmit.push({area: 'HEALTH', category: h.title}));
-    mind.forEach(h => dataSubmit.push({area: 'MIND', category: h.title}));
-    social.forEach(h => dataSubmit.push({area: 'SOCIAL', category: h.title}));
-    life.forEach(h => dataSubmit.push({area: 'HOBBY', category: h.title}));
-    work.forEach(h => dataSubmit.push({area: 'WORK', category: h.title}));
-    updateData(dataSubmit);
+    const areaCategory: AreaCategoryInput[] = [];
+    health.forEach(({title}) =>
+      areaCategory.push({area: LoeybAreaType.Health, category: title}),
+    );
+    mind.forEach(({title}) =>
+      areaCategory.push({area: LoeybAreaType.Mind, category: title}),
+    );
+    social.forEach(({title}) =>
+      areaCategory.push({area: LoeybAreaType.Social, category: title}),
+    );
+    life.forEach(({title}) =>
+      areaCategory.push({area: LoeybAreaType.Hobby, category: title}),
+    );
+    work.forEach(({title}) =>
+      areaCategory.push({area: LoeybAreaType.Work, category: title}),
+    );
+    registerCategories({
+      variables: {
+        areaCategory,
+      },
+    });
   };
 
   return (

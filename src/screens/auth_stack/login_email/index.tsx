@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {Alert, Image, Keyboard, TouchableWithoutFeedback} from 'react-native';
 
 import {useKeyboard} from '@react-native-community/hooks';
@@ -6,22 +6,24 @@ import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import {useDispatch} from 'react-redux';
 import styled from 'styled-components/native';
 
+import {
+  useGoogleLoginMutation,
+  useRequestEmailVerificationCodeMutation,
+} from '~/apollo/generated';
 import {saveToken} from '~/apollo/utils/auth';
 import {GOOGLE_LOGIN} from '~/assets';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import TextField from '~/components/text_field';
-import {isSuccessResponse} from '~/models/CommonResponse';
 import {push} from '~/navigation';
 import {NameScreenAuthStack} from '~/navigation/stacks';
+import {onLogin} from '~/store/reduxtoolkit/user/userSlice';
 import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
 import ToastService from '~/utils/ToastService';
 import {validateEmail} from '~/utils/Validate';
-
-import {useGetData} from '../register/useGetData';
-import {useGoogleLogin} from './hook/useGoogleLogin';
 
 const PageWrapper = styled.View`
   flex: 1;
@@ -51,38 +53,41 @@ const LoginButtonWrapper = styled.View`
 `;
 
 export const Login = () => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
-  const isValidEmail = validateEmail(email);
+  const isValidEmail = useMemo(() => validateEmail(email), [email]);
   const keyboard = useKeyboard();
-  const {data, requestCode, getContentData} = useGetData({
-    email: email,
+
+  const [requestCode] = useRequestEmailVerificationCodeMutation({
+    fetchPolicy: 'no-cache',
+    notifyOnNetworkStatusChange: true,
+    onCompleted: ({requestEmailVerificationCode: {data, result}}) => {
+      if (data) {
+        ToastService.showSuccess('Please check your email');
+        if (result === 'DUPLICATE_EMAIL') {
+          push(NameScreenAuthStack.LOGIN_WITH_PASS, {
+            email,
+          });
+        } else {
+          push(NameScreenAuthStack.REGISTER, {
+            email,
+          });
+        }
+      }
+    },
   });
 
-  const {request: googleLogin, responseData: resGoogleLogin} = useGoogleLogin();
-
-  useEffect(() => {
-    const responseData = getContentData();
-    if (responseData) {
-      if (responseData.result === 'DUPLICATE_EMAIL') {
-        push(NameScreenAuthStack.LOGIN_WITH_PASS, {
-          email: email,
-        });
-      } else {
-        push(NameScreenAuthStack.REGISTER, {
-          email: email,
-        });
-      }
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (resGoogleLogin) {
-      if (isSuccessResponse(resGoogleLogin)) {
-        saveToken(resGoogleLogin.data);
+  const [googleLogin] = useGoogleLoginMutation({
+    fetchPolicy: 'no-cache',
+    notifyOnNetworkStatusChange: true,
+    onCompleted: async ({googleLogin: {data}}) => {
+      if (data) {
+        await saveToken(data);
+        dispatch(onLogin());
         ToastService.showSuccess('Welcome back');
       }
-    }
-  }, [resGoogleLogin]);
+    },
+  });
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -105,7 +110,6 @@ export const Login = () => {
           token: currentUser.accessToken,
         },
       });
-      // this.setState({ userInfo });
     } catch (error: any) {
       Alert.alert('', 'Some things went wrong.');
       console.log(error ? JSON.stringify(error) : error);

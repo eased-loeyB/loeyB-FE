@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Keyboard, StyleSheet, TouchableWithoutFeedback} from 'react-native';
 
 import {isEmpty} from 'lodash';
@@ -7,10 +7,11 @@ import {rgba} from 'polished';
 import RadialGradient from 'react-native-radial-gradient';
 import styled, {css} from 'styled-components/native';
 
+import {useSetUsernameMutation} from '~/apollo/generated';
+import {isSuccessResponse} from '~/apollo/utils/error';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import TextField from '~/components/text_field';
-import {useSetName} from '~/hooks/api/useSetName';
 import {navigate} from '~/navigation';
 import {NameScreenAuthStack} from '~/navigation/stacks';
 import {ColorMap} from '~/utils/Colors';
@@ -70,15 +71,16 @@ export const InputName = () => {
   const [name, setName] = useState('');
   const isValidName = !isEmpty(name) && name.length < 31;
 
-  const {responseData, errorCode} = useSetName();
+  const [requestSetUsername] = useSetUsernameMutation({
+    fetchPolicy: 'no-cache',
+    notifyOnNetworkStatusChange: true,
+    onCompleted: ({setUsername: {result}}) => {
+      if (isSuccessResponse(result)) {
+        navigate(NameScreenAuthStack.SELECT_CATEGORY, {userName: name});
+      }
+    },
+  });
 
-  useEffect(() => {
-    if (responseData) {
-      // if (isSuccessResponse(responseData)) {
-      //   navigate(NameScreenAuthStack.SELECT_CATEGORY, {userName: name});
-      // }
-    }
-  }, [responseData, errorCode]);
   return (
     <BackgroundCommon haveFilter={true}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -115,12 +117,11 @@ export const InputName = () => {
             <Button
               title={'Next'}
               callback={() => {
-                navigate(NameScreenAuthStack.SELECT_CATEGORY, {userName: name});
-                // requestSetName({
-                //   variables: {
-                //     username: name,
-                //   },
-                // });
+                requestSetUsername({
+                  variables: {
+                    username: name,
+                  },
+                });
               }}
               enable={isValidName}
             />

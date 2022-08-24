@@ -3,8 +3,10 @@ import {Image, ImageRequireSource, TouchableOpacity} from 'react-native';
 
 import styled from 'styled-components/native';
 
+import {LoeybCategoryType} from '~/apollo/generated';
+
 export interface SubCategoryProps {
-  title: string;
+  title: LoeybCategoryType;
   image: ImageRequireSource;
 }
 

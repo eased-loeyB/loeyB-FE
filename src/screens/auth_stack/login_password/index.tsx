@@ -1,17 +1,14 @@
 import React, {useState} from 'react';
 import {Keyboard, TouchableWithoutFeedback} from 'react-native';
 
-import {useLazyQuery} from '@apollo/client';
 import {isEmpty} from 'lodash';
 import styled from 'styled-components/native';
 
-import {AUTHENTICATE} from '~/apollo/queries/auth';
+import {useAuthenticateLazyQuery} from '~/apollo/generated';
 import {saveToken} from '~/apollo/utils/auth';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import {Button} from '~/components/button';
 import TextField from '~/components/text_field';
-import {AuthResponse} from '~/models/Auth';
-import {isSuccessResponse} from '~/models/CommonResponse';
 import {getDeviceToken} from '~/services/notifications';
 import {TitleStyle} from '~/utils/Styles';
 import ToastService from '~/utils/ToastService';
@@ -51,21 +48,17 @@ export const LoginWithPassword = ({route}) => {
   const isValidEmail = validateEmail(email) && !isEmpty(email);
   const isValidPassword = validatePassword(password) && !isEmpty(password);
 
-  const [login] = useLazyQuery<{
-    authenticate: AuthResponse;
-  }>(AUTHENTICATE, {
-    onCompleted: async res => {
-      if (isSuccessResponse(res.authenticate)) {
-        saveToken(res.authenticate.data);
-        ToastService.showSuccess(`Welcome back ${email}`);
-      } else {
-        ToastService.showError('The email or password is incorrect');
+  const [login] = useAuthenticateLazyQuery({
+    fetchPolicy: 'no-cache',
+    onCompleted: async ({authenticate}) => {
+      if (authenticate.data) {
+        await saveToken(authenticate.data);
       }
+      ToastService.showSuccess(`Welcome back ${email}`);
     },
     onError: () => {
       ToastService.showError('The email or password is incorrect');
     },
-    fetchPolicy: 'no-cache',
   });
 
   const canNext = isValidEmail && isValidPassword;
