@@ -15,14 +15,12 @@ import {END_POINT, WSS_END_POINT} from '~/config/baseurl';
 import {loadAccessToken} from '~/utils/asyncstorage';
 
 import {cache} from './cache';
-import {IS_LOGGED_IN} from './queries/auth';
-import {onLogin} from './utils/auth';
 import {errorHandler} from './utils/error';
 
 let _client: ApolloClient<NormalizedCacheObject>;
 let webSocketClient: SubscriptionClient;
 
-export async function getApolloClient(
+export async function useApolloClient(
   focusUpdate = false,
 ): Promise<ApolloClient<NormalizedCacheObject>> {
   if (_client && !focusUpdate) {
@@ -31,17 +29,17 @@ export async function getApolloClient(
 
   const accessToken = await loadAccessToken();
 
-  if (accessToken) {
-    onLogin();
-  } else {
-    cache.writeQuery({
-      query: IS_LOGGED_IN,
-      data: {
-        isLoggedIn: false,
-        isLoginExpired: false,
-      },
-    });
-  }
+  // if (accessToken) {
+  //   onLogin();
+  // } else {
+  //   cache.writeQuery({
+  //     query: IS_LOGGED_IN,
+  //     data: {
+  //       isLoggedIn: false,
+  //       isLoginExpired: false,
+  //     },
+  //   });
+  // }
 
   const errorLink = onError(errorHandler);
 
