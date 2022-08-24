@@ -20,7 +20,7 @@ import {errorHandler} from './utils/error';
 let _client: ApolloClient<NormalizedCacheObject>;
 let webSocketClient: SubscriptionClient;
 
-export async function useApolloClient(
+export async function getApolloClient(
   focusUpdate = false,
 ): Promise<ApolloClient<NormalizedCacheObject>> {
   if (_client && !focusUpdate) {
