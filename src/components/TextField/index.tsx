@@ -38,9 +38,8 @@ export interface TextFieldProps {
 }
 
 const Wrapper = styled.View<Pick<TextFieldProps, 'editable'>>`
-  border-width: ${({editable}) => (editable ? 1 : 0)}px;
+  border: ${({editable}) => (editable ? 1 : 0)}px solid ${ColorMap.White};
   border-radius: 8px;
-  border-color: ${ColorMap.White};
 `;
 
 const TextInputOverlay = styled.View`
@@ -104,7 +103,7 @@ const TextField: FC<TextFieldProps> = ({
   customWrapperContainer = {},
 }) => (
   <View>
-    <Wrapper style={customWrapperContainer}>
+    <Wrapper editable={editable} style={customWrapperContainer}>
       <TextInputOverlay />
       <Container style={containerStyle}>
         {iconLeft && (

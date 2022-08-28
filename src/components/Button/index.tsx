@@ -16,6 +16,8 @@ const Wrapper = styled.View<Pick<ButtonProps, 'enable'>>`
   opacity: ${({enable}) => (enable ? 1 : 0.3)};
   border-radius: 16px;
   background-color: ${ColorMap.LightBlue};
+  justify-content: center;
+  align-items: center;
 `;
 
 const ButtonText = styled.Text`
