@@ -13,7 +13,7 @@
     "clean:android": "cd ./android && ./gradlew clean && cd ..",
     "clean:ios": "cd ./ios && xcodebuild clean && cd ..",
     "build:android": "yarn clean:android && cd ./android && ./gradlew assembleDebug && cd ..",
-    "codegen": "export $(cat .env.development | xargs) && wget $GITHUB_GQL_PATH -O ./src/apollo/schema.gql && graphql-codegen --config codegen.yml"
+    "codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
     "@apollo/client": "^3.5.10",

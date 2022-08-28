@@ -1,5 +1,5 @@
 overwrite: true
-schema: 'src/apollo/schema.gql'
+schema: 'http://3.35.67.1:3000/v1/graphql'
 documents: 'src/apollo/{mutations,queries}/**/*.ts'
 generates:
   src/apollo/generated.ts:
