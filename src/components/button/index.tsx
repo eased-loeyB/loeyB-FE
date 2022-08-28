@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {FC} from 'react';
 import {TouchableWithoutFeedback} from 'react-native';
 
 import styled from 'styled-components/native';
@@ -24,12 +24,12 @@ const ButtonText = styled.Text`
   color: ${ColorMap.NavyNightsky};
 `;
 
-export const Button = ({callback, enable, title}: ButtonProps) => {
-  return (
-    <TouchableWithoutFeedback onPress={callback} disabled={!enable}>
-      <Wrapper enable={enable}>
-        <ButtonText>{title}</ButtonText>
-      </Wrapper>
-    </TouchableWithoutFeedback>
-  );
-};
+const Button: FC<ButtonProps> = ({callback, enable, title}) => (
+  <TouchableWithoutFeedback onPress={callback} disabled={!enable}>
+    <Wrapper enable={enable}>
+      <ButtonText>{title}</ButtonText>
+    </Wrapper>
+  </TouchableWithoutFeedback>
+);
+
+export default Button;

@@ -1,16 +1,23 @@
-import React, {useEffect} from 'react';
+import React, {createRef, FC, useEffect} from 'react';
 import {DeviceEventEmitter, StatusBar} from 'react-native';
 
 // import notifee, {EventType} from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import {
+  NavigationContainer,
+  NavigationContainerRef,
+} from '@react-navigation/native';
+import {
+  createStackNavigator,
+  StackNavigationProp,
+} from '@react-navigation/stack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {useRefreshMutation} from '~/apollo/generated';
 import {EventToken} from '~/apollo/types/event';
 import {isSuccessResponse} from '~/apollo/utils/error';
+import Splash from '~/screens/Splash';
 import {RootState} from '~/store';
 import {onLogout} from '~/store/reduxtoolkit/user/userSlice';
 import {
@@ -22,20 +29,25 @@ import {
 import {isIOS} from '~/utils/device';
 import ToastService from '~/utils/ToastService';
 
-import {navigationRef} from './Root';
-import {AuthStack} from './stacks';
+import AuthStack from './stacks/AuthStack';
+import MainStack from './stacks/MainStack';
 
-import {MainNavigator} from '.';
+export enum ApplicationStackName {
+  SPLASH = 'SPLASH',
+  MAIN = 'MAIN',
+  AUTH = 'AUTH',
+}
 
-export const ApplicationStack = {
-  MAIN: 'Main',
-  AUTH: 'Auth',
-};
+export const navigationRef = createRef<NavigationContainerRef<any>>();
+
+export type ApplicationStackNavigationProps = StackNavigationProp<
+  Record<ApplicationStackName, undefined>
+>;
 
 const Stack = createStackNavigator();
 
 // @refresh reset
-const ApplicationNavigator = () => {
+const ApplicationNavigator: FC = () => {
   const {isLoggedIn, isLoginExpired} = useSelector(
     (state: RootState) => state.user.authData,
   );
@@ -144,17 +156,19 @@ const ApplicationNavigator = () => {
           backgroundColor="transparent"
         />
         <Stack.Navigator screenOptions={{headerShown: false}}>
+          <Stack.Screen name={ApplicationStackName.SPLASH} component={Splash} />
+
           {isLoggedIn ? (
             <Stack.Screen
-              name="Main"
-              component={MainNavigator}
+              name={ApplicationStackName.MAIN}
+              component={MainStack}
               options={{
                 animationEnabled: false,
               }}
             />
           ) : (
             <Stack.Screen
-              name={ApplicationStack.AUTH}
+              name={ApplicationStackName.AUTH}
               component={AuthStack}
               options={{
                 animationEnabled: false,

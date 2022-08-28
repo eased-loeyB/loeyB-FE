@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-// @ts-ignore
 import {DeviceEventEmitter, LogBox, Platform, View} from 'react-native';
 
 import {ApolloClient, ApolloLink} from '@apollo/client';
@@ -18,7 +17,7 @@ import {EventToken} from './apollo/types/event';
 //import {Fonts} from './assets';
 import './translations';
 import BackgroundCommon from './components/BackgroundCommon';
-import {ApplicationNavigator} from './navigation';
+import ApplicationNavigator from './navigation/Application';
 import store from './store';
 import {onLogin, resetData} from './store/reduxtoolkit/user/userSlice';
 import {loadAccessToken} from './utils/asyncstorage';

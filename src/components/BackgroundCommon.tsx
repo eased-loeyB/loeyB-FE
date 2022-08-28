@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import React, {FC, memo} from 'react';
 import {Image, ImageRequireSource, ImageStyle} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
@@ -52,7 +52,7 @@ const Title = styled.Text`
   ${TitleStyle}
 `;
 
-const BackgroundCommon = ({
+const BackgroundCommon: FC<BackgroundCommonProps> = ({
   children,
   haveFilter,
   canGoBack,
@@ -60,7 +60,7 @@ const BackgroundCommon = ({
   filterBG,
   customFiler,
   edges,
-}: BackgroundCommonProps) => {
+}) => {
   const {goBack} = useNavigation();
 
   return (

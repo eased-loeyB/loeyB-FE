@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {FC} from 'react';
 import {ImageSourcePropType} from 'react-native';
 
 import styled from 'styled-components/native';
@@ -56,20 +56,23 @@ const Icon = styled.Image<StyleProps>`
   tint-color: ${({error}) => (error ? ColorMap.ErrorMain : ColorMap.White)};
 `;
 
-const SnackBar = ({text, error, icon = CLEAR_ICON, onClose}: SnackBarProps) => {
-  return (
-    <Container>
-      <ContentRow error={error}>
-        <MessageSection>
-          <ContentText error={error}>{text}</ContentText>
-        </MessageSection>
+const SnackBar: FC<SnackBarProps> = ({
+  text,
+  error,
+  icon = CLEAR_ICON,
+  onClose,
+}) => (
+  <Container>
+    <ContentRow error={error}>
+      <MessageSection>
+        <ContentText error={error}>{text}</ContentText>
+      </MessageSection>
 
-        <IconButton onPress={onClose}>
-          <Icon source={icon} resizeMode="contain" error={error} />
-        </IconButton>
-      </ContentRow>
-    </Container>
-  );
-};
+      <IconButton onPress={onClose}>
+        <Icon source={icon} resizeMode="contain" error={error} />
+      </IconButton>
+    </ContentRow>
+  </Container>
+);
 
 export default SnackBar;
