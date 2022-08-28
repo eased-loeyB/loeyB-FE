@@ -12,13 +12,13 @@ import {
   StackNavigationProp,
 } from '@react-navigation/stack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
 import {useRefreshMutation} from '~/apollo/generated';
 import {EventToken} from '~/apollo/types/event';
 import {isSuccessResponse} from '~/apollo/utils/error';
 import Splash from '~/screens/Splash';
-import {RootState} from '~/store';
+import {useTypedSelector} from '~/store';
 import {
   onLogin,
   onLogout,
@@ -52,8 +52,8 @@ const Stack = createStackNavigator();
 
 // @refresh reset
 const ApplicationNavigator: FC = () => {
-  const {isLoggedIn, isLoginExpired} = useSelector(
-    (state: RootState) => state.user.authData,
+  const {isLoggedIn, isLoginExpired} = useTypedSelector(
+    ({user: {authData}}) => authData,
   );
   const dispatch = useDispatch();
 

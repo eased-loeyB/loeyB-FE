@@ -2,7 +2,6 @@ import React, {FC, useEffect, useRef} from 'react';
 import {Animated, Easing} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
 import styled from 'styled-components/native';
 
 import {SPLASH_IMAGE} from '~/assets';
@@ -11,7 +10,7 @@ import {
   ApplicationStackName,
   ApplicationStackNavigationProps,
 } from '~/navigation/Application';
-import {RootState} from '~/store';
+import {useTypedSelector} from '~/store';
 import {ContainerStyle} from '~/utils/Styles';
 
 const Container = styled.View`
@@ -24,7 +23,7 @@ const SplashImage = styled(Animated.Image)<{opacity: Animated.Value}>`
 
 const Splash: FC = () => {
   const {navigate} = useNavigation<ApplicationStackNavigationProps>();
-  const {isLoggedIn} = useSelector((state: RootState) => state.user.authData);
+  const {isLoggedIn} = useTypedSelector(({user: {authData}}) => authData);
 
   const opacity = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
 
