@@ -6,6 +6,7 @@ import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import {useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import styled from 'styled-components/native';
 
@@ -18,8 +19,10 @@ import {GOOGLE_LOGIN} from '~/assets';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import Button from '~/components/Button';
 import TextField from '~/components/TextField';
-import {AuthStackName} from '~/navigation/stacks/AuthStack';
-import {push} from '~/navigation/utils';
+import {
+  AuthStackName,
+  AuthStackNavigationProps,
+} from '~/navigation/stacks/AuthStack';
 import {onLogin} from '~/store/reduxtoolkit/user/userSlice';
 import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
 import ToastService from '~/utils/ToastService';
@@ -53,6 +56,7 @@ const LoginButtonWrapper = styled.View`
 `;
 
 const Login: FC = () => {
+  const {push} = useNavigation<AuthStackNavigationProps>();
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const isValidEmail = useMemo(() => validateEmail(email), [email]);

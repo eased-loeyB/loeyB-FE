@@ -1,6 +1,7 @@
 import React, {FC, useState} from 'react';
 import {Keyboard, TouchableWithoutFeedback} from 'react-native';
 
+import {useNavigation} from '@react-navigation/native';
 import {StackScreenProps} from '@react-navigation/stack';
 import styled from 'styled-components/native';
 
@@ -11,8 +12,11 @@ import {
 } from '~/apollo/generated';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import Button from '~/components/Button';
-import {MainStackName, MainStackParamList} from '~/navigation/stacks/MainStack';
-import {navigate} from '~/navigation/utils';
+import {
+  MainStackName,
+  MainStackNavigationProps,
+  MainStackParamList,
+} from '~/navigation/stacks/MainStack';
 import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
 
 import Category from './Category';
@@ -70,6 +74,8 @@ const SelectCategory: FC<Props> = ({
     params: {userName},
   },
 }) => {
+  const {navigate} = useNavigation<MainStackNavigationProps>();
+
   const [health, setHealth] = useState<SubCategoryProps[]>([]);
   const [mind, setMind] = useState<SubCategoryProps[]>([]);
   const [social, setSocial] = useState<SubCategoryProps[]>([]);

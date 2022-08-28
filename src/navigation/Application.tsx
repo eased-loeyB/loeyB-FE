@@ -19,7 +19,11 @@ import {EventToken} from '~/apollo/types/event';
 import {isSuccessResponse} from '~/apollo/utils/error';
 import Splash from '~/screens/Splash';
 import {RootState} from '~/store';
-import {onLogout} from '~/store/reduxtoolkit/user/userSlice';
+import {
+  onLogin,
+  onLogout,
+  resetData,
+} from '~/store/reduxtoolkit/user/userSlice';
 import {
   saveAccessToken,
   saveRefreshToken,
@@ -60,6 +64,7 @@ const ApplicationNavigator: FC = () => {
         await saveRefreshToken(data?.refreshToken);
         await saveExpiresIn(`${data?.expiresIn}`);
 
+        setAuthData(data?.accessToken);
         DeviceEventEmitter.emit(EventToken.UPDATE_TOKEN);
       }
     },
@@ -73,6 +78,14 @@ const ApplicationNavigator: FC = () => {
 
     if (enabled) {
       console.log('Authorization status:', authStatus);
+    }
+  };
+
+  const setAuthData = (accessToken?: string) => {
+    if (accessToken) {
+      dispatch(onLogin());
+    } else {
+      dispatch(resetData());
     }
   };
 

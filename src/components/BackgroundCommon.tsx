@@ -1,14 +1,13 @@
 import React, {FC, memo} from 'react';
 import {Image, ImageRequireSource, ImageStyle} from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
 // @ts-ignore
 import RadialGradient from 'react-native-radial-gradient';
 import {Edge, SafeAreaView} from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 
 import {ARROW_BACK, FILTER_IMAGE} from '~/assets';
-// import {goBack} from '~/navigation';
+import {goBack} from '~/navigation/utils';
 import {deviceHeight, deviceWidth} from '~/utils/design';
 import {TitleStyle} from '~/utils/Styles';
 
@@ -60,34 +59,27 @@ const BackgroundCommon: FC<BackgroundCommonProps> = ({
   filterBG,
   customFiler,
   edges,
-}) => {
-  const {goBack} = useNavigation();
-
-  return (
-    <Base
-      colors={['#272F5C', '#13132D', '#08070F']}
-      stops={[0, 0.55, 1]}
-      center={[deviceWidth / 2, deviceHeight / 2]}
-      radius={deviceWidth}>
-      {haveFilter && (
-        <BackgroundImage
-          source={filterBG ?? FILTER_IMAGE}
-          style={customFiler}
-        />
+}) => (
+  <Base
+    colors={['#272F5C', '#13132D', '#08070F']}
+    stops={[0, 0.55, 1]}
+    center={[deviceWidth / 2, deviceHeight / 2]}
+    radius={deviceWidth}>
+    {haveFilter && (
+      <BackgroundImage source={filterBG ?? FILTER_IMAGE} style={customFiler} />
+    )}
+    <Wrapper edges={edges ?? ['bottom', 'left', 'right', 'top']}>
+      {canGoBack && (
+        <Container>
+          <BackButton onPress={goBack}>
+            <Image source={ARROW_BACK} />
+          </BackButton>
+          <Title>{title}</Title>
+        </Container>
       )}
-      <Wrapper edges={edges ?? ['bottom', 'left', 'right', 'top']}>
-        {canGoBack && (
-          <Container>
-            <BackButton onPress={goBack}>
-              <Image source={ARROW_BACK} />
-            </BackButton>
-            <Title>{title}</Title>
-          </Container>
-        )}
-        {children}
-      </Wrapper>
-    </Base>
-  );
-};
+      {children}
+    </Wrapper>
+  </Base>
+);
 
 export default memo(BackgroundCommon);

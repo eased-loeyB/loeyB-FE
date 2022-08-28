@@ -10,7 +10,7 @@ import 'react-native-gesture-handler';
 import {setCustomText} from 'react-native-global-props';
 import Orientation from 'react-native-orientation-locker';
 import Toast from 'react-native-toast-message';
-import {Provider, useDispatch} from 'react-redux';
+import {Provider} from 'react-redux';
 
 import {getApolloClient} from './apollo/client';
 import {EventToken} from './apollo/types/event';
@@ -19,8 +19,6 @@ import './translations';
 import BackgroundCommon from './components/BackgroundCommon';
 import ApplicationNavigator from './navigation/Application';
 import store from './store';
-import {onLogin, resetData} from './store/reduxtoolkit/user/userSlice';
-import {loadAccessToken} from './utils/asyncstorage';
 import {create} from './utils/design';
 import {toastConfig} from './utils/ToastService';
 
@@ -35,18 +33,7 @@ LogBox.ignoreAllLogs();
 create();
 
 const App = () => {
-  const dispatch = useDispatch();
   const [client, setClient] = useState<ApolloClient<any> | any>();
-
-  const setAuthData = async () => {
-    const accessToken = await loadAccessToken();
-
-    if (accessToken) {
-      dispatch(onLogin());
-    } else {
-      dispatch(resetData());
-    }
-  };
 
   useEffect(() => {
     Orientation.lockToPortrait();
@@ -64,7 +51,6 @@ const App = () => {
 
     getApolloClient()
       .then(setClient)
-      .then(setAuthData)
       .catch((e: any) => console.log(e));
 
     dayjs.locale('ko');
@@ -73,7 +59,6 @@ const App = () => {
       () => {
         getApolloClient(true)
           .then(setClient)
-          .then(setAuthData)
           .catch(e => console.log(e));
       },
     );

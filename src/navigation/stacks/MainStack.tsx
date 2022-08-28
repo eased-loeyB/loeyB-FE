@@ -19,12 +19,14 @@ export enum MainStackName {
 }
 
 export type MainStackParamList = {
+  [MainStackName.INPUT_NAME]: undefined;
   [MainStackName.SELECT_CATEGORY]: {
     userName: string;
   };
   [MainStackName.WELCOME]: {
     userName: string;
   };
+  [MainStackName.FIRST_MEMORY]: undefined;
 };
 
 export type MainStackNavigationProps = StackNavigationProp<MainStackParamList>;
