@@ -28,8 +28,8 @@ const Base = styled(RadialGradient)`
 
 const BackgroundImage = styled.Image`
   position: absolute;
-  top: 16;
-  left: 24;
+  top: 16px;
+  left: 24px;
 `;
 
 const Wrapper = styled(SafeAreaView)`

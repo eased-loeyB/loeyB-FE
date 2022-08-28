@@ -5,13 +5,13 @@ import {ColorMap} from './Colors';
 export const TitleStyle = css`
   color: ${ColorMap.LightBlue2};
   font-weight: 600;
-  font-size: 28;
+  font-size: 28px;
 `;
 
 export const SubtitleStyle = css`
   color: ${ColorMap.LightBlue2};
   font-weight: 400;
-  font-size: 14;
+  font-size: 14px;
 `;
 
 export const ContainerStyle = css`
