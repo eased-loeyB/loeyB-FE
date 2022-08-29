@@ -10,6 +10,7 @@ import {
   ApplicationStackName,
   ApplicationStackNavigationProps,
 } from '~/navigation/Application';
+import {MainStackName} from '~/navigation/stacks/MainStack';
 import {useTypedSelector} from '~/store';
 import {ContainerStyle} from '~/utils/Styles';
 
@@ -22,18 +23,34 @@ const SplashImage = styled(Animated.Image)<{opacity: Animated.Value}>`
 `;
 
 const Splash: FC = () => {
-  const {navigate} = useNavigation<ApplicationStackNavigationProps>();
-  const {isLoggedIn} = useTypedSelector(({user: {authData}}) => authData);
+  const {replace} = useNavigation<ApplicationStackNavigationProps>();
+  const {
+    authData: {isLoggedIn},
+    userData: {userName, categoryAndTags, stardustRecords},
+  } = useTypedSelector(({user}) => user);
 
   const opacity = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
 
   useEffect(() => {
     const timeoutId: NodeJS.Timeout = setTimeout(() => {
       if (isLoggedIn) {
-        navigate(ApplicationStackName.MAIN);
-      } else {
-        navigate(ApplicationStackName.AUTH);
+        if (stardustRecords.length) {
+          // TODO: go to main page
+          return replace(MainStackName.FIRST_MEMORY);
+        }
+
+        if (categoryAndTags.length) {
+          return replace(MainStackName.FIRST_MEMORY);
+        }
+
+        if (userName) {
+          return replace(MainStackName.SELECT_CATEGORY);
+        }
+
+        return replace(MainStackName.INPUT_NAME);
       }
+
+      return replace(ApplicationStackName.AUTH);
     }, 3000);
 
     return () => {
