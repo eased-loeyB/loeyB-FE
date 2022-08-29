@@ -1,22 +1,21 @@
-import {StyleProp} from 'react-native';
+import {css} from 'styled-components/native';
 
-import {LightBlue2} from './Colors';
-import {convertFontSize} from './design';
+import {ColorMap} from './Colors';
 
-export const CommonStyles: StyleProp<any> = {
-  title: {
-    color: LightBlue2,
-    fontWeight: '600',
-    fontSize: convertFontSize(28),
-  },
-  subTitle: {
-    color: LightBlue2,
-    fontWeight: '400',
-    fontSize: convertFontSize(14),
-  },
-  flexCenter: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-};
+export const TitleStyle = css`
+  color: ${ColorMap.LightBlue2};
+  font-weight: 600;
+  font-size: 28px;
+`;
+
+export const SubtitleStyle = css`
+  color: ${ColorMap.LightBlue2};
+  font-weight: 400;
+  font-size: 14px;
+`;
+
+export const ContainerStyle = css`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;

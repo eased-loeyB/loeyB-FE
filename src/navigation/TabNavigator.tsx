@@ -1,10 +1,8 @@
 import React from 'react';
-import {Platform, Text} from 'react-native';
+import {Text} from 'react-native';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {SafeAreaProviderCompat} from '@react-navigation/elements';
 import {useTranslation} from 'react-i18next';
-import {EdgeInsets} from 'react-native-safe-area-context';
 
 import {MainStyles} from './styles';
 
@@ -21,29 +19,13 @@ export const NameTabs = {
   ProfileTab: 'ProfileTab',
 };
 
-const getPaddingBottom = (insets: EdgeInsets) => {
-  if (Platform.OS === 'android') {
-    return 0;
-  }
-  return Math.max(insets.bottom - Platform.select({ios: 4, default: 0}), 0);
-};
-
-export const Default_TabBarStyle = [
-  MainStyles.tabBarStyle,
-  {
-    paddingBottom: getPaddingBottom(
-      SafeAreaProviderCompat.initialMetrics.insets,
-    ),
-  },
-];
-
 export const TabNavigator = () => {
   const {t} = useTranslation();
 
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarStyle: Default_TabBarStyle,
+        tabBarStyle: MainStyles.tabBarStyle,
         headerShown: false,
         tabBarHideOnKeyboard: true,
       }}>

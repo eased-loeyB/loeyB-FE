@@ -1,6 +1,21 @@
-import {gql} from '@apollo/client';
+import {gql, TypedDocumentNode} from '@apollo/client';
 
-export const REFRESH_TOKEN = gql`
+import {
+  AuthenticationOutput,
+  GoogleLoginInput,
+  Output,
+  RegisterUserInput,
+  RegisterUserOutput,
+  RequestEmailVerificationCodeInput,
+  RequestEmailVerificationOutput,
+  SetUsernameInput,
+  TokenRefreshInput,
+} from '~/apollo/generated';
+
+export const REFRESH_TOKEN: TypedDocumentNode<
+  AuthenticationOutput,
+  TokenRefreshInput
+> = gql`
   mutation refresh($refreshToken: String!) {
     refresh(input: {refreshToken: $refreshToken}) {
       result
@@ -11,21 +26,33 @@ export const REFRESH_TOKEN = gql`
         expiresIn
         refreshToken
         redirectUrl
+        hasUserName
+        hasUserCategories
+        hasUserRecords
       }
     }
   }
 `;
 
-export const REQUEST_REGISTER_CODE = gql`
+export const REQUEST_EMAIL_VERIFICATION_CODE: TypedDocumentNode<
+  RequestEmailVerificationOutput,
+  RequestEmailVerificationCodeInput
+> = gql`
   mutation requestEmailVerificationCode($email: String!) {
     requestEmailVerificationCode(input: {email: $email}) {
       result
       errorMessage
+      data {
+        code
+      }
     }
   }
 `;
 
-export const REGISTER_USER = gql`
+export const REGISTER_USER: TypedDocumentNode<
+  RegisterUserOutput,
+  RegisterUserInput
+> = gql`
   mutation registerUser($email: String!, $password: String!) {
     registerUser(input: {email: $email, password: $password}) {
       result
@@ -40,16 +67,19 @@ export const REGISTER_USER = gql`
   }
 `;
 
-export const SET_USER_NAME = gql`
+export const SET_USER_NAME: TypedDocumentNode<Output, SetUsernameInput> = gql`
   mutation setUsername($username: String!) {
-    registerUser(input: {username: $username}) {
+    setUsername(input: {username: $username}) {
       result
       errorMessage
     }
   }
 `;
 
-export const GOOGLE_LOGIN = gql`
+export const GOOGLE_LOGIN: TypedDocumentNode<
+  AuthenticationOutput,
+  GoogleLoginInput
+> = gql`
   mutation googleLogin($token: String!) {
     googleLogin(input: {token: $token}) {
       result
@@ -59,6 +89,10 @@ export const GOOGLE_LOGIN = gql`
         tokenType
         expiresIn
         refreshToken
+        redirectUrl
+        hasUserName
+        hasUserCategories
+        hasUserRecords
       }
     }
   }

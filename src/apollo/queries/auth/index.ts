@@ -1,10 +1,20 @@
-import {gql} from '@apollo/client';
+import {gql, TypedDocumentNode} from '@apollo/client';
 
-export const AUTHENTICATE = gql`
+import {
+  AuthenticationInput,
+  AuthenticationOutput,
+  Output,
+  VerifyEmailVerificationCodeInput,
+} from '~/apollo/generated';
+
+export const AUTHENTICATE: TypedDocumentNode<
+  AuthenticationOutput,
+  AuthenticationInput
+> = gql`
   query authenticate(
     $email: String!
     $password: String!
-    $deviceToken: String!
+    $deviceToken: String
   ) {
     authenticate(
       input: {email: $email, password: $password, deviceToken: $deviceToken}
@@ -15,23 +25,24 @@ export const AUTHENTICATE = gql`
         accessToken
         tokenType
         expiresIn
+        refreshToken
+        redirectUrl
+        hasUserName
+        hasUserCategories
+        hasUserRecords
       }
     }
   }
 `;
 
-export const REMOVE_DEVICE_TOKEN = gql`
-  query removeDeviceToken($email: String!, $deviceToken: String) {
-    removeDeviceToken(input: {email: $email, deviceToken: $deviceToken}) {
-      result
+export const VERIFY_EMAIL_VERIFICATION_CODE: TypedDocumentNode<
+  Output,
+  VerifyEmailVerificationCodeInput
+> = gql`
+  query verifyEmailVerificationCode($email: String!, $code: String!) {
+    verifyEmailVerificationCode(input: {email: $email, code: $code}) {
       errorMessage
+      result
     }
-  }
-`;
-
-export const IS_LOGGED_IN = gql`
-  query IsUserLoggedIn {
-    isLoggedIn @client
-    isLoginExpired @client
   }
 `;

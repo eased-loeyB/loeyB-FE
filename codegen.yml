@@ -1,0 +1,15 @@
+overwrite: true
+schema: 'http://3.35.67.1:3000/v1/graphql'
+documents: 'src/apollo/{mutations,queries}/**/*.ts'
+generates:
+  src/apollo/generated.ts:
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+    config:
+      withHooks: true
+      withMutationFn: true
+  ./graphql.schema.json:
+    plugins:
+      - 'introspection'

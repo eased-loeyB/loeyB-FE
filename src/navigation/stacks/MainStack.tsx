@@ -1,34 +1,48 @@
-import React from 'react';
+import React, {FC} from 'react';
 
-import {createStackNavigator} from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  StackNavigationProp,
+} from '@react-navigation/stack';
 
-import {InputName} from '~/screens/auth_stack/input_name';
-import {SelectCategory} from '~/screens/auth_stack/select_category';
-import {Welcome} from '~/screens/auth_stack/welcome';
-import {FirstMemory} from '~/screens/memore_stack/first_memory';
+import FirstMemory from '~/screens/MainStack/FirstMemory';
+import InputName from '~/screens/MainStack/InputName';
+import SelectCategory from '~/screens/MainStack/SelectCategory';
+import Welcome from '~/screens/MainStack/Welcome';
 
-import {NameScreenAuthStack} from './AuthStack';
+export enum MainStackName {
+  INPUT_NAME = 'INPUT_NAME',
+  SELECT_CATEGORY = 'SELECT_CATEGORY',
+  WELCOME = 'WELCOME',
+  FIRST_MEMORY = 'FIRST_MEMORY',
+  CAMERA = 'CAMERA',
+}
+
+export type MainStackParamList = {
+  [MainStackName.INPUT_NAME]: undefined;
+  [MainStackName.SELECT_CATEGORY]: {
+    userName: string;
+  };
+  [MainStackName.WELCOME]: {
+    userName: string;
+  };
+  [MainStackName.FIRST_MEMORY]: undefined;
+};
+
+export type MainStackNavigationProps = StackNavigationProp<MainStackParamList>;
 
 const Stack = createStackNavigator();
-export const MainStackName = {
-  Welcome: 'Welcome',
-  FIRST_MEMORY: 'FIRST_MEMORY',
-  CAMERA: 'CAMERA',
-};
 
-export const MainStack = () => {
-  return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen
-        name={NameScreenAuthStack.INPUT_NAME}
-        component={InputName}
-      />
-      <Stack.Screen
-        name={NameScreenAuthStack.SELECT_CATEGORY}
-        component={SelectCategory}
-      />
-      <Stack.Screen name={MainStackName.Welcome} component={Welcome} />
-      <Stack.Screen name={MainStackName.FIRST_MEMORY} component={FirstMemory} />
-    </Stack.Navigator>
-  );
-};
+const MainStack: FC = () => (
+  <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Screen name={MainStackName.INPUT_NAME} component={InputName} />
+    <Stack.Screen
+      name={MainStackName.SELECT_CATEGORY}
+      component={SelectCategory}
+    />
+    <Stack.Screen name={MainStackName.WELCOME} component={Welcome} />
+    <Stack.Screen name={MainStackName.FIRST_MEMORY} component={FirstMemory} />
+  </Stack.Navigator>
+);
+
+export default MainStack;

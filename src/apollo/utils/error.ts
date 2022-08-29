@@ -4,8 +4,12 @@ import {ErrorHandler, ErrorResponse} from '@apollo/client/link/error';
 
 import ToastService from '~/utils/ToastService';
 
+import {LoeybErrorCode} from '../generated';
 import {EventToken} from '../types/event';
-import {onLogout} from './auth';
+
+export const isSuccessResponse = (result: LoeybErrorCode) => {
+  return ['SUCCESS', 'success'].includes(result ?? '');
+};
 
 export const errorHandler: ErrorHandler = ({
   graphQLErrors,
@@ -27,7 +31,8 @@ export const errorHandler: ErrorHandler = ({
 
       switch (message) {
         case EventToken.INVALID_TOKEN:
-          await onLogout();
+          // await onLogout();
+          DeviceEventEmitter.emit(message);
           toastMessage = 'commons.errors.token.invalid';
           break;
         case EventToken.TOKEN_EXPIRED:

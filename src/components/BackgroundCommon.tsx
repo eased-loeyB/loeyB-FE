@@ -1,22 +1,15 @@
-import React, {memo} from 'react';
-import {
-  Image,
-  ImageRequireSource,
-  ImageStyle,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, {FC, memo} from 'react';
+import {Image, ImageRequireSource, ImageStyle} from 'react-native';
 
 // @ts-ignore
 import RadialGradient from 'react-native-radial-gradient';
 import {Edge, SafeAreaView} from 'react-native-safe-area-context';
+import styled from 'styled-components/native';
 
 import {ARROW_BACK, FILTER_IMAGE} from '~/assets';
-import {goBack} from '~/navigation';
-import {convertWidth, deviceHeight, deviceWidth} from '~/utils/design';
-import {CommonStyles} from '~/utils/Styles';
+import {goBack} from '~/navigation/utils';
+import {deviceHeight, deviceWidth} from '~/utils/design';
+import {TitleStyle} from '~/utils/Styles';
 
 export interface BackgroundCommonProps {
   children: JSX.Element;
@@ -28,7 +21,37 @@ export interface BackgroundCommonProps {
   edges?: Edge[];
 }
 
-const BackgroundCommon = ({
+const Base = styled(RadialGradient)`
+  flex: 1;
+`;
+
+const BackgroundImage = styled.Image`
+  position: absolute;
+  top: 16px;
+  left: 24px;
+`;
+
+const Wrapper = styled(SafeAreaView)`
+  flex: 1;
+`;
+
+const Container = styled.View`
+  flex-direction: row;
+  padding: 24px 16px;
+  justify-content: space-between;
+`;
+
+const BackButton = styled.TouchableOpacity`
+  position: absolute;
+  top: 48px;
+  left: 24px;
+`;
+
+const Title = styled.Text`
+  ${TitleStyle}
+`;
+
+const BackgroundCommon: FC<BackgroundCommonProps> = ({
   children,
   haveFilter,
   canGoBack,
@@ -36,51 +59,27 @@ const BackgroundCommon = ({
   filterBG,
   customFiler,
   edges,
-}: BackgroundCommonProps) => {
-  return (
-    <RadialGradient
-      style={{flex: 1}}
-      colors={['#272F5C', '#13132D', '#08070F']}
-      stops={[0, 0.55, 1]}
-      center={[deviceWidth / 2, deviceHeight / 2]}
-      radius={convertWidth(deviceWidth)}>
-      {haveFilter && (
-        <Image
-          source={filterBG ?? FILTER_IMAGE}
-          style={{position: 'absolute', top: 15, left: 24, ...customFiler}}
-        />
+}) => (
+  <Base
+    colors={['#272F5C', '#13132D', '#08070F']}
+    stops={[0, 0.55, 1]}
+    center={[deviceWidth / 2, deviceHeight / 2]}
+    radius={deviceWidth}>
+    {haveFilter && (
+      <BackgroundImage source={filterBG ?? FILTER_IMAGE} style={customFiler} />
+    )}
+    <Wrapper edges={edges ?? ['bottom', 'left', 'right', 'top']}>
+      {canGoBack && (
+        <Container>
+          <BackButton onPress={goBack}>
+            <Image source={ARROW_BACK} />
+          </BackButton>
+          <Title>{title}</Title>
+        </Container>
       )}
-      <SafeAreaView
-        style={{flex: 1}}
-        edges={edges ?? ['bottom', 'left', 'right', 'top']}>
-        {canGoBack && (
-          <View style={styles.container}>
-            <TouchableOpacity style={styles.iconBack} onPress={() => goBack()}>
-              <Image source={ARROW_BACK} />
-            </TouchableOpacity>
-            <Text style={CommonStyles.title}>{title}</Text>
-          </View>
-        )}
-        {children}
-      </SafeAreaView>
-    </RadialGradient>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    paddingTop: 24,
-    paddingBottom: 24,
-    justifyContent: 'space-between',
-    paddingLeft: 16,
-    paddingRight: 16,
-  },
-  iconBack: {
-    position: 'absolute',
-    top: 48,
-    left: 24,
-  },
-});
+      {children}
+    </Wrapper>
+  </Base>
+);
 
 export default memo(BackgroundCommon);

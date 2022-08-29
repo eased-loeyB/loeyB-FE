@@ -1,18 +1,29 @@
-import React, {useEffect} from 'react';
+import React, {createRef, FC, useEffect} from 'react';
 import {DeviceEventEmitter, StatusBar} from 'react-native';
 
-import {useMutation, useQuery} from '@apollo/client';
 // import notifee, {EventType} from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import {
+  NavigationContainer,
+  NavigationContainerRef,
+} from '@react-navigation/native';
+import {
+  createStackNavigator,
+  StackNavigationProp,
+} from '@react-navigation/stack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {useDispatch} from 'react-redux';
 
-import {REFRESH_TOKEN} from '~/apollo/mutations/auth';
-import {IS_LOGGED_IN} from '~/apollo/queries/auth';
-import {IsLoggedInDataType} from '~/apollo/types/auth';
+import {useRefreshMutation} from '~/apollo/generated';
 import {EventToken} from '~/apollo/types/event';
-import {isSuccessResponse} from '~/models/CommonResponse';
+import {isSuccessResponse} from '~/apollo/utils/error';
+import Splash from '~/screens/Splash';
+import {useTypedSelector} from '~/store';
+import {
+  onLogin,
+  onLogout,
+  resetData,
+} from '~/store/reduxtoolkit/user/userSlice';
 import {
   saveAccessToken,
   saveRefreshToken,
@@ -22,29 +33,38 @@ import {
 import {isIOS} from '~/utils/device';
 import ToastService from '~/utils/ToastService';
 
-import {navigationRef} from './Root';
-import {AuthStack} from './stacks';
+import AuthStack from './stacks/AuthStack';
+import MainStack from './stacks/MainStack';
 
-import {MainNavigator} from '.';
+export enum ApplicationStackName {
+  SPLASH = 'SPLASH',
+  MAIN = 'MAIN',
+  AUTH = 'AUTH',
+}
 
-export const ApplicationStack = {
-  MAIN: 'Main',
-  AUTH: 'Auth',
-};
+export const navigationRef = createRef<NavigationContainerRef<any>>();
+
+export type ApplicationStackNavigationProps = StackNavigationProp<
+  Record<ApplicationStackName, undefined>
+>;
 
 const Stack = createStackNavigator();
 
 // @refresh reset
-const ApplicationNavigator = () => {
-  const {loading, data} = useQuery<IsLoggedInDataType>(IS_LOGGED_IN);
+const ApplicationNavigator: FC = () => {
+  const {isLoggedIn, isLoginExpired} = useTypedSelector(
+    ({user: {authData}}) => authData,
+  );
+  const dispatch = useDispatch();
 
-  const [getRefreshToken] = useMutation(REFRESH_TOKEN, {
-    onCompleted: async res => {
-      if (isSuccessResponse(res.refresh)) {
-        await saveAccessToken(res.refresh.data.accessToken);
-        await saveRefreshToken(res.refresh.data.refreshToken);
-        await saveExpiresIn(`${res.refresh.data.expiresIn}`);
+  const [getRefreshToken] = useRefreshMutation({
+    onCompleted: async ({refresh: {result, data}}) => {
+      if (isSuccessResponse(result)) {
+        await saveAccessToken(data?.accessToken);
+        await saveRefreshToken(data?.refreshToken);
+        await saveExpiresIn(`${data?.expiresIn}`);
 
+        setAuthData(data?.accessToken);
         DeviceEventEmitter.emit(EventToken.UPDATE_TOKEN);
       }
     },
@@ -58,6 +78,14 @@ const ApplicationNavigator = () => {
 
     if (enabled) {
       console.log('Authorization status:', authStatus);
+    }
+  };
+
+  const setAuthData = (accessToken?: string) => {
+    if (accessToken) {
+      dispatch(onLogin());
+    } else {
+      dispatch(resetData());
     }
   };
 
@@ -85,24 +113,32 @@ const ApplicationNavigator = () => {
       requestUserPermission();
     }
 
-    const event = DeviceEventEmitter.addListener(
+    const tokenExpiredEvent = DeviceEventEmitter.addListener(
       EventToken.TOKEN_EXPIRED,
       onRefreshToken,
     );
 
+    const tokenInvalidEvent = DeviceEventEmitter.addListener(
+      EventToken.INVALID_TOKEN,
+      () => {
+        dispatch(onLogout());
+      },
+    );
+
     return () => {
-      event.remove();
+      tokenExpiredEvent.remove();
+      tokenInvalidEvent.remove();
     };
   }, []);
 
   useEffect(() => {
-    if (data?.isLoginExpired) {
+    if (isLoginExpired) {
       ToastService.show({
         isError: false,
         message: 'login.loginExpired',
       });
     }
-  }, [data?.isLoginExpired]);
+  }, [isLoginExpired]);
 
   // notifee.onBackgroundEvent(async ({type, detail}) => {
   //   const {notification, pressAction} = detail;
@@ -133,17 +169,19 @@ const ApplicationNavigator = () => {
           backgroundColor="transparent"
         />
         <Stack.Navigator screenOptions={{headerShown: false}}>
-          {!loading && data?.isLoggedIn ? (
+          <Stack.Screen name={ApplicationStackName.SPLASH} component={Splash} />
+
+          {isLoggedIn ? (
             <Stack.Screen
-              name="Main"
-              component={MainNavigator}
+              name={ApplicationStackName.MAIN}
+              component={MainStack}
               options={{
                 animationEnabled: false,
               }}
             />
           ) : (
             <Stack.Screen
-              name={ApplicationStack.AUTH}
+              name={ApplicationStackName.AUTH}
               component={AuthStack}
               options={{
                 animationEnabled: false,

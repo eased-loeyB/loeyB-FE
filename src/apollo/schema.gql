@@ -1,0 +1,664 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""Default Output"""
+type Output {
+  """LOEYB ERROR CODE"""
+  result: LOEYBErrorCode!
+
+  """errorMessage"""
+  errorMessage: String
+}
+
+"""loeyB error code"""
+enum LOEYBErrorCode {
+  """SUCCESS"""
+  SUCCESS
+
+  """NO_USER"""
+  NO_USER
+
+  """INVALID_TOKEN"""
+  INVALID_TOKEN
+
+  """UNAUTHORIZED"""
+  UNAUTHORIZED
+
+  """NO_REGISTERED_AREA_CATEGORY"""
+  NO_REGISTERED_AREA_CATEGORY
+
+  """NO_REGISTERED_CATEGORY_TAG"""
+  NO_REGISTERED_CATEGORY_TAG
+
+  """HAD_NEVER_ADDED_CATEGORY"""
+  HAD_NEVER_ADDED_CATEGORY
+
+  """NO_REGISTERED_RECORD"""
+  NO_REGISTERED_RECORD
+
+  """USER_NOT_FOUND"""
+  USER_NOT_FOUND
+
+  """PASSWORD_INCORRECT"""
+  PASSWORD_INCORRECT
+
+  """DUPLICATE_EMAIL"""
+  DUPLICATE_EMAIL
+
+  """QUERY_ERROR"""
+  QUERY_ERROR
+
+  """ALREADY_REGISTERED_USER"""
+  ALREADY_REGISTERED_USER
+
+  """ERROR"""
+  ERROR
+
+  """PARMETER_VALIDATION_ERROR"""
+  PARMETER_VALIDATION_ERROR
+  TOKEN_EXPIRED
+  CODE_MISMATCH
+
+  """ALREADY_ADDED_CATEGORIES"""
+  ALREADY_ADDED_CATEGORIES
+
+  """ALREADY_REGISTERED_IMAGE"""
+  ALREADY_REGISTERED_IMAGE
+  ALREADY_REGISTERED_CATEGORY
+
+  """ALREADY_REGISTERED_TAG"""
+  ALREADY_REGISTERED_TAG
+
+  """FILE_NOT_FOUND"""
+  FILE_NOT_FOUND
+
+  """SHARP_IMAGE_RESIZE_ERROR"""
+  SHARP_IMAGE_RESIZE_ERROR
+}
+
+""""""
+type RegisterUSer {
+  """JWT"""
+  accessToken: String!
+
+  """"""
+  tokenType: String!
+
+  """"""
+  expiresIn: Float!
+
+  """JWT"""
+  refreshToken: String!
+}
+
+""""""
+type RegisterUserOutput {
+  """LOEYB ERROR CODE"""
+  result: LOEYBErrorCode!
+
+  """errorMessage"""
+  errorMessage: String
+  data: RegisterUSer
+}
+
+""""""
+type Authentication {
+  """JWT"""
+  accessToken: String!
+
+  """"""
+  tokenType: String!
+
+  """"""
+  expiresIn: Float!
+
+  """JWT"""
+  refreshToken: String!
+
+  """"""
+  redirectUrl: String
+
+  """유저이름 존재 유무"""
+  hasUserName: Boolean
+
+  """유저가 등록한 카테고리 존재 유무"""
+  hasUserCategories: Boolean
+
+  """유저가 저장한 이미지 존재 유무"""
+  hasUserRecords: Boolean
+}
+
+""""""
+type AuthenticationOutput {
+  """LOEYB ERROR CODE"""
+  result: LOEYBErrorCode!
+
+  """errorMessage"""
+  errorMessage: String
+  data: Authentication
+}
+
+""""""
+type LOEYBFile {
+  """"""
+  fileId: ID!
+
+  """"""
+  fileName: String
+
+  """"""
+  fileExtension: String
+
+  """"""
+  fileMimetype: String
+
+  """파일 용량 in bytes"""
+  fileSize: Float
+}
+
+""""""
+type RegisteredNameAreaAndCategory {
+  """"""
+  name: String
+
+  """"""
+  area: LoeybAreaType
+
+  """"""
+  category: String
+}
+
+"""topic"""
+enum LoeybAreaType {
+  """HEALTH"""
+  HEALTH
+
+  """MIND"""
+  MIND
+
+  """SOCIAL"""
+  SOCIAL
+
+  """HOBBY"""
+  HOBBY
+
+  """WORK"""
+  WORK
+}
+
+""""""
+type RequestEmailVerification {
+  """JWT"""
+  code: String!
+}
+
+""""""
+type RequestEmailVerificationOutput {
+  """LOEYB ERROR CODE"""
+  result: LOEYBErrorCode!
+
+  """errorMessage"""
+  errorMessage: String
+  data: RequestEmailVerification
+}
+
+""""""
+type RegisteredAreaAndCategoryAndTag {
+  """"""
+  area: LoeybAreaType
+
+  """"""
+  category: LoeybCategoryType
+
+  """"""
+  tag: [String!]
+}
+
+"""유저들의 국가"""
+enum LoeybCategoryType {
+  """"""
+  FOOD
+
+  """"""
+  EXERCISE
+
+  """"""
+  SICK
+
+  """"""
+  MEDICINE
+
+  """"""
+  THOUGHT
+
+  """"""
+  EMOTION
+
+  """"""
+  GOALS
+
+  """"""
+  IDEAS
+
+  """"""
+  FRIENDS
+
+  """"""
+  FAMILY
+
+  """"""
+  PETS
+
+  """"""
+  COWORKER
+
+  """"""
+  FASHION
+
+  """"""
+  MUSIC
+
+  """"""
+  ART
+
+  """"""
+  BOOKS
+
+  """"""
+  VIDEO
+
+  """"""
+  TRAVEL
+
+  """"""
+  SPORTS
+
+  """"""
+  PROJECT
+
+  """"""
+  SCHOOL
+
+  """"""
+  SKILL
+
+  """"""
+  COMPANY
+
+  """"""
+  AWARD
+}
+
+""""""
+type RegisteredAreaAndCategoryAndTagOutput {
+  """LOEYB ERROR CODE"""
+  result: LOEYBErrorCode!
+
+  """errorMessage"""
+  errorMessage: String
+  data: [RegisteredAreaAndCategoryAndTag!]
+}
+
+""""""
+type RegisteredCategoryAndTag {
+  """"""
+  category: String
+
+  """"""
+  tag: String
+}
+
+""""""
+type RegisteredCategoryAndTagOutput {
+  """LOEYB ERROR CODE"""
+  result: LOEYBErrorCode!
+
+  """errorMessage"""
+  errorMessage: String
+  data: RegisteredCategoryAndTag
+}
+
+""""""
+type RegisteredCategoryAndTagsOutput {
+  """LOEYB ERROR CODE"""
+  result: LOEYBErrorCode!
+
+  """errorMessage"""
+  errorMessage: String
+  data: [RegisteredCategoryAndTag!]
+}
+
+""""""
+type StardustRecords {
+  recordId: String
+
+  """"""
+  fileId: String
+
+  """"""
+  fileName: String
+
+  """중요도"""
+  importance: Float
+
+  """description"""
+  description: String
+
+  """"""
+  location: String
+
+  """"""
+  date: String
+
+  """"""
+  area: String
+
+  """"""
+  category: String
+
+  """"""
+  tag: String
+}
+
+""""""
+type StardustRecordsOutput {
+  """LOEYB ERROR CODE"""
+  result: LOEYBErrorCode!
+
+  """errorMessage"""
+  errorMessage: String
+  data: [StardustRecords!]
+}
+
+type tagRatio {
+  tag: String
+  ratio: Float
+}
+
+type areaTagRatio {
+  area: LoeybAreaType
+  categoryRatio: [tagRatio!]
+}
+
+type areaTagRatiosOutput {
+  """LOEYB ERROR CODE"""
+  result: LOEYBErrorCode!
+
+  """errorMessage"""
+  errorMessage: String
+  data: [areaTagRatio!]
+}
+
+type Query {
+  sayHello: String!
+
+  """이메일 인증 확인"""
+  verifyEmailVerificationCode(
+    """이메일 인증"""
+    input: VerifyEmailVerificationCodeInput!
+  ): Output!
+
+  """로그인"""
+  authenticate(
+    """로그인"""
+    input: AuthenticationInput!
+  ): AuthenticationOutput!
+
+  """fetchRegisteredAreaAndCategoryAndTag"""
+  fetchRegisteredAreaAndCategoryAndTag(
+    """upload file with tag and date and location information"""
+    input: fetchRegisteredAreaAndCategoryAndTagInput!
+  ): RegisteredAreaAndCategoryAndTagOutput!
+
+  """fetchRegisteredCategoryAndTag"""
+  fetchRegisteredCategoryAndTag(
+    """upload file with tag and date and location information"""
+    input: fetchRegisteredCategoryAndTag!
+  ): RegisteredCategoryAndTagsOutput!
+
+  """searchTag"""
+  searchTag(
+    """upload file with tag and date and location information"""
+    input: SearchTagInput!
+  ): RegisteredCategoryAndTagOutput!
+
+  """fetchRegisteredRecords"""
+  fetchRegisteredRecords(
+    """upload file with tag and date and location information"""
+    input: FetchRegisteredRecordsInput!
+  ): StardustRecordsOutput!
+
+  """fetchTagRatio"""
+  fetchTagRatio(
+    """fetch area category ratio"""
+    input: fetchTagRatioInput!
+  ): areaTagRatiosOutput!
+}
+
+"""이메일 인증"""
+input VerifyEmailVerificationCodeInput {
+  """이메일"""
+  email: String!
+
+  """인증번호"""
+  code: String!
+}
+
+"""로그인"""
+input AuthenticationInput {
+  """이메일"""
+  email: String!
+
+  """비밀번호"""
+  password: String!
+
+  """device token"""
+  deviceToken: String
+}
+
+"""show registered area, category, tag"""
+input fetchRegisteredAreaAndCategoryAndTagInput {
+  limit: String = "40"
+  offset: String = "0"
+}
+
+"""show registered area, category, tag"""
+input fetchRegisteredCategoryAndTag {
+  limit: String = "40"
+  offset: String = "0"
+}
+
+""""""
+input SearchTagInput {
+  """"""
+  keyword: String!
+
+  """"""
+  limit: Float = 40
+
+  """"""
+  offset: Float = 0
+}
+
+"""저장된 사진 가져오기"""
+input FetchRegisteredRecordsInput {
+  """이메일"""
+  email: String
+
+  """area"""
+  area: LoeybAreaType
+
+  """category"""
+  category: LoeybCategoryType
+
+  """tag"""
+  tag: String
+  date: String
+}
+
+"""show tag ratio of given date condition"""
+input fetchTagRatioInput {
+  limit: String = "40"
+  offset: String = "0"
+  date: String
+}
+
+type Mutation {
+  """회원가입"""
+  registerUser(
+    """loeyb 회원가입"""
+    input: RegisterUserInput!
+  ): RegisterUserOutput!
+
+  """Authorization: Bearer 토큰 갱신"""
+  refresh(
+    """토큰 갱신"""
+    input: TokenRefreshInput!
+  ): AuthenticationOutput!
+
+  """이메일 인증 요청"""
+  requestEmailVerificationCode(
+    """이메일 인증 코드"""
+    input: RequestEmailVerificationCodeInput!
+  ): RequestEmailVerificationOutput!
+
+  """이메일 인증 요청"""
+  googleLogin(
+    """이메일 인증 코드"""
+    input: GoogleLoginInput!
+  ): AuthenticationOutput!
+
+  """이메일 인증 요청"""
+  setUsername(
+    """이메일 인증 코드"""
+    input: SetUsernameInput!
+  ): Output!
+
+  """register at least 3 categories at first"""
+  registerCategories(
+    """register at least 3 categories at first"""
+    input: RegisterCategoriesInput!
+  ): Output!
+
+  """upload file with tag and date and location information"""
+  registerRecord(
+    """upload file with tag and date and location information"""
+    input: RegisterRecordInput!
+  ): Output!
+
+  """updateRecord"""
+  updateRecord(
+    """update records"""
+    input: UpdateRecordInput!
+  ): Output!
+
+  """add categories when upload img file"""
+  addCategoryAndArea(
+    """add categories when upload img file"""
+    input: addCategoryAndAreaInput!
+  ): Output!
+
+  """add categories when upload img file"""
+  addTag(
+    """add categories when upload img file"""
+    input: addTagInput!
+  ): Output!
+}
+
+"""회원가입"""
+input RegisterUserInput {
+  """이메일"""
+  email: String!
+
+  """비밀번호"""
+  password: String!
+}
+
+"""토큰 갱신"""
+input TokenRefreshInput {
+  """refresh 토큰"""
+  refreshToken: String!
+}
+
+"""이메일 인증 코드"""
+input RequestEmailVerificationCodeInput {
+  """이메일"""
+  email: String!
+}
+
+"""이메일 인증 코드"""
+input GoogleLoginInput {
+  """"""
+  token: String!
+}
+
+"""이메일 인증 코드"""
+input SetUsernameInput {
+  """"""
+  username: String!
+}
+
+"""registerCategories"""
+input RegisterCategoriesInput {
+  """category"""
+  areaCategory: [AreaCategoryInput!]!
+}
+
+""""""
+input AreaCategoryInput {
+  area: LoeybAreaType!
+  category: LoeybCategoryType!
+}
+
+""""""
+input RegisterRecordInput {
+  imgFiles: ImgFileInput
+  areaCategoryTag: [AreaCategoryTagInput!]!
+  date: String!
+  location: String!
+  importance: Float
+  description: String
+}
+
+""""""
+input ImgFileInput {
+  fileId: String!
+  fileName: String!
+}
+
+""""""
+input AreaCategoryTagInput {
+  area: LoeybAreaType
+  category: LoeybCategoryType
+  tag: String
+}
+
+""""""
+input UpdateRecordInput {
+  recordId: String
+  imgFiles: ImgFileInput
+  areaCategoryTag: [AreaCategoryTagInput!]
+  date: String
+  location: String
+  importance: Float
+  description: String
+}
+
+"""addCategoryAndArea"""
+input addCategoryAndAreaInput {
+  """category"""
+  category: LoeybCategoryType!
+
+  """area"""
+  area: LoeybAreaType!
+}
+
+"""addTagInput"""
+input addTagInput {
+  """category"""
+  category: LoeybCategoryType!
+
+  """area"""
+  tag: String!
+}
