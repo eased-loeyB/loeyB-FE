@@ -14,7 +14,6 @@ import {
   useGoogleLoginMutation,
   useRequestEmailVerificationCodeMutation,
 } from '~/apollo/generated';
-import {saveToken} from '~/apollo/utils/auth';
 import {GOOGLE_LOGIN} from '~/assets';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import Button from '~/components/Button';
@@ -86,8 +85,7 @@ const Login: FC = () => {
     notifyOnNetworkStatusChange: true,
     onCompleted: async ({googleLogin: {data}}) => {
       if (data) {
-        await saveToken(data);
-        dispatch(onLogin());
+        dispatch(onLogin(data));
         ToastService.showSuccess('Welcome back');
       }
     },

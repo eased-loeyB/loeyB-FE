@@ -18,18 +18,9 @@ export enum MainStackName {
   CAMERA = 'CAMERA',
 }
 
-export type MainStackParamList = {
-  [MainStackName.INPUT_NAME]: undefined;
-  [MainStackName.SELECT_CATEGORY]: {
-    userName: string;
-  };
-  [MainStackName.WELCOME]: {
-    userName: string;
-  };
-  [MainStackName.FIRST_MEMORY]: undefined;
-};
-
-export type MainStackNavigationProps = StackNavigationProp<MainStackParamList>;
+export type MainStackNavigationProps = StackNavigationProp<
+  Record<MainStackName, undefined>
+>;
 
 const Stack = createStackNavigator();
 

@@ -6,6 +6,7 @@ import {isEmpty} from 'lodash';
 import {rgba} from 'polished';
 // @ts-ignore
 import RadialGradient from 'react-native-radial-gradient';
+import {useDispatch} from 'react-redux';
 import styled, {css} from 'styled-components/native';
 
 import {useSetUsernameMutation} from '~/apollo/generated';
@@ -17,6 +18,7 @@ import {
   MainStackName,
   MainStackNavigationProps,
 } from '~/navigation/stacks/MainStack';
+import {updateUserData} from '~/store/reduxtoolkit/user/userSlice';
 import {ColorMap} from '~/utils/Colors';
 import {convertFontSize, convertHeight, convertWidth} from '~/utils/design';
 import {ContainerStyle, TitleStyle} from '~/utils/Styles';
@@ -71,6 +73,7 @@ const ButtonWrapper = styled.View`
 `;
 
 const InputName: FC = () => {
+  const dispatch = useDispatch();
   const {navigate} = useNavigation<MainStackNavigationProps>();
   const [name, setName] = useState('');
   const isValidName = !isEmpty(name) && name.length < 31;
@@ -80,7 +83,8 @@ const InputName: FC = () => {
     notifyOnNetworkStatusChange: true,
     onCompleted: ({setUsername: {result}}) => {
       if (isSuccessResponse(result)) {
-        navigate(MainStackName.SELECT_CATEGORY, {userName: name});
+        dispatch(updateUserData({userName: name}));
+        navigate(MainStackName.SELECT_CATEGORY);
       }
     },
   });

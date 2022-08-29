@@ -4,6 +4,7 @@ import {DeviceEventEmitter, StatusBar} from 'react-native';
 // import notifee, {EventType} from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 import {
+  CompositeNavigationProp,
   NavigationContainer,
   NavigationContainerRef,
 } from '@react-navigation/native';
@@ -14,7 +15,7 @@ import {
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
 
-import {useRefreshMutation} from '~/apollo/generated';
+import {Authentication, useRefreshMutation} from '~/apollo/generated';
 import {EventToken} from '~/apollo/types/event';
 import {isSuccessResponse} from '~/apollo/utils/error';
 import Splash from '~/screens/Splash';
@@ -33,8 +34,8 @@ import {
 import {isIOS} from '~/utils/device';
 import ToastService from '~/utils/ToastService';
 
-import AuthStack from './stacks/AuthStack';
-import MainStack from './stacks/MainStack';
+import AuthStack, {AuthStackNavigationProps} from './stacks/AuthStack';
+import MainStack, {MainStackNavigationProps} from './stacks/MainStack';
 
 export enum ApplicationStackName {
   SPLASH = 'SPLASH',
@@ -44,8 +45,9 @@ export enum ApplicationStackName {
 
 export const navigationRef = createRef<NavigationContainerRef<any>>();
 
-export type ApplicationStackNavigationProps = StackNavigationProp<
-  Record<ApplicationStackName, undefined>
+export type ApplicationStackNavigationProps = CompositeNavigationProp<
+  StackNavigationProp<Record<ApplicationStackName, undefined>>,
+  CompositeNavigationProp<MainStackNavigationProps, AuthStackNavigationProps>
 >;
 
 const Stack = createStackNavigator();
@@ -64,7 +66,7 @@ const ApplicationNavigator: FC = () => {
         await saveRefreshToken(data?.refreshToken);
         await saveExpiresIn(`${data?.expiresIn}`);
 
-        setAuthData(data?.accessToken);
+        setAuthData(data ?? undefined);
         DeviceEventEmitter.emit(EventToken.UPDATE_TOKEN);
       }
     },
@@ -81,9 +83,9 @@ const ApplicationNavigator: FC = () => {
     }
   };
 
-  const setAuthData = (accessToken?: string) => {
-    if (accessToken) {
-      dispatch(onLogin());
+  const setAuthData = (data?: Authentication) => {
+    if (data) {
+      dispatch(onLogin(data));
     } else {
       dispatch(resetData());
     }
@@ -168,7 +170,9 @@ const ApplicationNavigator: FC = () => {
           translucent={true}
           backgroundColor="transparent"
         />
-        <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Navigator
+          initialRouteName={ApplicationStackName.SPLASH}
+          screenOptions={{headerShown: false}}>
           <Stack.Screen name={ApplicationStackName.SPLASH} component={Splash} />
 
           {isLoggedIn ? (

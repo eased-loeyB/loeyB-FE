@@ -2,7 +2,6 @@ import React, {FC, useState} from 'react';
 import {Keyboard, TouchableWithoutFeedback} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
-import {StackScreenProps} from '@react-navigation/stack';
 import styled from 'styled-components/native';
 
 import {
@@ -15,8 +14,8 @@ import Button from '~/components/Button';
 import {
   MainStackName,
   MainStackNavigationProps,
-  MainStackParamList,
 } from '~/navigation/stacks/MainStack';
+import {useTypedSelector} from '~/store';
 import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
 
 import Category from './Category';
@@ -33,11 +32,6 @@ import {
   workCategory,
   workTitle,
 } from './constants';
-
-type Props = StackScreenProps<
-  MainStackParamList,
-  MainStackName.SELECT_CATEGORY
->;
 
 const PageWrapper = styled.View`
   flex: 1;
@@ -69,11 +63,8 @@ const ButtonWrapper = styled.View`
   margin-top: 28px;
 `;
 
-const SelectCategory: FC<Props> = ({
-  route: {
-    params: {userName},
-  },
-}) => {
+const SelectCategory: FC = () => {
+  const {userName} = useTypedSelector(({user: {userData}}) => userData);
   const {navigate} = useNavigation<MainStackNavigationProps>();
 
   const [health, setHealth] = useState<SubCategoryProps[]>([]);
@@ -170,7 +161,7 @@ const SelectCategory: FC<Props> = ({
               title={'Next'}
               callback={() => {
                 submitData();
-                navigate(MainStackName.WELCOME, {userName});
+                navigate(MainStackName.WELCOME);
               }}
               enable={canNext}
             />

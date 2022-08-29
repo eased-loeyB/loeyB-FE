@@ -3,15 +3,16 @@ import {Keyboard, TouchableWithoutFeedback} from 'react-native';
 
 import {StackScreenProps} from '@react-navigation/stack';
 import {isEmpty} from 'lodash';
+import {useDispatch} from 'react-redux';
 import styled from 'styled-components/native';
 
 import {useAuthenticateLazyQuery} from '~/apollo/generated';
-import {saveToken} from '~/apollo/utils/auth';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import Button from '~/components/Button';
 import TextField from '~/components/TextField';
 import {AuthStackParamList, AuthStackName} from '~/navigation/stacks/AuthStack';
 import {getDeviceToken} from '~/services/notifications';
+import {onLogin} from '~/store/reduxtoolkit/user/userSlice';
 import {TitleStyle} from '~/utils/Styles';
 import ToastService from '~/utils/ToastService';
 import {validateEmail, validatePassword} from '~/utils/Validate';
@@ -53,6 +54,8 @@ const LoginWithPassword: FC<Props> = ({
     params: {email: defaultEmail},
   },
 }) => {
+  const dispatch = useDispatch();
+
   const [email, setEmail] = useState(defaultEmail);
   const [password, setPassword] = useState('');
   const isValidEmail = validateEmail(email) && !isEmpty(email);
@@ -62,7 +65,7 @@ const LoginWithPassword: FC<Props> = ({
     fetchPolicy: 'no-cache',
     onCompleted: async ({authenticate}) => {
       if (authenticate.data) {
-        await saveToken(authenticate.data);
+        dispatch(onLogin(authenticate.data));
       }
       ToastService.showSuccess(`Welcome back ${email}`);
     },

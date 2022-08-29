@@ -5,10 +5,10 @@ import {useNavigation} from '@react-navigation/native';
 import {StackScreenProps} from '@react-navigation/stack';
 import {isEmpty} from 'lodash';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {useDispatch} from 'react-redux';
 import styled from 'styled-components/native';
 
-import {useRegisterUserMutation} from '~/apollo/generated';
-import {saveToken} from '~/apollo/utils/auth';
+import {Authentication, useRegisterUserMutation} from '~/apollo/generated';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import Button from '~/components/Button';
 import TextField from '~/components/TextField';
@@ -17,6 +17,7 @@ import {
   MainStackName,
   MainStackNavigationProps,
 } from '~/navigation/stacks/MainStack';
+import {onLogin} from '~/store/reduxtoolkit/user/userSlice';
 import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
 import ToastService from '~/utils/ToastService';
 import {validatePassword} from '~/utils/Validate';
@@ -58,6 +59,8 @@ const RegisterWithPass: FC<Props> = ({
     params: {email},
   },
 }) => {
+  const dispatch = useDispatch();
+
   const {push} = useNavigation<MainStackNavigationProps>();
   const [pass, setPass] = useState('');
   const [rePass, setRePass] = useState('');
@@ -66,7 +69,7 @@ const RegisterWithPass: FC<Props> = ({
     notifyOnNetworkStatusChange: true,
     onCompleted: async ({registerUser: {data}}) => {
       if (data) {
-        await saveToken(data);
+        dispatch(onLogin(data as Authentication));
         ToastService.showSuccess('Welcome to loeyB');
         push(MainStackName.INPUT_NAME);
       }
