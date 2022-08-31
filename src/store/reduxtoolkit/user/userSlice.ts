@@ -11,7 +11,6 @@ import {removeAccessToken} from '~/utils/asyncstorage';
 export interface AuthData {
   isLoggedIn: boolean;
   isLoginExpired: boolean;
-  authentication?: Authentication;
 }
 
 export interface UserData {
@@ -44,9 +43,12 @@ export const userSlice = createSlice({
     onLogin: (state, action: PayloadAction<Authentication>) => {
       saveToken(action.payload).then(() => {
         state.authData = {
+          ...state.authData,
           isLoggedIn: true,
-          isLoginExpired: false,
-          authentication: action.payload,
+        };
+        state.userData = {
+          ...state.userData,
+          userName: action.payload.userName || '',
         };
       });
     },
@@ -56,6 +58,7 @@ export const userSlice = createSlice({
           isLoggedIn: false,
           isLoginExpired: true,
         };
+        state.userData = initialState.userData;
       });
     },
     resetData: state => {

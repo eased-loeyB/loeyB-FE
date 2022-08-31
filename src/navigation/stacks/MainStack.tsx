@@ -9,6 +9,7 @@ import FirstMemory from '~/screens/MainStack/FirstMemory';
 import InputName from '~/screens/MainStack/InputName';
 import SelectCategory from '~/screens/MainStack/SelectCategory';
 import Welcome from '~/screens/MainStack/Welcome';
+import {useTypedSelector} from '~/store';
 
 export enum MainStackName {
   INPUT_NAME = 'INPUT_NAME',
@@ -24,16 +25,35 @@ export type MainStackNavigationProps = StackNavigationProp<
 
 const Stack = createStackNavigator();
 
-const MainStack: FC = () => (
-  <Stack.Navigator screenOptions={{headerShown: false}}>
-    <Stack.Screen name={MainStackName.INPUT_NAME} component={InputName} />
-    <Stack.Screen
-      name={MainStackName.SELECT_CATEGORY}
-      component={SelectCategory}
-    />
-    <Stack.Screen name={MainStackName.WELCOME} component={Welcome} />
-    <Stack.Screen name={MainStackName.FIRST_MEMORY} component={FirstMemory} />
-  </Stack.Navigator>
-);
+const MainStack: FC = () => {
+  const {userName, categoryAndTags, stardustRecords} = useTypedSelector(
+    ({user: {userData}}) => userData,
+  );
+
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      {!userName && (
+        <Stack.Screen name={MainStackName.INPUT_NAME} component={InputName} />
+      )}
+
+      {!categoryAndTags.length && (
+        <Stack.Screen
+          name={MainStackName.SELECT_CATEGORY}
+          component={SelectCategory}
+        />
+      )}
+
+      {!stardustRecords.length && (
+        <>
+          <Stack.Screen name={MainStackName.WELCOME} component={Welcome} />
+          <Stack.Screen
+            name={MainStackName.FIRST_MEMORY}
+            component={FirstMemory}
+          />
+        </>
+      )}
+    </Stack.Navigator>
+  );
+};
 
 export default MainStack;

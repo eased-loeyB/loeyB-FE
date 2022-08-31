@@ -15,7 +15,7 @@ import {
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
 
-import {Authentication, useRefreshMutation} from '~/apollo/generated';
+import {useRefreshMutation} from '~/apollo/generated';
 import {EventToken} from '~/apollo/types/event';
 import {isSuccessResponse} from '~/apollo/utils/error';
 import Splash from '~/screens/Splash';
@@ -25,12 +25,7 @@ import {
   onLogout,
   resetData,
 } from '~/store/reduxtoolkit/user/userSlice';
-import {
-  saveAccessToken,
-  saveRefreshToken,
-  saveExpiresIn,
-  loadRefreshToken,
-} from '~/utils/asyncstorage';
+import {loadRefreshToken} from '~/utils/asyncstorage';
 import {isIOS} from '~/utils/device';
 import ToastService from '~/utils/ToastService';
 
@@ -59,14 +54,15 @@ const ApplicationNavigator: FC = () => {
   );
   const dispatch = useDispatch();
 
-  const [getRefreshToken] = useRefreshMutation({
+  const [requestRefreshToken] = useRefreshMutation({
     onCompleted: async ({refresh: {result, data}}) => {
       if (isSuccessResponse(result)) {
-        await saveAccessToken(data?.accessToken);
-        await saveRefreshToken(data?.refreshToken);
-        await saveExpiresIn(`${data?.expiresIn}`);
+        if (data) {
+          dispatch(onLogin(data));
+        } else {
+          dispatch(resetData());
+        }
 
-        setAuthData(data ?? undefined);
         DeviceEventEmitter.emit(EventToken.UPDATE_TOKEN);
       }
     },
@@ -83,19 +79,11 @@ const ApplicationNavigator: FC = () => {
     }
   };
 
-  const setAuthData = (data?: Authentication) => {
-    if (data) {
-      dispatch(onLogin(data));
-    } else {
-      dispatch(resetData());
-    }
-  };
-
   const onRefreshToken = async () => {
     const refreshToken = await loadRefreshToken();
 
     if (refreshToken) {
-      await getRefreshToken({
+      await requestRefreshToken({
         variables: {
           refreshToken,
         },

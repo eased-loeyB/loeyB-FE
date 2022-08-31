@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useRef} from 'react';
+import React, {FC, useEffect, useMemo, useRef} from 'react';
 import {Animated, Easing} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
@@ -10,7 +10,6 @@ import {
   ApplicationStackName,
   ApplicationStackNavigationProps,
 } from '~/navigation/Application';
-import {MainStackName} from '~/navigation/stacks/MainStack';
 import {useTypedSelector} from '~/store';
 import {ContainerStyle} from '~/utils/Styles';
 
@@ -28,29 +27,25 @@ const Splash: FC = () => {
     authData: {isLoggedIn},
     userData: {userName, categoryAndTags, stardustRecords},
   } = useTypedSelector(({user}) => user);
+  const hasUserData = useMemo(
+    () =>
+      !!userName && categoryAndTags.length > 0 && stardustRecords.length > 0,
+    [userName, categoryAndTags, stardustRecords],
+  );
 
   const opacity = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
 
   useEffect(() => {
     const timeoutId: NodeJS.Timeout = setTimeout(() => {
-      if (isLoggedIn) {
-        if (stardustRecords.length) {
-          // TODO: go to main page
-          return replace(MainStackName.FIRST_MEMORY);
-        }
-
-        if (categoryAndTags.length) {
-          return replace(MainStackName.FIRST_MEMORY);
-        }
-
-        if (userName) {
-          return replace(MainStackName.SELECT_CATEGORY);
-        }
-
-        return replace(MainStackName.INPUT_NAME);
+      if (!isLoggedIn) {
+        return replace(ApplicationStackName.AUTH);
       }
 
-      return replace(ApplicationStackName.AUTH);
+      if (!hasUserData) {
+        return replace(ApplicationStackName.MAIN);
+      }
+
+      // TODO: add redirection to main page
     }, 3000);
 
     return () => {
