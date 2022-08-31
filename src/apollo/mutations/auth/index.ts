@@ -5,7 +5,6 @@ import {
   GoogleLoginInput,
   Output,
   RegisterUserInput,
-  RegisterUserOutput,
   RequestEmailVerificationCodeInput,
   RequestEmailVerificationOutput,
   SetUsernameInput,
@@ -25,10 +24,7 @@ export const REFRESH_TOKEN: TypedDocumentNode<
         tokenType
         expiresIn
         refreshToken
-        redirectUrl
-        hasUserName
-        hasUserCategories
-        hasUserRecords
+        userName
       }
     }
   }
@@ -50,11 +46,17 @@ export const REQUEST_EMAIL_VERIFICATION_CODE: TypedDocumentNode<
 `;
 
 export const REGISTER_USER: TypedDocumentNode<
-  RegisterUserOutput,
+  AuthenticationOutput,
   RegisterUserInput
 > = gql`
-  mutation registerUser($email: String!, $password: String!) {
-    registerUser(input: {email: $email, password: $password}) {
+  mutation registerUser(
+    $email: String!
+    $password: String!
+    $deviceToken: String
+  ) {
+    registerUser(
+      input: {email: $email, password: $password, deviceToken: $deviceToken}
+    ) {
       result
       errorMessage
       data {
@@ -62,6 +64,7 @@ export const REGISTER_USER: TypedDocumentNode<
         tokenType
         expiresIn
         refreshToken
+        userName
       }
     }
   }
@@ -80,8 +83,8 @@ export const GOOGLE_LOGIN: TypedDocumentNode<
   AuthenticationOutput,
   GoogleLoginInput
 > = gql`
-  mutation googleLogin($token: String!) {
-    googleLogin(input: {token: $token}) {
+  mutation googleLogin($token: String!, $deviceToken: String) {
+    googleLogin(input: {token: $token, deviceToken: $deviceToken}) {
       result
       errorMessage
       data {
@@ -89,10 +92,7 @@ export const GOOGLE_LOGIN: TypedDocumentNode<
         tokenType
         expiresIn
         refreshToken
-        redirectUrl
-        hasUserName
-        hasUserCategories
-        hasUserRecords
+        userName
       }
     }
   }

@@ -26,10 +26,7 @@ export const AUTHENTICATE: TypedDocumentNode<
         tokenType
         expiresIn
         refreshToken
-        redirectUrl
-        hasUserName
-        hasUserCategories
-        hasUserRecords
+        userName
       }
     }
   }
