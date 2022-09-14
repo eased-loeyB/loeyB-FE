@@ -62,7 +62,6 @@ const LoginWithPassword: FC<Props> = ({
   const isValidPassword = validatePassword(password) && !isEmpty(password);
 
   const [login] = useAuthenticateLazyQuery({
-    fetchPolicy: 'no-cache',
     onCompleted: async ({authenticate}) => {
       if (authenticate.data) {
         dispatch(onLogin(authenticate.data));

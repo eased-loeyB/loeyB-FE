@@ -79,8 +79,6 @@ const InputName: FC = () => {
   const isValidName = !isEmpty(name) && name.length < 31;
 
   const [requestSetUsername] = useSetUsernameMutation({
-    fetchPolicy: 'no-cache',
-    notifyOnNetworkStatusChange: true,
     onCompleted: ({setUsername: {result}}) => {
       if (isSuccessResponse(result)) {
         dispatch(updateUserData({userName: name}));

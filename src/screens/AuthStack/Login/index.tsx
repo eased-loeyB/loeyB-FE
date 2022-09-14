@@ -62,8 +62,6 @@ const Login: FC = () => {
   const keyboard = useKeyboard();
 
   const [requestCode] = useRequestEmailVerificationCodeMutation({
-    fetchPolicy: 'no-cache',
-    notifyOnNetworkStatusChange: true,
     onCompleted: ({requestEmailVerificationCode: {data, result}}) => {
       if (data) {
         ToastService.showSuccess('Please check your email');
@@ -81,8 +79,6 @@ const Login: FC = () => {
   });
 
   const [googleLogin] = useGoogleLoginMutation({
-    fetchPolicy: 'no-cache',
-    notifyOnNetworkStatusChange: true,
     onCompleted: async ({googleLogin: {data}}) => {
       if (data) {
         dispatch(onLogin(data));

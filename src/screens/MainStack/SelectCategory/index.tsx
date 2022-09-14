@@ -72,10 +72,7 @@ const SelectCategory: FC = () => {
   const [social, setSocial] = useState<SubCategoryProps[]>([]);
   const [life, setLife] = useState<SubCategoryProps[]>([]);
   const [work, setWork] = useState<SubCategoryProps[]>([]);
-  const [registerCategories] = useRegisterCategoriesMutation({
-    fetchPolicy: 'no-cache',
-    notifyOnNetworkStatusChange: true,
-  });
+  const [registerCategories] = useRegisterCategoriesMutation();
 
   const canNext =
     health.length + mind.length + social.length + life.length + work.length >=

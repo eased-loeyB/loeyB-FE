@@ -65,8 +65,6 @@ const RegisterWithPass: FC<Props> = ({
   const [pass, setPass] = useState('');
   const [rePass, setRePass] = useState('');
   const [registerUser] = useRegisterUserMutation({
-    fetchPolicy: 'no-cache',
-    notifyOnNetworkStatusChange: true,
     onCompleted: async ({registerUser: {data}}) => {
       if (data) {
         dispatch(onLogin(data as Authentication));
