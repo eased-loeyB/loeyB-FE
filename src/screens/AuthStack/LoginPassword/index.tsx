@@ -29,6 +29,7 @@ const PageWrapper = styled.View`
 
 const Container = styled.View`
   flex: 1;
+  width: 100%;
   padding: 0 24px;
   margin-top: 60px;
 `;
