@@ -3,10 +3,6 @@ import {Platform, StyleSheet} from 'react-native';
 import {SafeAreaProviderCompat} from '@react-navigation/elements';
 import {EdgeInsets} from 'react-native-safe-area-context';
 
-import {Fonts} from '~/assets';
-import {ColorMap} from '~/utils/Colors';
-import {convertFontSize} from '~/utils/design';
-
 const getPaddingBottom = (insets: EdgeInsets) => {
   if (Platform.OS === 'android') {
     return 0;
@@ -15,13 +11,6 @@ const getPaddingBottom = (insets: EdgeInsets) => {
 };
 
 export const MainStyles = StyleSheet.create({
-  tabBarBadgeStyle: {
-    backgroundColor: ColorMap.ErrorBase,
-    fontFamily: Fonts.Medium,
-    fontSize: convertFontSize(11),
-    color: ColorMap.White,
-    letterSpacing: -0.1,
-  },
   tabBarStyle: {
     borderTopWidth: 1,
     borderTopColor: '#E9ECEF',
@@ -33,21 +22,5 @@ export const MainStyles = StyleSheet.create({
     paddingBottom: getPaddingBottom(
       SafeAreaProviderCompat.initialMetrics.insets,
     ),
-  },
-  dotIcon: {
-    width: 4,
-    height: 4,
-    backgroundColor: ColorMap.ErrorBase02,
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    borderRadius: 45,
-  },
-  badgeStyle: {
-    backgroundColor: ColorMap.ErrorBase02,
-    color: ColorMap.White,
-    fontSize: convertFontSize(11),
-    fontFamily: Fonts.Medium,
-    fontWeight: '500',
   },
 });

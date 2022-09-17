@@ -18,7 +18,7 @@ import {
   MainStackNavigationProps,
 } from '~/navigation/stacks/MainStack';
 import {onLogin} from '~/store/reduxtoolkit/user/userSlice';
-import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
+import {BottomWrapperStyle, SubtitleStyle, TitleStyle} from '~/utils/Styles';
 import ToastService from '~/utils/ToastService';
 import {validatePassword} from '~/utils/Validate';
 
@@ -51,7 +51,7 @@ const PasswordInputWrapper = styled.View`
 `;
 
 const ButtonWrapper = styled.View`
-  margin-top: 28px;
+  ${BottomWrapperStyle}
 `;
 
 const RegisterWithPass: FC<Props> = ({
