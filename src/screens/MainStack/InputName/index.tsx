@@ -20,7 +20,6 @@ import {
 } from '~/navigation/stacks/MainStack';
 import {updateUserData} from '~/store/reduxtoolkit/user/userSlice';
 import {ColorMap} from '~/utils/Colors';
-import {convertFontSize, convertHeight, convertWidth} from '~/utils/design';
 import {ContainerStyle, TitleStyle} from '~/utils/Styles';
 
 const Container = styled.View`
@@ -53,7 +52,7 @@ const FirstCircle = styled.View`
 
 const SecondCircle = styled.View`
   ${CircleStyle}
-  width: 200;
+  width: 200px;
   height: 200px;
   border-width: 12px;
   border-color: ${rgba(ColorMap.LightBlue, 0.3)};
@@ -103,8 +102,8 @@ const InputName: FC = () => {
                 rgba(ColorMap.LightBlue2, 0),
                 rgba(ColorMap.LightBlue2, 1),
               ]}
-              center={[convertWidth(88), convertHeight(88)]}
-              radius={convertWidth(176)}>
+              center={[88, 88]}
+              radius={176}>
               <TextField
                 value={name}
                 onTextChange={value => setName(value)}
@@ -145,14 +144,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   textFieldContainer: {
-    width: convertWidth(140),
-    height: convertHeight(36),
+    width: 140,
+    height: 36,
     backgroundColor: 'transparent',
   },
   textInput: {
     color: ColorMap.Black,
     textAlign: 'center',
-    fontSize: convertFontSize(12),
+    fontSize: 12,
   },
 });
 

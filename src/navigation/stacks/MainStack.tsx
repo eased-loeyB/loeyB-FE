@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useMemo} from 'react';
 
 import {
   createStackNavigator,
@@ -26,32 +26,35 @@ export type MainStackNavigationProps = StackNavigationProp<
 const Stack = createStackNavigator();
 
 const MainStack: FC = () => {
-  const {userName, categoryAndTags, stardustRecords} = useTypedSelector(
+  const {userName, categoryAndTags} = useTypedSelector(
     ({user: {userData}}) => userData,
   );
 
+  const initialRouteName: MainStackName = useMemo(() => {
+    if (!userName) {
+      return MainStackName.INPUT_NAME;
+    }
+
+    if (!categoryAndTags.length) {
+      return MainStackName.SELECT_CATEGORY;
+    }
+
+    return MainStackName.WELCOME;
+  }, [userName, categoryAndTags]);
+
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      {!userName && (
-        <Stack.Screen name={MainStackName.INPUT_NAME} component={InputName} />
-      )}
+    <Stack.Navigator
+      initialRouteName={initialRouteName}
+      screenOptions={{headerShown: false}}>
+      <Stack.Screen name={MainStackName.INPUT_NAME} component={InputName} />
 
-      {!categoryAndTags.length && (
-        <Stack.Screen
-          name={MainStackName.SELECT_CATEGORY}
-          component={SelectCategory}
-        />
-      )}
+      <Stack.Screen
+        name={MainStackName.SELECT_CATEGORY}
+        component={SelectCategory}
+      />
 
-      {!stardustRecords.length && (
-        <>
-          <Stack.Screen name={MainStackName.WELCOME} component={Welcome} />
-          <Stack.Screen
-            name={MainStackName.FIRST_MEMORY}
-            component={FirstMemory}
-          />
-        </>
-      )}
+      <Stack.Screen name={MainStackName.WELCOME} component={Welcome} />
+      <Stack.Screen name={MainStackName.FIRST_MEMORY} component={FirstMemory} />
     </Stack.Navigator>
   );
 };
