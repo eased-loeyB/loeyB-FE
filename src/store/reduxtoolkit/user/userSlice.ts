@@ -41,25 +41,23 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     onLogin: (state, action: PayloadAction<Authentication>) => {
-      saveToken(action.payload).then(() => {
-        state.authData = {
-          ...state.authData,
-          isLoggedIn: true,
-        };
-        state.userData = {
-          ...state.userData,
-          userName: action.payload.userName || '',
-        };
-      });
+      saveToken(action.payload);
+      state.authData = {
+        ...state.authData,
+        isLoggedIn: true,
+      };
+      state.userData = {
+        ...state.userData,
+        userName: action.payload.userName || '',
+      };
     },
     onLogout: state => {
-      removeAccessToken().then(() => {
-        state.authData = {
-          isLoggedIn: false,
-          isLoginExpired: true,
-        };
-        state.userData = initialState.userData;
-      });
+      removeAccessToken();
+      state.authData = {
+        isLoggedIn: false,
+        isLoginExpired: true,
+      };
+      state.userData = initialState.userData;
     },
     resetData: state => {
       console.log(state);
