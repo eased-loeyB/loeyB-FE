@@ -1,7 +1,6 @@
 import React, {FC, useState} from 'react';
 import {Keyboard, StyleSheet, TouchableWithoutFeedback} from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
 import {StackScreenProps} from '@react-navigation/stack';
 import {isEmpty} from 'lodash';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -13,10 +12,6 @@ import BackgroundCommon from '~/components/BackgroundCommon';
 import Button from '~/components/Button';
 import TextField from '~/components/TextField';
 import {AuthStackParamList, AuthStackName} from '~/navigation/stacks/AuthStack';
-import {
-  MainStackName,
-  MainStackNavigationProps,
-} from '~/navigation/stacks/MainStack';
 import {onLogin} from '~/store/reduxtoolkit/user/userSlice';
 import {BottomWrapperStyle, SubtitleStyle, TitleStyle} from '~/utils/Styles';
 import ToastService from '~/utils/ToastService';
@@ -61,7 +56,6 @@ const RegisterWithPass: FC<Props> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const {push} = useNavigation<MainStackNavigationProps>();
   const [pass, setPass] = useState('');
   const [rePass, setRePass] = useState('');
   const [registerUser] = useRegisterUserMutation({
@@ -69,7 +63,6 @@ const RegisterWithPass: FC<Props> = ({
       if (data) {
         dispatch(onLogin(data as Authentication));
         ToastService.showSuccess('Welcome to loeyB');
-        push(MainStackName.INPUT_NAME);
       }
     },
   });
