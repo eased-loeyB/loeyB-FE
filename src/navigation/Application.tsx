@@ -1,4 +1,4 @@
-import React, {createRef, FC, useEffect} from 'react';
+import React, {createRef, FC, useEffect, useMemo, useState} from 'react';
 import {DeviceEventEmitter, StatusBar} from 'react-native';
 
 // import notifee, {EventType} from '@notifee/react-native';
@@ -49,10 +49,13 @@ const Stack = createStackNavigator();
 
 // @refresh reset
 const ApplicationNavigator: FC = () => {
-  const {isLoggedIn, isLoginExpired} = useTypedSelector(
-    ({user: {authData}}) => authData,
-  );
+  const {
+    authData: {isLoggedIn, isLoginExpired},
+    userData: {userName, categoryAndTags, stardustRecords},
+  } = useTypedSelector(({user}) => user);
   const dispatch = useDispatch();
+
+  const [showSplash, setShowSplash] = useState<boolean>(true);
 
   const [requestRefreshToken] = useRefreshMutation({
     onCompleted: async ({refresh: {result, data}}) => {
@@ -67,6 +70,12 @@ const ApplicationNavigator: FC = () => {
       }
     },
   });
+
+  const hasUserData = useMemo(
+    () =>
+      !!userName && categoryAndTags.length > 0 && stardustRecords.length > 0,
+    [userName, categoryAndTags, stardustRecords],
+  );
 
   const requestUserPermission = async () => {
     const authStatus = await messaging().requestPermission();
@@ -115,10 +124,19 @@ const ApplicationNavigator: FC = () => {
       },
     );
 
+    const timeoutId: NodeJS.Timeout = setTimeout(() => {
+      setShowSplash(false);
+    }, 3000);
+
     return () => {
       tokenExpiredEvent.remove();
       tokenInvalidEvent.remove();
+
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -158,10 +176,13 @@ const ApplicationNavigator: FC = () => {
           translucent={true}
           backgroundColor="transparent"
         />
-        <Stack.Navigator
-          initialRouteName={ApplicationStackName.SPLASH}
-          screenOptions={{headerShown: false}}>
-          <Stack.Screen name={ApplicationStackName.SPLASH} component={Splash} />
+        <Stack.Navigator screenOptions={{headerShown: false}}>
+          {showSplash && (
+            <Stack.Screen
+              name={ApplicationStackName.SPLASH}
+              component={Splash}
+            />
+          )}
 
           {isLoggedIn ? (
             <Stack.Screen
@@ -171,7 +192,16 @@ const ApplicationNavigator: FC = () => {
                 animationEnabled: false,
               }}
             />
+          ) : !hasUserData ? (
+            <Stack.Screen
+              name={ApplicationStackName.AUTH}
+              component={AuthStack}
+              options={{
+                animationEnabled: false,
+              }}
+            />
           ) : (
+            // TODO: add real main page
             <Stack.Screen
               name={ApplicationStackName.AUTH}
               component={AuthStack}
