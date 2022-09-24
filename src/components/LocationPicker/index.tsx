@@ -89,7 +89,7 @@ const LocationPicker: FC<MyLocationPickerProps> = ({
           {(cities ?? []).map(item => {
             const isSelected = location === item;
             return (
-              <Location onPress={() => callback(item)}>
+              <Location key={item} onPress={() => callback(item)}>
                 <IconWrapper>
                   {isSelected && <Image source={PUBLIC} />}
                 </IconWrapper>

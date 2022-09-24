@@ -34,3 +34,4 @@ export const VIDEO_CAMERA = require('./icons/video-camera.png');
 export const VIEW_CAROUSEL = require('./icons/view_carousel.png');
 export const HAND = require('./icons/hand.png');
 export const DELETE_MODAL = require('./icons/delete_modal.png');
+export const FIRST_STARDUST = require('./icons/first_stardust.png');

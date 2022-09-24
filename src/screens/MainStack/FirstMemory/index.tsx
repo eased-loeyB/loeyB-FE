@@ -9,6 +9,8 @@ import styled from 'styled-components/native';
 import {
   CAMERA,
   CLEAR_ICON,
+  DELETE_MODAL,
+  FIRST_STARDUST,
   LAST_PAGE,
   loeyB,
   PUBLIC,
@@ -22,11 +24,10 @@ import BackgroundCommon from '~/components/BackgroundCommon';
 import BottomModal from '~/components/BottomModal';
 import IconButton from '~/components/IconButton';
 import LocationPicker from '~/components/LocationPicker';
+import Modal from '~/components/Modal';
 import MyDatePicker from '~/components/MyDatePicker';
 import {ChooseMultiple, FileAttachment, OpenCamera} from '~/utils/Camera';
 import {ColorMap} from '~/utils/Colors';
-
-import DeleteModal from './DeleteModal';
 
 const PageWrapper = styled.KeyboardAvoidingView`
   flex: 1;
@@ -99,7 +100,14 @@ const StyledTextInput = styled.TextInput`
   color: ${ColorMap.White};
 `;
 
+const GuideContent = styled.Text`
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 32px;
+`;
+
 const FirstMemory = () => {
+  const [openGuideModal, setOpenGuideModal] = useState(true);
   const [image, setImage] = useState<FileAttachment[]>();
   const [openTimePicker, setOpenTimePicker] = useState(false);
   const [date, setDate] = useState(dayjs());
@@ -213,38 +221,58 @@ const FirstMemory = () => {
               </IconButton>
             </InformationContainer>
           )}
-          <MyDatePicker
-            callback={d => {
-              setDate(dayjs(d));
-              console.log('da', dayjs(d).toString());
-              setOpenTimePicker(false);
-            }}
-            open={openTimePicker}
-            date={date}
-            dismiss={() => {
-              setOpenTimePicker(false);
-            }}
-          />
-          <LocationPicker
-            dismiss={() => {
-              setCityPicker(false);
-            }}
-            callback={c => {
-              setCity(c);
-              setCityPicker(false);
-            }}
-            location={city}
-            open={openCityPicker}
-          />
-          <DeleteModal
-            callback={() => {
-              setOpenDeleteModal(false);
-              setImage(undefined);
-            }}
-            open={openDeleteModal}
-            dismiss={() => setOpenDeleteModal(false)}
-          />
         </Base>
+
+        <Modal
+          open={openGuideModal}
+          dismiss={() => setOpenGuideModal(false)}
+          callback={() => setOpenGuideModal(false)}
+          content={
+            <GuideContent>
+              {'Create 5 stardusts and\nyour star will be created!'}
+            </GuideContent>
+          }
+          iconSource={FIRST_STARDUST}
+          buttonText="Next"
+        />
+
+        <MyDatePicker
+          callback={d => {
+            setDate(dayjs(d));
+            console.log('da', dayjs(d).toString());
+            setOpenTimePicker(false);
+          }}
+          open={openTimePicker}
+          date={date}
+          dismiss={() => {
+            setOpenTimePicker(false);
+          }}
+        />
+
+        <LocationPicker
+          dismiss={() => {
+            setCityPicker(false);
+          }}
+          callback={c => {
+            setCity(c);
+            setCityPicker(false);
+          }}
+          location={city}
+          open={openCityPicker}
+        />
+
+        <Modal
+          open={openDeleteModal}
+          dismiss={() => setOpenDeleteModal(false)}
+          callback={() => {
+            setOpenDeleteModal(false);
+            setImage(undefined);
+          }}
+          content="Are you sure to delete this image from your device album?"
+          iconSource={DELETE_MODAL}
+          buttonText="Delete from device album"
+        />
+
         <BottomModal />
       </PageWrapper>
     </BackgroundCommon>
