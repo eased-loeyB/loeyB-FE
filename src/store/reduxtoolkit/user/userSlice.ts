@@ -2,11 +2,9 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 import {
   Authentication,
-  RegisteredCategoryAndTag,
+  RegisteredAreaAndCategoryAndTag,
   StardustRecords,
 } from '~/apollo/generated';
-import {saveToken} from '~/apollo/utils/auth';
-import {removeAccessToken} from '~/utils/asyncstorage';
 
 export interface AuthData {
   isLoggedIn: boolean;
@@ -15,7 +13,7 @@ export interface AuthData {
 
 export interface UserData {
   userName: string;
-  categoryAndTags: RegisteredCategoryAndTag[];
+  areaAndCategoryAndTags: RegisteredAreaAndCategoryAndTag[];
   stardustRecords: StardustRecords[];
 }
 
@@ -31,7 +29,7 @@ const initialState: UserState = {
   },
   userData: {
     userName: '',
-    categoryAndTags: [],
+    areaAndCategoryAndTags: [],
     stardustRecords: [],
   },
 };
@@ -41,7 +39,6 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     onLogin: (state, action: PayloadAction<Authentication>) => {
-      saveToken(action.payload);
       state.authData = {
         ...state.authData,
         isLoggedIn: true,
@@ -52,7 +49,6 @@ export const userSlice = createSlice({
       };
     },
     onLogout: state => {
-      removeAccessToken();
       state.authData = {
         isLoggedIn: false,
         isLoginExpired: true,

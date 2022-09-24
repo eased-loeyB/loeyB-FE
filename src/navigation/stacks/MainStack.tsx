@@ -26,7 +26,7 @@ export type MainStackNavigationProps = StackNavigationProp<
 const Stack = createStackNavigator();
 
 const MainStack: FC = () => {
-  const {userName, categoryAndTags} = useTypedSelector(
+  const {userName, areaAndCategoryAndTags} = useTypedSelector(
     ({user: {userData}}) => userData,
   );
 
@@ -35,12 +35,12 @@ const MainStack: FC = () => {
       return MainStackName.INPUT_NAME;
     }
 
-    if (!categoryAndTags.length) {
+    if (!areaAndCategoryAndTags.length) {
       return MainStackName.SELECT_CATEGORY;
     }
 
     return MainStackName.WELCOME;
-  }, [userName, categoryAndTags]);
+  }, [userName, areaAndCategoryAndTags]);
 
   return (
     <Stack.Navigator

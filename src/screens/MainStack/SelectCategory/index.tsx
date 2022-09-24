@@ -79,7 +79,14 @@ const SelectCategory: FC = () => {
   const [registerCategories] = useRegisterCategoriesMutation({
     onCompleted: ({registerCategories: {result}}) => {
       if (isSuccessResponse(result)) {
-        dispatch(updateUserData({categoryAndTags: areaCategory}));
+        dispatch(
+          updateUserData({
+            areaAndCategoryAndTags: areaCategory.map(value => ({
+              ...value,
+              tag: [],
+            })),
+          }),
+        );
         navigate(MainStackName.WELCOME);
       }
     },
