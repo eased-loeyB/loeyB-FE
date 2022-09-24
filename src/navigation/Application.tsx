@@ -83,7 +83,6 @@ const ApplicationNavigator: FC = () => {
   const [fetchCategoryAndTag] =
     useFetchRegisteredAreaAndCategoryAndTagLazyQuery({
       onCompleted: ({fetchRegisteredAreaAndCategoryAndTag: {data, result}}) => {
-        console.log('fetch areas', data, result);
         if (isSuccessResponse(result)) {
           if (data) {
             dispatch(
@@ -98,7 +97,6 @@ const ApplicationNavigator: FC = () => {
 
   const [fetchRecords] = useFetchRegisteredRecordsLazyQuery({
     onCompleted: ({fetchRegisteredRecords: {data, result}}) => {
-      console.log('fetch records', data, result);
       if (isSuccessResponse(result)) {
         if (data) {
           dispatch(
