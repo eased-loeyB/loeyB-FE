@@ -1,8 +1,8 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useMemo, useState} from 'react';
 import {Keyboard, TouchableWithoutFeedback} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
-import {StackScreenProps} from '@react-navigation/stack';
+import {useDispatch} from 'react-redux';
 import styled from 'styled-components/native';
 
 import {
@@ -10,13 +10,15 @@ import {
   LoeybAreaType,
   useRegisterCategoriesMutation,
 } from '~/apollo/generated';
+import {isSuccessResponse} from '~/apollo/utils/error';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import Button from '~/components/Button';
 import {
   MainStackName,
   MainStackNavigationProps,
-  MainStackParamList,
 } from '~/navigation/stacks/MainStack';
+import {useTypedSelector} from '~/store';
+import {updateUserData} from '~/store/reduxtoolkit/user/userSlice';
 import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
 
 import Category from './Category';
@@ -33,11 +35,6 @@ import {
   workCategory,
   workTitle,
 } from './constants';
-
-type Props = StackScreenProps<
-  MainStackParamList,
-  MainStackName.SELECT_CATEGORY
->;
 
 const PageWrapper = styled.View`
   flex: 1;
@@ -69,12 +66,10 @@ const ButtonWrapper = styled.View`
   margin-top: 28px;
 `;
 
-const SelectCategory: FC<Props> = ({
-  route: {
-    params: {userName},
-  },
-}) => {
+const SelectCategory: FC = () => {
+  const {userName} = useTypedSelector(({user: {userData}}) => userData);
   const {navigate} = useNavigation<MainStackNavigationProps>();
+  const dispatch = useDispatch();
 
   const [health, setHealth] = useState<SubCategoryProps[]>([]);
   const [mind, setMind] = useState<SubCategoryProps[]>([]);
@@ -82,31 +77,41 @@ const SelectCategory: FC<Props> = ({
   const [life, setLife] = useState<SubCategoryProps[]>([]);
   const [work, setWork] = useState<SubCategoryProps[]>([]);
   const [registerCategories] = useRegisterCategoriesMutation({
-    fetchPolicy: 'no-cache',
-    notifyOnNetworkStatusChange: true,
+    onCompleted: ({registerCategories: {result}}) => {
+      if (isSuccessResponse(result)) {
+        dispatch(updateUserData({categoryAndTags: areaCategory}));
+        navigate(MainStackName.WELCOME);
+      }
+    },
   });
 
   const canNext =
     health.length + mind.length + social.length + life.length + work.length >=
     3;
 
-  const submitData = () => {
-    const areaCategory: AreaCategoryInput[] = [];
+  const areaCategory = useMemo(() => {
+    const areaCategoryInput: AreaCategoryInput[] = [];
+
     health.forEach(({title}) =>
-      areaCategory.push({area: LoeybAreaType.Health, category: title}),
+      areaCategoryInput.push({area: LoeybAreaType.Health, category: title}),
     );
     mind.forEach(({title}) =>
-      areaCategory.push({area: LoeybAreaType.Mind, category: title}),
+      areaCategoryInput.push({area: LoeybAreaType.Mind, category: title}),
     );
     social.forEach(({title}) =>
-      areaCategory.push({area: LoeybAreaType.Social, category: title}),
+      areaCategoryInput.push({area: LoeybAreaType.Social, category: title}),
     );
     life.forEach(({title}) =>
-      areaCategory.push({area: LoeybAreaType.Hobby, category: title}),
+      areaCategoryInput.push({area: LoeybAreaType.Hobby, category: title}),
     );
     work.forEach(({title}) =>
-      areaCategory.push({area: LoeybAreaType.Work, category: title}),
+      areaCategoryInput.push({area: LoeybAreaType.Work, category: title}),
     );
+
+    return areaCategoryInput;
+  }, [health, mind, social, life, work]);
+
+  const submitData = () => {
     registerCategories({
       variables: {
         areaCategory,
@@ -170,7 +175,7 @@ const SelectCategory: FC<Props> = ({
               title={'Next'}
               callback={() => {
                 submitData();
-                navigate(MainStackName.WELCOME, {userName});
+                // navigate(MainStackName.WELCOME);
               }}
               enable={canNext}
             />

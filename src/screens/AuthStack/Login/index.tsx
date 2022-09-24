@@ -11,10 +11,10 @@ import {useDispatch} from 'react-redux';
 import styled from 'styled-components/native';
 
 import {
+  LoeybErrorCode,
   useGoogleLoginMutation,
   useRequestEmailVerificationCodeMutation,
 } from '~/apollo/generated';
-import {saveToken} from '~/apollo/utils/auth';
 import {GOOGLE_LOGIN} from '~/assets';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import Button from '~/components/Button';
@@ -62,36 +62,38 @@ const Login: FC = () => {
   const isValidEmail = useMemo(() => validateEmail(email), [email]);
   const keyboard = useKeyboard();
 
-  const [requestCode] = useRequestEmailVerificationCodeMutation({
-    fetchPolicy: 'no-cache',
-    notifyOnNetworkStatusChange: true,
-    onCompleted: ({requestEmailVerificationCode: {data, result}}) => {
-      if (data) {
-        ToastService.showSuccess('Please check your email');
-        if (result === 'DUPLICATE_EMAIL') {
+  const [requestCode, {loading: isLoadingRequestCode}] =
+    useRequestEmailVerificationCodeMutation({
+      onCompleted: ({requestEmailVerificationCode: {data, result}}) => {
+        if (data) {
+          ToastService.showSuccess('Please check your email');
+          push(AuthStackName.REGISTER, {
+            email,
+          });
+        } else if (result === LoeybErrorCode.DuplicateEmail) {
           push(AuthStackName.LOGIN_WITH_PASS, {
             email,
           });
         } else {
-          push(AuthStackName.REGISTER, {
-            email,
-          });
+          ToastService.showError('Something went wrong. Please try again.');
         }
-      }
-    },
-  });
+      },
+    });
 
-  const [googleLogin] = useGoogleLoginMutation({
-    fetchPolicy: 'no-cache',
-    notifyOnNetworkStatusChange: true,
-    onCompleted: async ({googleLogin: {data}}) => {
-      if (data) {
-        await saveToken(data);
-        dispatch(onLogin());
-        ToastService.showSuccess('Welcome back');
-      }
+  const [googleLogin, {loading: isLoadingGoogleLogin}] = useGoogleLoginMutation(
+    {
+      onCompleted: async ({googleLogin: {data}}) => {
+        if (data) {
+          dispatch(onLogin(data));
+          ToastService.showSuccess('Welcome back');
+        } else {
+          ToastService.showError('Something went wrong. Please try again.');
+        }
+      },
     },
-  });
+  );
+
+  const isLoading = isLoadingRequestCode || isLoadingGoogleLogin;
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -156,7 +158,7 @@ const Login: FC = () => {
                     },
                   });
                 }}
-                enable={!!email && isValidEmail}
+                enable={!!email && isValidEmail && !isLoading}
               />
             </LoginButtonWrapper>
           </Container>

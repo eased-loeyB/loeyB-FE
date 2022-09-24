@@ -13,7 +13,7 @@ import {
   AuthStackNavigationProps,
   AuthStackParamList,
 } from '~/navigation/stacks/AuthStack';
-import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
+import {BottomWrapperStyle, SubtitleStyle, TitleStyle} from '~/utils/Styles';
 
 type Props = StackScreenProps<AuthStackParamList, AuthStackName.REGISTER>;
 
@@ -41,7 +41,7 @@ const CodeInputWrapper = styled.View`
 `;
 
 const ButtonWrapper = styled.View`
-  margin-top: 28px;
+  ${BottomWrapperStyle}
 `;
 
 const Register: FC<Props> = ({

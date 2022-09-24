@@ -1,5 +1,8 @@
-import {saveExpiresIn, saveRefreshToken} from '~/utils/asyncstorage';
-import {saveCustomerToken} from '~/utils/storage';
+import {
+  saveAccessToken,
+  saveExpiresIn,
+  saveRefreshToken,
+} from '~/utils/asyncstorage';
 
 import {Authentication} from '../generated';
 
@@ -8,7 +11,7 @@ export async function saveToken({
   refreshToken,
   expiresIn,
 }: Omit<Authentication, '__typename'>) {
-  await saveCustomerToken(accessToken);
+  await saveAccessToken(accessToken);
   await saveRefreshToken(refreshToken);
   await saveExpiresIn(`${expiresIn}`);
 }

@@ -19,3 +19,10 @@ export const ContainerStyle = css`
   align-items: center;
   justify-content: center;
 `;
+
+export const BottomWrapperStyle = css`
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  padding: 12px 16px 24px;
+`;

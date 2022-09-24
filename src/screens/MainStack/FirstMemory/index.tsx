@@ -20,13 +20,13 @@ import {
 } from '~/assets';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import BottomModal from '~/components/BottomModal';
+import IconButton from '~/components/IconButton';
 import LocationPicker from '~/components/LocationPicker';
 import MyDatePicker from '~/components/MyDatePicker';
 import {ChooseMultiple, FileAttachment, OpenCamera} from '~/utils/Camera';
 import {ColorMap} from '~/utils/Colors';
 
 import DeleteModal from './DeleteModal';
-import IconButton from './IconButton';
 
 const PageWrapper = styled.KeyboardAvoidingView`
   flex: 1;

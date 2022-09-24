@@ -29,18 +29,6 @@ export async function getApolloClient(
 
   const accessToken = await loadAccessToken();
 
-  // if (accessToken) {
-  //   onLogin();
-  // } else {
-  //   cache.writeQuery({
-  //     query: IS_LOGGED_IN,
-  //     data: {
-  //       isLoggedIn: false,
-  //       isLoginExpired: false,
-  //     },
-  //   });
-  // }
-
   const errorLink = onError(errorHandler);
 
   const httpLink = new HttpLink({uri: END_POINT});

@@ -1,23 +1,19 @@
 import React, {FC, useState} from 'react';
 import {Keyboard, StyleSheet, TouchableWithoutFeedback} from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
 import {StackScreenProps} from '@react-navigation/stack';
 import {isEmpty} from 'lodash';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {useDispatch} from 'react-redux';
 import styled from 'styled-components/native';
 
-import {useRegisterUserMutation} from '~/apollo/generated';
-import {saveToken} from '~/apollo/utils/auth';
+import {Authentication, useRegisterUserMutation} from '~/apollo/generated';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import Button from '~/components/Button';
 import TextField from '~/components/TextField';
 import {AuthStackParamList, AuthStackName} from '~/navigation/stacks/AuthStack';
-import {
-  MainStackName,
-  MainStackNavigationProps,
-} from '~/navigation/stacks/MainStack';
-import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
+import {onLogin} from '~/store/reduxtoolkit/user/userSlice';
+import {BottomWrapperStyle, SubtitleStyle, TitleStyle} from '~/utils/Styles';
 import ToastService from '~/utils/ToastService';
 import {validatePassword} from '~/utils/Validate';
 
@@ -50,7 +46,7 @@ const PasswordInputWrapper = styled.View`
 `;
 
 const ButtonWrapper = styled.View`
-  margin-top: 28px;
+  ${BottomWrapperStyle}
 `;
 
 const RegisterWithPass: FC<Props> = ({
@@ -58,17 +54,15 @@ const RegisterWithPass: FC<Props> = ({
     params: {email},
   },
 }) => {
-  const {push} = useNavigation<MainStackNavigationProps>();
+  const dispatch = useDispatch();
+
   const [pass, setPass] = useState('');
   const [rePass, setRePass] = useState('');
   const [registerUser] = useRegisterUserMutation({
-    fetchPolicy: 'no-cache',
-    notifyOnNetworkStatusChange: true,
     onCompleted: async ({registerUser: {data}}) => {
       if (data) {
-        await saveToken(data);
+        dispatch(onLogin(data as Authentication));
         ToastService.showSuccess('Welcome to loeyB');
-        push(MainStackName.INPUT_NAME);
       }
     },
   });

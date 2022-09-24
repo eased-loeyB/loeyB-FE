@@ -5,7 +5,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-const defaultOptions = {} as const;
+const defaultOptions = {"fetchPolicy":"no-cache","notifyOnNetworkStatusChange":true} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -37,10 +37,11 @@ export type Authentication = {
   hasUserName?: Maybe<Scalars['Boolean']>;
   /** 유저가 저장한 이미지 존재 유무 */
   hasUserRecords?: Maybe<Scalars['Boolean']>;
-  redirectUrl?: Maybe<Scalars['String']>;
   /** JWT */
   refreshToken: Scalars['String'];
   tokenType: Scalars['String'];
+  /** 유저 이름 */
+  userName?: Maybe<Scalars['String']>;
 };
 
 /** 로그인 */
@@ -77,6 +78,8 @@ export type FetchRegisteredRecordsInput = {
 
 /** 이메일 인증 코드 */
 export type GoogleLoginInput = {
+  /** device token */
+  deviceToken?: InputMaybe<Scalars['String']>;
   token: Scalars['String'];
 };
 
@@ -199,7 +202,7 @@ export type Mutation = {
   /** upload file with tag and date and location information */
   registerRecord: Output;
   /** 회원가입 */
-  registerUser: RegisterUserOutput;
+  registerUser: AuthenticationOutput;
   /** 이메일 인증 요청 */
   requestEmailVerificationCode: RequestEmailVerificationOutput;
   /** 이메일 인증 요청 */
@@ -348,19 +351,12 @@ export type RegisterUSer = {
 
 /** 회원가입 */
 export type RegisterUserInput = {
+  /** device token */
+  deviceToken?: InputMaybe<Scalars['String']>;
   /** 이메일 */
   email: Scalars['String'];
   /** 비밀번호 */
   password: Scalars['String'];
-};
-
-export type RegisterUserOutput = {
-  __typename?: 'RegisterUserOutput';
-  data?: Maybe<RegisterUSer>;
-  /** errorMessage */
-  errorMessage?: Maybe<Scalars['String']>;
-  /** LOEYB ERROR CODE */
-  result: LoeybErrorCode;
 };
 
 export type RegisteredAreaAndCategoryAndTag = {
@@ -552,7 +548,7 @@ export type RefreshMutationVariables = Exact<{
 }>;
 
 
-export type RefreshMutation = { __typename?: 'Mutation', refresh: { __typename?: 'AuthenticationOutput', result: LoeybErrorCode, errorMessage?: string | null, data?: { __typename?: 'Authentication', accessToken: string, tokenType: string, expiresIn: number, refreshToken: string, redirectUrl?: string | null, hasUserName?: boolean | null, hasUserCategories?: boolean | null, hasUserRecords?: boolean | null } | null } };
+export type RefreshMutation = { __typename?: 'Mutation', refresh: { __typename?: 'AuthenticationOutput', result: LoeybErrorCode, errorMessage?: string | null, data?: { __typename?: 'Authentication', accessToken: string, tokenType: string, expiresIn: number, refreshToken: string, userName?: string | null } | null } };
 
 export type RequestEmailVerificationCodeMutationVariables = Exact<{
   email: Scalars['String'];
@@ -564,10 +560,11 @@ export type RequestEmailVerificationCodeMutation = { __typename?: 'Mutation', re
 export type RegisterUserMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
+  deviceToken?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type RegisterUserMutation = { __typename?: 'Mutation', registerUser: { __typename?: 'RegisterUserOutput', result: LoeybErrorCode, errorMessage?: string | null, data?: { __typename?: 'RegisterUSer', accessToken: string, tokenType: string, expiresIn: number, refreshToken: string } | null } };
+export type RegisterUserMutation = { __typename?: 'Mutation', registerUser: { __typename?: 'AuthenticationOutput', result: LoeybErrorCode, errorMessage?: string | null, data?: { __typename?: 'Authentication', accessToken: string, tokenType: string, expiresIn: number, refreshToken: string, userName?: string | null } | null } };
 
 export type SetUsernameMutationVariables = Exact<{
   username: Scalars['String'];
@@ -578,10 +575,11 @@ export type SetUsernameMutation = { __typename?: 'Mutation', setUsername: { __ty
 
 export type GoogleLoginMutationVariables = Exact<{
   token: Scalars['String'];
+  deviceToken?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GoogleLoginMutation = { __typename?: 'Mutation', googleLogin: { __typename?: 'AuthenticationOutput', result: LoeybErrorCode, errorMessage?: string | null, data?: { __typename?: 'Authentication', accessToken: string, tokenType: string, expiresIn: number, refreshToken: string, redirectUrl?: string | null, hasUserName?: boolean | null, hasUserCategories?: boolean | null, hasUserRecords?: boolean | null } | null } };
+export type GoogleLoginMutation = { __typename?: 'Mutation', googleLogin: { __typename?: 'AuthenticationOutput', result: LoeybErrorCode, errorMessage?: string | null, data?: { __typename?: 'Authentication', accessToken: string, tokenType: string, expiresIn: number, refreshToken: string, userName?: string | null } | null } };
 
 export type RegisterCategoriesMutationVariables = Exact<{
   areaCategory: Array<AreaCategoryInput> | AreaCategoryInput;
@@ -638,7 +636,7 @@ export type AuthenticateQueryVariables = Exact<{
 }>;
 
 
-export type AuthenticateQuery = { __typename?: 'Query', authenticate: { __typename?: 'AuthenticationOutput', errorMessage?: string | null, result: LoeybErrorCode, data?: { __typename?: 'Authentication', accessToken: string, tokenType: string, expiresIn: number, refreshToken: string, redirectUrl?: string | null, hasUserName?: boolean | null, hasUserCategories?: boolean | null, hasUserRecords?: boolean | null } | null } };
+export type AuthenticateQuery = { __typename?: 'Query', authenticate: { __typename?: 'AuthenticationOutput', errorMessage?: string | null, result: LoeybErrorCode, data?: { __typename?: 'Authentication', accessToken: string, tokenType: string, expiresIn: number, refreshToken: string, userName?: string | null } | null } };
 
 export type VerifyEmailVerificationCodeQueryVariables = Exact<{
   email: Scalars['String'];
@@ -704,10 +702,7 @@ export const RefreshDocument = gql`
       tokenType
       expiresIn
       refreshToken
-      redirectUrl
-      hasUserName
-      hasUserCategories
-      hasUserRecords
+      userName
     }
   }
 }
@@ -776,8 +771,10 @@ export type RequestEmailVerificationCodeMutationHookResult = ReturnType<typeof u
 export type RequestEmailVerificationCodeMutationResult = Apollo.MutationResult<RequestEmailVerificationCodeMutation>;
 export type RequestEmailVerificationCodeMutationOptions = Apollo.BaseMutationOptions<RequestEmailVerificationCodeMutation, RequestEmailVerificationCodeMutationVariables>;
 export const RegisterUserDocument = gql`
-    mutation registerUser($email: String!, $password: String!) {
-  registerUser(input: {email: $email, password: $password}) {
+    mutation registerUser($email: String!, $password: String!, $deviceToken: String) {
+  registerUser(
+    input: {email: $email, password: $password, deviceToken: $deviceToken}
+  ) {
     result
     errorMessage
     data {
@@ -785,6 +782,7 @@ export const RegisterUserDocument = gql`
       tokenType
       expiresIn
       refreshToken
+      userName
     }
   }
 }
@@ -806,6 +804,7 @@ export type RegisterUserMutationFn = Apollo.MutationFunction<RegisterUserMutatio
  *   variables: {
  *      email: // value for 'email'
  *      password: // value for 'password'
+ *      deviceToken: // value for 'deviceToken'
  *   },
  * });
  */
@@ -851,8 +850,8 @@ export type SetUsernameMutationHookResult = ReturnType<typeof useSetUsernameMuta
 export type SetUsernameMutationResult = Apollo.MutationResult<SetUsernameMutation>;
 export type SetUsernameMutationOptions = Apollo.BaseMutationOptions<SetUsernameMutation, SetUsernameMutationVariables>;
 export const GoogleLoginDocument = gql`
-    mutation googleLogin($token: String!) {
-  googleLogin(input: {token: $token}) {
+    mutation googleLogin($token: String!, $deviceToken: String) {
+  googleLogin(input: {token: $token, deviceToken: $deviceToken}) {
     result
     errorMessage
     data {
@@ -860,10 +859,7 @@ export const GoogleLoginDocument = gql`
       tokenType
       expiresIn
       refreshToken
-      redirectUrl
-      hasUserName
-      hasUserCategories
-      hasUserRecords
+      userName
     }
   }
 }
@@ -884,6 +880,7 @@ export type GoogleLoginMutationFn = Apollo.MutationFunction<GoogleLoginMutation,
  * const [googleLoginMutation, { data, loading, error }] = useGoogleLoginMutation({
  *   variables: {
  *      token: // value for 'token'
+ *      deviceToken: // value for 'deviceToken'
  *   },
  * });
  */
@@ -1093,10 +1090,7 @@ export const AuthenticateDocument = gql`
       tokenType
       expiresIn
       refreshToken
-      redirectUrl
-      hasUserName
-      hasUserCategories
-      hasUserRecords
+      userName
     }
   }
 }

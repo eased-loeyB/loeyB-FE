@@ -2,7 +2,6 @@ import React, {FC} from 'react';
 import {Keyboard, TouchableWithoutFeedback} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
-import {StackScreenProps} from '@react-navigation/stack';
 import styled from 'styled-components/native';
 
 import {BACKGROUND_INPUT_NAME, BACKGROUND_WELCOME} from '~/assets';
@@ -11,12 +10,10 @@ import Button from '~/components/Button';
 import {
   MainStackName,
   MainStackNavigationProps,
-  MainStackParamList,
 } from '~/navigation/stacks/MainStack';
+import {useTypedSelector} from '~/store';
 import {deviceHeight, deviceWidth} from '~/utils/design';
 import {TitleStyle} from '~/utils/Styles';
-
-type Props = StackScreenProps<MainStackParamList, MainStackName.WELCOME>;
 
 const Container = styled.View`
   flex: 1;
@@ -43,11 +40,8 @@ const ButtonWrapper = styled.View`
   margin-top: 28px;
 `;
 
-const Welcome: FC<Props> = ({
-  route: {
-    params: {userName},
-  },
-}) => {
+const Welcome: FC = () => {
+  const {userName} = useTypedSelector(({user: {userData}}) => userData);
   const {push} = useNavigation<MainStackNavigationProps>();
 
   return (
