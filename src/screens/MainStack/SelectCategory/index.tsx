@@ -19,7 +19,7 @@ import {
 } from '~/navigation/stacks/MainStack';
 import {useTypedSelector} from '~/store';
 import {updateUserData} from '~/store/reduxtoolkit/user/userSlice';
-import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
+import {BottomWrapperStyle, SubtitleStyle, TitleStyle} from '~/utils/Styles';
 
 import Category from './Category';
 import {SubCategoryProps} from './Category/CategoryItem';
@@ -63,7 +63,7 @@ const Container = styled.View`
 `;
 
 const ButtonWrapper = styled.View`
-  margin-top: 28px;
+  ${BottomWrapperStyle}
 `;
 
 const SelectCategory: FC = () => {
@@ -120,11 +120,11 @@ const SelectCategory: FC = () => {
   };
 
   return (
-    <BackgroundCommon haveFilter={true} canGoBack={true} title={userName ?? ''}>
+    <BackgroundCommon haveFilter={true} canGoBack={true} isAuth={false}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <PageWrapper>
           <TitleContainer>
-            <Title>what do you want to organize?</Title>
+            <Title>{`${userName}\nWhat do you want\nto organize?`}</Title>
             <Subtitle>Select atleast 3 categories</Subtitle>
           </TitleContainer>
 

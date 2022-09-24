@@ -20,7 +20,7 @@ import {
 } from '~/navigation/stacks/MainStack';
 import {updateUserData} from '~/store/reduxtoolkit/user/userSlice';
 import {ColorMap} from '~/utils/Colors';
-import {ContainerStyle, TitleStyle} from '~/utils/Styles';
+import {BottomWrapperStyle, ContainerStyle, TitleStyle} from '~/utils/Styles';
 
 const Container = styled.View`
   ${ContainerStyle}
@@ -68,7 +68,7 @@ const InnerCircle = styled(RadialGradient)`
 `;
 
 const ButtonWrapper = styled.View`
-  margin-top: 28px;
+  ${BottomWrapperStyle}
 `;
 
 const InputName: FC = () => {
