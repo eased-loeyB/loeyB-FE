@@ -19,6 +19,7 @@ import {
 } from '~/navigation/stacks/MainStack';
 import {useTypedSelector} from '~/store';
 import {updateUserData} from '~/store/reduxtoolkit/user/userSlice';
+import {AreaColorMap} from '~/utils/Colors';
 import {BottomWrapperStyle, SubtitleStyle, TitleStyle} from '~/utils/Styles';
 
 import Category from './Category';
@@ -139,7 +140,7 @@ const SelectCategory: FC = () => {
             <Category
               title={healthTitle}
               child={healthCategory}
-              color={'#F65454'}
+              color={AreaColorMap[LoeybAreaType.Health]}
               callback={data => {
                 setHealth(data);
               }}
@@ -147,7 +148,7 @@ const SelectCategory: FC = () => {
             <Category
               title={mindTitle}
               child={mindCategory}
-              color="#F6DD56"
+              color={AreaColorMap[LoeybAreaType.Mind]}
               callback={data => {
                 setMind(data);
               }}
@@ -155,7 +156,7 @@ const SelectCategory: FC = () => {
             <Category
               title={socialTitle}
               child={socialCategory}
-              color="#8AE58B"
+              color={AreaColorMap[LoeybAreaType.Social]}
               callback={data => {
                 setSocial(data);
               }}
@@ -163,7 +164,7 @@ const SelectCategory: FC = () => {
             <Category
               title={lifeTitle}
               child={lifeCategory}
-              color="#49DFE9"
+              color={AreaColorMap[LoeybAreaType.Hobby]}
               callback={data => {
                 setLife(data);
               }}
@@ -171,7 +172,7 @@ const SelectCategory: FC = () => {
             <Category
               title={workTitle}
               child={workCategory}
-              color="#BE4FC8"
+              color={AreaColorMap[LoeybAreaType.Work]}
               callback={data => {
                 setWork(data);
               }}
