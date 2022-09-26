@@ -3,6 +3,7 @@ import {Image, Platform, TouchableOpacity} from 'react-native';
 
 import dayjs from 'dayjs';
 import {isEmpty} from 'lodash';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
 import styled from 'styled-components/native';
 
@@ -21,11 +22,11 @@ import {
   VIEW_CAROUSEL,
 } from '~/assets';
 import BackgroundCommon from '~/components/BackgroundCommon';
-import BottomModal from '~/components/BottomModal';
 import IconButton from '~/components/IconButton';
 import LocationPicker from '~/components/LocationPicker';
 import Modal from '~/components/Modal';
 import MyDatePicker from '~/components/MyDatePicker';
+import TagSheet, {MINIMIZED_TAG_SHEET_HEIGHT} from '~/components/TagSheet';
 import {ChooseMultiple, FileAttachment, OpenCamera} from '~/utils/Camera';
 import {ColorMap} from '~/utils/Colors';
 
@@ -84,11 +85,12 @@ const InformationContainer = styled.View`
   padding: 0 16px;
 `;
 
-const TextInputContainer = styled.View`
+const TextInputContainer = styled.View<{footerHeight: number}>`
   flex: 1;
   width: 100%;
   margin-top: 12px;
   padding: 0 16px;
+  margin-bottom: ${({footerHeight}) => footerHeight + 12}px;
 `;
 
 const StyledTextInput = styled.TextInput`
@@ -116,6 +118,22 @@ const FirstMemory = () => {
   const [textMode, setTextMode] = useState(false);
   const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0;
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  const {bottom} = useSafeAreaInsets();
+
+  const onSelectTag = (tag: string) => {
+    setSelectedTags(prev => {
+      if (prev.includes(tag)) {
+        const copied = [...prev];
+        copied.splice(prev.indexOf(tag), 1);
+
+        return copied;
+      }
+
+      return [...prev, tag];
+    });
+  };
 
   return (
     <BackgroundCommon edges={['top', 'right', 'left']}>
@@ -193,7 +211,8 @@ const FirstMemory = () => {
               <IconButton iconSrc={loeyB}> 1</IconButton>
             </InformationContainer>
           )}
-          <TextInputContainer>
+          <TextInputContainer
+            footerHeight={bottom + MINIMIZED_TAG_SHEET_HEIGHT}>
             <StyledTextInput
               multiline={true}
               placeholder={'Write about the experience'}
@@ -273,7 +292,7 @@ const FirstMemory = () => {
           buttonText="Delete from device album"
         />
 
-        <BottomModal />
+        <TagSheet selectedTags={selectedTags} onSelectTag={onSelectTag} />
       </PageWrapper>
     </BackgroundCommon>
   );
