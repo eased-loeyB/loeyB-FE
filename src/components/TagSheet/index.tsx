@@ -1,7 +1,7 @@
 import React, {Children, FC, useMemo, useRef, useState} from 'react';
 import {StyleSheet} from 'react-native';
 
-import BottomSheet from '@gorhom/bottom-sheet';
+import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {rgba} from 'polished';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -89,7 +89,7 @@ const TagSheet: FC<Props> = ({selectedTags, onSelectTag}) => {
       {!openTagSheet ? (
         <TagSheetTitle>Swipe up to save</TagSheetTitle>
       ) : (
-        <>
+        <BottomSheetScrollView showsVerticalScrollIndicator={false}>
           <TagListWrapper>
             <TagTitle>Recent</TagTitle>
             <TagList>
@@ -146,7 +146,7 @@ const TagSheet: FC<Props> = ({selectedTags, onSelectTag}) => {
               );
             }),
           )}
-        </>
+        </BottomSheetScrollView>
       )}
     </BottomSheet>
   );
