@@ -8,6 +8,7 @@ export enum ColorMap {
   LightBlue2 = '#F4FAFF',
   DarkBlue = '#050D20',
   NavyNightsky = '#0D1648',
+  Navy1 = '#1A1A3C',
 
   // Text Colors
   Primary = '#343A40',
