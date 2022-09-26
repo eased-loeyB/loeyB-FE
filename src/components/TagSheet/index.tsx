@@ -94,6 +94,9 @@ const TagSheet: FC<Props> = ({selectedTags, onSelectTag}) => {
             <TagTitle>Recent</TagTitle>
             <TagList>
               {Children.toArray(
+                /**
+                 * @todo apply fetchRecentCategoryAndTag query
+                 */
                 ['salad', 'fried chicken'].map(tag => (
                   <TagItem
                     color={AreaColorMap[LoeybAreaType.Health]}
