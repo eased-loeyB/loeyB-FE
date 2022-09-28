@@ -1,23 +1,39 @@
-import React, {Children, FC, useMemo, useRef, useState} from 'react';
+import React, {
+  Children,
+  forwardRef,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import {StyleSheet} from 'react-native';
 
-import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
+import BottomSheet, {
+  BottomSheetFooter,
+  BottomSheetFooterProps,
+  BottomSheetScrollView,
+} from '@gorhom/bottom-sheet';
+import {useKeyboard} from '@react-native-community/hooks';
 import {rgba} from 'polished';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useDispatch} from 'react-redux';
 import styled from 'styled-components/native';
 
 import {
+  AreaCategoryTagInput,
   LoeybAreaType,
   useFetchRegisteredAreaAndCategoryAndTagQuery,
 } from '~/apollo/generated';
+import {isSuccessResponse} from '~/apollo/utils/error';
+import {updateUserData} from '~/store/reduxtoolkit/user/userSlice';
 import {AreaColorMap, ColorMap} from '~/utils/Colors';
-import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
+import {ContainerStyle, SubtitleStyle, TitleStyle} from '~/utils/Styles';
 
 import AddTagButton from './AddTagButton';
 
 interface Props {
-  selectedTags: string[];
-  onSelectTag: (tag: string) => void;
+  selectedTags: AreaCategoryTagInput[];
+  onSelectTag: (input: AreaCategoryTagInput) => void;
+  onSubmit: () => Promise<any>;
 }
 
 const TagSheetTitle = styled.Text`
@@ -56,101 +72,161 @@ const TagItemText = styled.Text`
   line-height: 17px;
 `;
 
+const SaveButton = styled.TouchableOpacity<{bottom: number; disabled: boolean}>`
+  ${ContainerStyle}
+  height: ${({bottom}) => bottom + 64}px;
+  padding-bottom: ${({bottom}) => bottom}px;
+  background-color: ${ColorMap.LightBlue2};
+  mix-blend-mode: normal;
+  opacity: ${({disabled}) => (disabled ? 0.6 : 1)};
+`;
+
+const SaveButtonText = styled.Text`
+  font-size: 18px;
+  font-weight: 600;
+  color: ${ColorMap.Navy};
+`;
+
 export const MINIMIZED_TAG_SHEET_HEIGHT = 88;
 
-const TagSheet: FC<Props> = ({selectedTags, onSelectTag}) => {
-  const {bottom} = useSafeAreaInsets();
-  const [openTagSheet, setOpenTagSheet] = useState(false);
+const TagSheet = forwardRef<BottomSheet, Props>(
+  ({selectedTags, onSelectTag, onSubmit}, tagSheetRef) => {
+    const {bottom} = useSafeAreaInsets();
+    const {keyboardShown} = useKeyboard();
+    const dispatch = useDispatch();
+    const [openTagSheet, setOpenTagSheet] = useState(false);
 
-  const tagSheetRef = useRef<BottomSheet>(null);
+    const minimizedHeight = useMemo(
+      () => bottom + MINIMIZED_TAG_SHEET_HEIGHT,
+      [bottom],
+    );
 
-  const minimizedHeight = useMemo(
-    () => bottom + MINIMIZED_TAG_SHEET_HEIGHT,
-    [bottom],
-  );
+    const {
+      data: {fetchRegisteredAreaAndCategoryAndTag: fetchedData} = {},
+      refetch,
+    } = useFetchRegisteredAreaAndCategoryAndTagQuery({
+      onCompleted: ({fetchRegisteredAreaAndCategoryAndTag: {data, result}}) => {
+        if (isSuccessResponse(result)) {
+          if (data) {
+            dispatch(
+              updateUserData({
+                areaAndCategoryAndTags: data,
+              }),
+            );
+          }
+        }
+      },
+    });
 
-  const {
-    data: {fetchRegisteredAreaAndCategoryAndTag: fetchedData} = {},
-    refetch,
-  } = useFetchRegisteredAreaAndCategoryAndTagQuery();
+    const handleTagSheetOpen = (index: number) => {
+      setOpenTagSheet(index === 1);
+    };
 
-  const handleTagSheetOpen = (index: number) => {
-    setOpenTagSheet(index === 1);
-  };
+    const getIsSelectedTag = (tag: string) => {
+      return !!selectedTags.find(({tag: selectedTag}) => selectedTag === tag);
+    };
 
-  return (
-    <BottomSheet
-      ref={tagSheetRef}
-      index={0}
-      snapPoints={[minimizedHeight, '95%']}
-      onChange={handleTagSheetOpen}
-      backgroundStyle={styles.tagSheetBackground}
-      handleIndicatorStyle={styles.tagSheetHandle}>
-      {!openTagSheet ? (
-        <TagSheetTitle>Swipe up to save</TagSheetTitle>
-      ) : (
-        <BottomSheetScrollView showsVerticalScrollIndicator={false}>
-          <TagListWrapper>
-            <TagTitle>Recent</TagTitle>
-            <TagList>
-              {Children.toArray(
-                /**
-                 * @todo apply fetchRecentCategoryAndTag query
-                 */
-                ['salad', 'fried chicken'].map(tag => (
-                  <TagItem
-                    color={AreaColorMap[LoeybAreaType.Health]}
-                    isSelected={selectedTags.includes(tag)}
-                    onPress={() => onSelectTag(tag)}>
-                    <TagItemText>{tag}</TagItemText>
-                  </TagItem>
-                )),
-              )}
-            </TagList>
-          </TagListWrapper>
+    const renderFooter = useCallback(
+      (props: BottomSheetFooterProps) => {
+        if (!openTagSheet || keyboardShown) {
+          return null;
+        }
 
-          {Children.toArray(
-            Object.values(LoeybAreaType).map(area => {
-              const color = AreaColorMap[area];
-              const categoryAndTagList =
-                fetchedData?.data?.filter(d => d.area === area) || [];
+        return (
+          <BottomSheetFooter {...props}>
+            <SaveButton
+              bottom={bottom}
+              disabled={selectedTags.length === 0}
+              onPress={onSubmit}>
+              <SaveButtonText>Save Stardust</SaveButtonText>
+            </SaveButton>
+          </BottomSheetFooter>
+        );
+      },
+      [bottom, openTagSheet, keyboardShown, selectedTags, onSubmit],
+    );
 
-              return Children.toArray(
-                categoryAndTagList.map(
-                  ({category, tag: tags}) =>
-                    category && (
-                      <TagListWrapper>
-                        <TagTitle color={color}>{category}</TagTitle>
+    return (
+      <BottomSheet
+        ref={tagSheetRef}
+        index={0}
+        snapPoints={[minimizedHeight, '95%']}
+        onChange={handleTagSheetOpen}
+        backgroundStyle={styles.tagSheetBackground}
+        handleIndicatorStyle={styles.tagSheetHandle}
+        footerComponent={renderFooter}>
+        {!openTagSheet ? (
+          <TagSheetTitle>Swipe up to save</TagSheetTitle>
+        ) : (
+          <BottomSheetScrollView showsVerticalScrollIndicator={false}>
+            <TagListWrapper>
+              <TagTitle>Recent</TagTitle>
+              <TagList>
+                {Children.toArray(
+                  /**
+                   * @todo apply fetchRecentCategoryAndTag query
+                   */
+                  ([] as AreaCategoryTagInput[]).map(input => (
+                    <TagItem
+                      color={AreaColorMap[input.area!]}
+                      isSelected={getIsSelectedTag(input.tag!)}
+                      onPress={() => onSelectTag(input)}>
+                      <TagItemText>{input.tag}</TagItemText>
+                    </TagItem>
+                  )),
+                )}
+              </TagList>
+            </TagListWrapper>
 
-                        <TagList>
-                          {Children.toArray(
-                            tags?.map(tag => (
-                              <TagItem
-                                color={color}
-                                isSelected={selectedTags.includes(tag)}
-                                onPress={() => onSelectTag(tag)}>
-                                <TagItemText>{tag}</TagItemText>
-                              </TagItem>
-                            )),
-                          )}
+            {Children.toArray(
+              Object.values(LoeybAreaType).map(area => {
+                const color = AreaColorMap[area];
+                const categoryAndTagList =
+                  fetchedData?.data?.filter(d => d.area === area) || [];
 
-                          <AddTagButton
-                            color={color}
-                            category={category}
-                            onSubmit={refetch}
-                          />
-                        </TagList>
-                      </TagListWrapper>
-                    ),
-                ),
-              );
-            }),
-          )}
-        </BottomSheetScrollView>
-      )}
-    </BottomSheet>
-  );
-};
+                return Children.toArray(
+                  categoryAndTagList.map(
+                    ({category, tag: tags}) =>
+                      category && (
+                        <TagListWrapper>
+                          <TagTitle color={color}>{category}</TagTitle>
+
+                          <TagList>
+                            {Children.toArray(
+                              tags?.map(tag => (
+                                <TagItem
+                                  color={color}
+                                  isSelected={getIsSelectedTag(tag)}
+                                  onPress={() =>
+                                    onSelectTag({
+                                      area,
+                                      category,
+                                      tag,
+                                    })
+                                  }>
+                                  <TagItemText>{tag}</TagItemText>
+                                </TagItem>
+                              )),
+                            )}
+
+                            <AddTagButton
+                              color={color}
+                              category={category}
+                              onSubmit={refetch}
+                            />
+                          </TagList>
+                        </TagListWrapper>
+                      ),
+                  ),
+                );
+              }),
+            )}
+          </BottomSheetScrollView>
+        )}
+      </BottomSheet>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   tagSheetBackground: {

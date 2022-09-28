@@ -5,7 +5,7 @@ export enum ColorMap {
   Black = '#000',
   White = '#fff',
   LightBlue = '#A7D5F6',
-  LightBlue2 = '#F4FAFF',
+  LightBlue2 = '#E5F9FF',
   DarkBlue = '#050D20',
   NavyNightsky = '#0D1648',
   Navy1 = '#1A1A3C',
