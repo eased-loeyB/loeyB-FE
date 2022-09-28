@@ -1,13 +1,20 @@
-import React, {FC, useRef, useState} from 'react';
+import React, {FC, useCallback, useRef, useState} from 'react';
 import {StyleSheet, TextInput} from 'react-native';
 
 import {BottomSheetTextInput} from '@gorhom/bottom-sheet';
 import {rgba} from 'polished';
 import styled from 'styled-components/native';
 
-import {LoeybCategoryType, useAddTagMutation} from '~/apollo/generated';
+import {
+  LoeybCategoryType,
+  LoeybErrorCode,
+  useAddTagMutation,
+  useFetchRegisteredAreaAndCategoryAndTagQuery,
+} from '~/apollo/generated';
+import {isSuccessResponse} from '~/apollo/utils/error';
 import {PLUS} from '~/assets';
 import {ColorMap} from '~/utils/Colors';
+import ToastService from '~/utils/ToastService';
 
 interface Props {
   color: string;
@@ -37,8 +44,46 @@ const AddTagButton: FC<Props> = ({color, category, onSubmit}) => {
   const [tag, setTag] = useState<string>('');
   const inputRef = useRef<TextInput | any>(null);
 
+  const {data: {fetchRegisteredAreaAndCategoryAndTag: fetchedData} = {}} =
+    useFetchRegisteredAreaAndCategoryAndTagQuery();
+
+  const getTagExists = useCallback(
+    (newTag: string) => {
+      const {data} = fetchedData || {};
+      if (!data) {
+        return;
+      }
+
+      return data.find(({tag: tags}) => tags?.includes(newTag));
+    },
+    [fetchedData],
+  );
+
+  const checkDuplicatedTag = (): boolean => {
+    const {category: foundCategory = ''} = getTagExists(tag.trim()) || {};
+
+    if (foundCategory) {
+      ToastService.showError(`The tag already exsists in ${foundCategory}`);
+      return false;
+    }
+
+    return true;
+  };
+
   const [addTag] = useAddTagMutation({
-    onCompleted: onSubmit,
+    onCompleted: async ({addTag: {result}}) => {
+      if (isSuccessResponse(result)) {
+        ToastService.showSuccess('Tag created!');
+        await onSubmit();
+      } else if (result === LoeybErrorCode.AlreadyRegisteredTag) {
+        checkDuplicatedTag();
+      } else {
+        ToastService.showError('Failed to create the tag. Please try again');
+      }
+    },
+    onError: () => {
+      ToastService.showError('Failed to create the tag. Please try again');
+    },
   });
 
   const onClick = () => {
@@ -49,7 +94,8 @@ const AddTagButton: FC<Props> = ({color, category, onSubmit}) => {
 
   const onBlur = async () => {
     setActive(false);
-    if (tag.trim()) {
+
+    if (tag.trim() && checkDuplicatedTag()) {
       await addTag({
         variables: {
           category,
@@ -57,6 +103,7 @@ const AddTagButton: FC<Props> = ({color, category, onSubmit}) => {
         },
       });
     }
+
     setTag('');
   };
 
