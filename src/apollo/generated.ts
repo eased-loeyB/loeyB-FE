@@ -106,6 +106,8 @@ export enum LoeybErrorCode {
   Error = 'ERROR',
   /** FILE_NOT_FOUND */
   FileNotFound = 'FILE_NOT_FOUND',
+  /** FILE_OR_DESCRIPTION_MUST_BE_EXISTED */
+  FileOrDescriptionMustBeExisted = 'FILE_OR_DESCRIPTION_MUST_BE_EXISTED',
   /** HAD_NEVER_ADDED_CATEGORY */
   HadNeverAddedCategory = 'HAD_NEVER_ADDED_CATEGORY',
   /** INVALID_TOKEN */
@@ -124,6 +126,8 @@ export enum LoeybErrorCode {
   PasswordIncorrect = 'PASSWORD_INCORRECT',
   /** QUERY_ERROR */
   QueryError = 'QUERY_ERROR',
+  /** REGISTER_CATEGORIES_MUST_BE_TRHEE */
+  RegisterCategoriesMustBeTrhee = 'REGISTER_CATEGORIES_MUST_BE_TRHEE',
   /** SHARP_IMAGE_RESIZE_ERROR */
   SharpImageResizeError = 'SHARP_IMAGE_RESIZE_ERROR',
   /** SUCCESS */
@@ -274,10 +278,10 @@ export type Query = {
   __typename?: 'Query';
   /** 로그인 */
   authenticate: AuthenticationOutput;
+  /** fetchRecentCategoryAndTag */
+  fetchRecentCategoryAndTag: RegisteredCategoryAndTagsOutput;
   /** fetchRegisteredAreaAndCategoryAndTag */
   fetchRegisteredAreaAndCategoryAndTag: RegisteredAreaAndCategoryAndTagOutput;
-  /** fetchRegisteredCategoryAndTag */
-  fetchRegisteredCategoryAndTag: RegisteredCategoryAndTagsOutput;
   /** fetchRegisteredRecords */
   fetchRegisteredRecords: StardustRecordsOutput;
   /** fetchTagRatio */
@@ -295,13 +299,13 @@ export type QueryAuthenticateArgs = {
 };
 
 
-export type QueryFetchRegisteredAreaAndCategoryAndTagArgs = {
-  input: FetchRegisteredAreaAndCategoryAndTagInput;
+export type QueryFetchRecentCategoryAndTagArgs = {
+  input: FetchRecentCategoryAndTagInput;
 };
 
 
-export type QueryFetchRegisteredCategoryAndTagArgs = {
-  input: FetchRegisteredCategoryAndTag;
+export type QueryFetchRegisteredAreaAndCategoryAndTagArgs = {
+  input: FetchRegisteredAreaAndCategoryAndTagInput;
 };
 
 
@@ -518,14 +522,12 @@ export type AreaTagRatiosOutput = {
   result: LoeybErrorCode;
 };
 
-/** show registered area, category, tag */
-export type FetchRegisteredAreaAndCategoryAndTagInput = {
-  limit?: InputMaybe<Scalars['String']>;
-  offset?: InputMaybe<Scalars['String']>;
+export type FetchRecentCategoryAndTagInput = {
+  count?: InputMaybe<Scalars['Float']>;
 };
 
 /** show registered area, category, tag */
-export type FetchRegisteredCategoryAndTag = {
+export type FetchRegisteredAreaAndCategoryAndTagInput = {
   limit?: InputMaybe<Scalars['String']>;
   offset?: InputMaybe<Scalars['String']>;
 };
@@ -646,14 +648,6 @@ export type VerifyEmailVerificationCodeQueryVariables = Exact<{
 
 export type VerifyEmailVerificationCodeQuery = { __typename?: 'Query', verifyEmailVerificationCode: { __typename?: 'Output', errorMessage?: string | null, result: LoeybErrorCode } };
 
-export type FetchRegisteredCategoryAndTagQueryVariables = Exact<{
-  limit?: InputMaybe<Scalars['String']>;
-  offset?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type FetchRegisteredCategoryAndTagQuery = { __typename?: 'Query', fetchRegisteredCategoryAndTag: { __typename?: 'RegisteredCategoryAndTagsOutput', errorMessage?: string | null, result: LoeybErrorCode, data?: Array<{ __typename?: 'RegisteredCategoryAndTag', category?: string | null, tag?: string | null }> | null } };
-
 export type FetchRegisteredAreaAndCategoryAndTagQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['String']>;
   offset?: InputMaybe<Scalars['String']>;
@@ -690,6 +684,13 @@ export type SearchTagQueryVariables = Exact<{
 
 
 export type SearchTagQuery = { __typename?: 'Query', searchTag: { __typename?: 'RegisteredCategoryAndTagOutput', errorMessage?: string | null, result: LoeybErrorCode, data?: { __typename?: 'RegisteredCategoryAndTag', category?: string | null, tag?: string | null } | null } };
+
+export type FetchRecentCategoryAndTagQueryVariables = Exact<{
+  count?: InputMaybe<Scalars['Float']>;
+}>;
+
+
+export type FetchRecentCategoryAndTagQuery = { __typename?: 'Query', fetchRecentCategoryAndTag: { __typename?: 'RegisteredCategoryAndTagsOutput', errorMessage?: string | null, result: LoeybErrorCode, data?: Array<{ __typename?: 'RegisteredCategoryAndTag', category?: string | null, tag?: string | null }> | null } };
 
 
 export const RefreshDocument = gql`
@@ -1162,47 +1163,6 @@ export function useVerifyEmailVerificationCodeLazyQuery(baseOptions?: Apollo.Laz
 export type VerifyEmailVerificationCodeQueryHookResult = ReturnType<typeof useVerifyEmailVerificationCodeQuery>;
 export type VerifyEmailVerificationCodeLazyQueryHookResult = ReturnType<typeof useVerifyEmailVerificationCodeLazyQuery>;
 export type VerifyEmailVerificationCodeQueryResult = Apollo.QueryResult<VerifyEmailVerificationCodeQuery, VerifyEmailVerificationCodeQueryVariables>;
-export const FetchRegisteredCategoryAndTagDocument = gql`
-    query fetchRegisteredCategoryAndTag($limit: String = "40", $offset: String = "0") {
-  fetchRegisteredCategoryAndTag(input: {limit: $limit, offset: $offset}) {
-    errorMessage
-    result
-    data {
-      category
-      tag
-    }
-  }
-}
-    `;
-
-/**
- * __useFetchRegisteredCategoryAndTagQuery__
- *
- * To run a query within a React component, call `useFetchRegisteredCategoryAndTagQuery` and pass it any options that fit your needs.
- * When your component renders, `useFetchRegisteredCategoryAndTagQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFetchRegisteredCategoryAndTagQuery({
- *   variables: {
- *      limit: // value for 'limit'
- *      offset: // value for 'offset'
- *   },
- * });
- */
-export function useFetchRegisteredCategoryAndTagQuery(baseOptions?: Apollo.QueryHookOptions<FetchRegisteredCategoryAndTagQuery, FetchRegisteredCategoryAndTagQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FetchRegisteredCategoryAndTagQuery, FetchRegisteredCategoryAndTagQueryVariables>(FetchRegisteredCategoryAndTagDocument, options);
-      }
-export function useFetchRegisteredCategoryAndTagLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchRegisteredCategoryAndTagQuery, FetchRegisteredCategoryAndTagQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FetchRegisteredCategoryAndTagQuery, FetchRegisteredCategoryAndTagQueryVariables>(FetchRegisteredCategoryAndTagDocument, options);
-        }
-export type FetchRegisteredCategoryAndTagQueryHookResult = ReturnType<typeof useFetchRegisteredCategoryAndTagQuery>;
-export type FetchRegisteredCategoryAndTagLazyQueryHookResult = ReturnType<typeof useFetchRegisteredCategoryAndTagLazyQuery>;
-export type FetchRegisteredCategoryAndTagQueryResult = Apollo.QueryResult<FetchRegisteredCategoryAndTagQuery, FetchRegisteredCategoryAndTagQueryVariables>;
 export const FetchRegisteredAreaAndCategoryAndTagDocument = gql`
     query fetchRegisteredAreaAndCategoryAndTag($limit: String = "40", $offset: String = "0") {
   fetchRegisteredAreaAndCategoryAndTag(input: {limit: $limit, offset: $offset}) {
@@ -1386,3 +1346,43 @@ export function useSearchTagLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type SearchTagQueryHookResult = ReturnType<typeof useSearchTagQuery>;
 export type SearchTagLazyQueryHookResult = ReturnType<typeof useSearchTagLazyQuery>;
 export type SearchTagQueryResult = Apollo.QueryResult<SearchTagQuery, SearchTagQueryVariables>;
+export const FetchRecentCategoryAndTagDocument = gql`
+    query fetchRecentCategoryAndTag($count: Float = 6) {
+  fetchRecentCategoryAndTag(input: {count: $count}) {
+    errorMessage
+    result
+    data {
+      category
+      tag
+    }
+  }
+}
+    `;
+
+/**
+ * __useFetchRecentCategoryAndTagQuery__
+ *
+ * To run a query within a React component, call `useFetchRecentCategoryAndTagQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchRecentCategoryAndTagQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchRecentCategoryAndTagQuery({
+ *   variables: {
+ *      count: // value for 'count'
+ *   },
+ * });
+ */
+export function useFetchRecentCategoryAndTagQuery(baseOptions?: Apollo.QueryHookOptions<FetchRecentCategoryAndTagQuery, FetchRecentCategoryAndTagQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchRecentCategoryAndTagQuery, FetchRecentCategoryAndTagQueryVariables>(FetchRecentCategoryAndTagDocument, options);
+      }
+export function useFetchRecentCategoryAndTagLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchRecentCategoryAndTagQuery, FetchRecentCategoryAndTagQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchRecentCategoryAndTagQuery, FetchRecentCategoryAndTagQueryVariables>(FetchRecentCategoryAndTagDocument, options);
+        }
+export type FetchRecentCategoryAndTagQueryHookResult = ReturnType<typeof useFetchRecentCategoryAndTagQuery>;
+export type FetchRecentCategoryAndTagLazyQueryHookResult = ReturnType<typeof useFetchRecentCategoryAndTagLazyQuery>;
+export type FetchRecentCategoryAndTagQueryResult = Apollo.QueryResult<FetchRecentCategoryAndTagQuery, FetchRecentCategoryAndTagQueryVariables>;

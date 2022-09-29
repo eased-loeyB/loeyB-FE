@@ -21,6 +21,8 @@ import styled from 'styled-components/native';
 import {
   AreaCategoryTagInput,
   LoeybAreaType,
+  LoeybCategoryType,
+  useFetchRecentCategoryAndTagQuery,
   useFetchRegisteredAreaAndCategoryAndTagQuery,
 } from '~/apollo/generated';
 import {isSuccessResponse} from '~/apollo/utils/error';
@@ -102,8 +104,13 @@ const TagSheet = forwardRef<BottomSheet, Props>(
     );
 
     const {
-      data: {fetchRegisteredAreaAndCategoryAndTag: fetchedData} = {},
-      refetch,
+      data: {fetchRecentCategoryAndTag: recentTags} = {},
+      refetch: refetchRecentTags,
+    } = useFetchRecentCategoryAndTagQuery();
+
+    const {
+      data: {fetchRegisteredAreaAndCategoryAndTag: registeredAllTags} = {},
+      refetch: refetchRegisteredAllTags,
     } = useFetchRegisteredAreaAndCategoryAndTagQuery({
       onCompleted: ({fetchRegisteredAreaAndCategoryAndTag: {data, result}}) => {
         if (isSuccessResponse(result)) {
@@ -146,6 +153,13 @@ const TagSheet = forwardRef<BottomSheet, Props>(
       [bottom, openTagSheet, keyboardShown, selectedTags, onSubmit],
     );
 
+    const refetchTags = async () => {
+      await refetchRecentTags();
+      await refetchRegisteredAllTags();
+    };
+
+    console.log(recentTags);
+
     return (
       <BottomSheet
         ref={tagSheetRef}
@@ -163,15 +177,18 @@ const TagSheet = forwardRef<BottomSheet, Props>(
               <TagTitle>Recent</TagTitle>
               <TagList>
                 {Children.toArray(
-                  /**
-                   * @todo apply fetchRecentCategoryAndTag query
-                   */
-                  ([] as AreaCategoryTagInput[]).map(input => (
+                  (recentTags?.data || []).map(({category, tag}) => (
                     <TagItem
-                      color={AreaColorMap[input.area!]}
-                      isSelected={getIsSelectedTag(input.tag!)}
-                      onPress={() => onSelectTag(input)}>
-                      <TagItemText>{input.tag}</TagItemText>
+                      color={AreaColorMap[LoeybAreaType.Health]}
+                      isSelected={getIsSelectedTag(tag as string)}
+                      onPress={() =>
+                        onSelectTag({
+                          area: LoeybAreaType.Health,
+                          category: category as LoeybCategoryType,
+                          tag,
+                        })
+                      }>
+                      <TagItemText>{tag}</TagItemText>
                     </TagItem>
                   )),
                 )}
@@ -182,7 +199,7 @@ const TagSheet = forwardRef<BottomSheet, Props>(
               Object.values(LoeybAreaType).map(area => {
                 const color = AreaColorMap[area];
                 const categoryAndTagList =
-                  fetchedData?.data?.filter(d => d.area === area) || [];
+                  registeredAllTags?.data?.filter(d => d.area === area) || [];
 
                 return Children.toArray(
                   categoryAndTagList.map(
@@ -212,7 +229,7 @@ const TagSheet = forwardRef<BottomSheet, Props>(
                             <AddTagButton
                               color={color}
                               category={category}
-                              onSubmit={refetch}
+                              onSubmit={refetchTags}
                             />
                           </TagList>
                         </TagListWrapper>

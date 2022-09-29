@@ -2,25 +2,23 @@ import {gql, TypedDocumentNode} from '@apollo/client';
 
 import {
   AreaTagRatiosOutput,
+  FetchRecentCategoryAndTagInput,
   FetchRegisteredAreaAndCategoryAndTagInput,
-  FetchRegisteredCategoryAndTag,
   FetchRegisteredRecordsInput,
   FetchTagRatioInput,
   RegisteredAreaAndCategoryAndTagOutput,
   RegisteredCategoryAndTagOutput,
+  RegisteredCategoryAndTagsOutput,
   SearchTagInput,
   StardustRecordsOutput,
 } from '~/apollo/generated';
 
-export const FETCH_REGISTERED_CATEGORY_AND_TAG: TypedDocumentNode<
-  RegisteredCategoryAndTagOutput,
-  FetchRegisteredCategoryAndTag
+export const FETCH_RECENT_CATEGORY_AND_TAG: TypedDocumentNode<
+  RegisteredCategoryAndTagsOutput,
+  FetchRecentCategoryAndTagInput
 > = gql`
-  query fetchRegisteredCategoryAndTag(
-    $limit: String = "40"
-    $offset: String = "0"
-  ) {
-    fetchRegisteredCategoryAndTag(input: {limit: $limit, offset: $offset}) {
+  query fetchRecentCategoryAndTag($count: Float = 6) {
+    fetchRecentCategoryAndTag(input: {count: $count}) {
       errorMessage
       result
       data {
