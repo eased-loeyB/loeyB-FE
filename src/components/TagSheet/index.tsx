@@ -158,8 +158,6 @@ const TagSheet = forwardRef<BottomSheet, Props>(
       await refetchRegisteredAllTags();
     };
 
-    console.log(recentTags);
-
     return (
       <BottomSheet
         ref={tagSheetRef}
