@@ -1,11 +1,14 @@
+import {LoeybAreaType} from '~/apollo/generated';
+
 export enum ColorMap {
   // Common Colors
   Black = '#000',
   White = '#fff',
   LightBlue = '#A7D5F6',
-  LightBlue2 = '#F4FAFF',
+  LightBlue2 = '#E5F9FF',
   DarkBlue = '#050D20',
   NavyNightsky = '#0D1648',
+  Navy1 = '#1A1A3C',
 
   // Text Colors
   Primary = '#343A40',
@@ -61,3 +64,11 @@ export enum ColorMap {
   SuccessMain = '#22C245',
   SuccessDark = '#06A228',
 }
+
+export const AreaColorMap = {
+  [LoeybAreaType.Health]: '#F65454',
+  [LoeybAreaType.Mind]: '#F6DD56',
+  [LoeybAreaType.Social]: '#8AE588',
+  [LoeybAreaType.Hobby]: '#49DFE9',
+  [LoeybAreaType.Work]: '#BE4FC8',
+};

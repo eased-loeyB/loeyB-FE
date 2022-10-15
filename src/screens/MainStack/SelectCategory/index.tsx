@@ -19,7 +19,8 @@ import {
 } from '~/navigation/stacks/MainStack';
 import {useTypedSelector} from '~/store';
 import {updateUserData} from '~/store/reduxtoolkit/user/userSlice';
-import {SubtitleStyle, TitleStyle} from '~/utils/Styles';
+import {AreaColorMap} from '~/utils/Colors';
+import {BottomWrapperStyle, SubtitleStyle, TitleStyle} from '~/utils/Styles';
 
 import Category from './Category';
 import {SubCategoryProps} from './Category/CategoryItem';
@@ -63,7 +64,7 @@ const Container = styled.View`
 `;
 
 const ButtonWrapper = styled.View`
-  margin-top: 28px;
+  ${BottomWrapperStyle}
 `;
 
 const SelectCategory: FC = () => {
@@ -79,7 +80,14 @@ const SelectCategory: FC = () => {
   const [registerCategories] = useRegisterCategoriesMutation({
     onCompleted: ({registerCategories: {result}}) => {
       if (isSuccessResponse(result)) {
-        dispatch(updateUserData({categoryAndTags: areaCategory}));
+        dispatch(
+          updateUserData({
+            areaAndCategoryAndTags: areaCategory.map(value => ({
+              ...value,
+              tag: [],
+            })),
+          }),
+        );
         navigate(MainStackName.WELCOME);
       }
     },
@@ -120,11 +128,11 @@ const SelectCategory: FC = () => {
   };
 
   return (
-    <BackgroundCommon haveFilter={true} canGoBack={true} title={userName ?? ''}>
+    <BackgroundCommon haveFilter={true} canGoBack={true} isAuth={false}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <PageWrapper>
           <TitleContainer>
-            <Title>what do you want to organize?</Title>
+            <Title>{`${userName}\nWhat do you want\nto organize?`}</Title>
             <Subtitle>Select atleast 3 categories</Subtitle>
           </TitleContainer>
 
@@ -132,7 +140,7 @@ const SelectCategory: FC = () => {
             <Category
               title={healthTitle}
               child={healthCategory}
-              color={'#F65454'}
+              color={AreaColorMap[LoeybAreaType.Health]}
               callback={data => {
                 setHealth(data);
               }}
@@ -140,7 +148,7 @@ const SelectCategory: FC = () => {
             <Category
               title={mindTitle}
               child={mindCategory}
-              color="#F6DD56"
+              color={AreaColorMap[LoeybAreaType.Mind]}
               callback={data => {
                 setMind(data);
               }}
@@ -148,7 +156,7 @@ const SelectCategory: FC = () => {
             <Category
               title={socialTitle}
               child={socialCategory}
-              color="#8AE58B"
+              color={AreaColorMap[LoeybAreaType.Social]}
               callback={data => {
                 setSocial(data);
               }}
@@ -156,7 +164,7 @@ const SelectCategory: FC = () => {
             <Category
               title={lifeTitle}
               child={lifeCategory}
-              color="#49DFE9"
+              color={AreaColorMap[LoeybAreaType.Hobby]}
               callback={data => {
                 setLife(data);
               }}
@@ -164,7 +172,7 @@ const SelectCategory: FC = () => {
             <Category
               title={workTitle}
               child={workCategory}
-              color="#BE4FC8"
+              color={AreaColorMap[LoeybAreaType.Work]}
               callback={data => {
                 setWork(data);
               }}

@@ -1,11 +1,20 @@
-import React, {useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {Image, Platform, TouchableOpacity} from 'react-native';
 
+import BottomSheet from '@gorhom/bottom-sheet';
 import dayjs from 'dayjs';
 import {isEmpty} from 'lodash';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
+import {useDispatch} from 'react-redux';
 import styled from 'styled-components/native';
 
+import {
+  AreaCategoryTagInput,
+  useFetchRegisteredRecordsLazyQuery,
+  useRegisterRecordMutation,
+} from '~/apollo/generated';
+import {isSuccessResponse} from '~/apollo/utils/error';
 import {
   CAMERA,
   CLEAR_ICON,
@@ -21,13 +30,15 @@ import {
   VIEW_CAROUSEL,
 } from '~/assets';
 import BackgroundCommon from '~/components/BackgroundCommon';
-import BottomModal from '~/components/BottomModal';
 import IconButton from '~/components/IconButton';
 import LocationPicker from '~/components/LocationPicker';
 import Modal from '~/components/Modal';
 import MyDatePicker from '~/components/MyDatePicker';
+import TagSheet, {MINIMIZED_TAG_SHEET_HEIGHT} from '~/components/TagSheet';
+import {updateUserData} from '~/store/reduxtoolkit/user/userSlice';
 import {ChooseMultiple, FileAttachment, OpenCamera} from '~/utils/Camera';
 import {ColorMap} from '~/utils/Colors';
+import ToastService from '~/utils/ToastService';
 
 const PageWrapper = styled.KeyboardAvoidingView`
   flex: 1;
@@ -84,11 +95,12 @@ const InformationContainer = styled.View`
   padding: 0 16px;
 `;
 
-const TextInputContainer = styled.View`
+const TextInputContainer = styled.View<{footerHeight: number}>`
   flex: 1;
   width: 100%;
   margin-top: 12px;
   padding: 0 16px;
+  margin-bottom: ${({footerHeight}) => footerHeight + 12}px;
 `;
 
 const StyledTextInput = styled.TextInput`
@@ -107,15 +119,99 @@ const GuideContent = styled.Text`
 `;
 
 const FirstMemory = () => {
+  const {bottom} = useSafeAreaInsets();
+  const dispatch = useDispatch();
+
   const [openGuideModal, setOpenGuideModal] = useState(true);
-  const [image, setImage] = useState<FileAttachment[]>();
+  const [images, setImages] = useState<FileAttachment[]>([]);
   const [openTimePicker, setOpenTimePicker] = useState(false);
   const [date, setDate] = useState(dayjs());
   const [city, setCity] = useState('');
   const [openCityPicker, setCityPicker] = useState(false);
   const [textMode, setTextMode] = useState(false);
+  const [description, setDescription] = useState<string>('');
   const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0;
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<AreaCategoryTagInput[]>([]);
+
+  const tagSheetRef = useRef<BottomSheet>(null);
+
+  const [fetchRecords] = useFetchRegisteredRecordsLazyQuery({
+    onCompleted: ({fetchRegisteredRecords: {data, result}}) => {
+      if (isSuccessResponse(result)) {
+        if (data) {
+          dispatch(
+            updateUserData({
+              stardustRecords: data,
+            }),
+          );
+        }
+      }
+    },
+  });
+
+  const [registerRecord] = useRegisterRecordMutation({
+    onCompleted: async ({registerRecord: {result}}) => {
+      if (isSuccessResponse(result)) {
+        await fetchRecords();
+        // TODO: change success logic
+        setImages([]);
+        setDate(dayjs());
+        setCity('');
+        setDescription('');
+        setSelectedTags([]);
+        tagSheetRef.current?.collapse();
+      } else {
+        ToastService.showError('Failed to save stardust');
+      }
+    },
+    onError: () => {
+      ToastService.showError('Failed to save stardust');
+    },
+  });
+
+  const onSelectTag = (input: AreaCategoryTagInput) => {
+    setSelectedTags(prev => {
+      const prevIndex = prev.findIndex(
+        ({tag: prevTag}) => prevTag === input.tag,
+      );
+      if (prevIndex > -1) {
+        const copied = [...prev];
+        copied.splice(prevIndex, 1);
+
+        return copied;
+      }
+
+      return [...prev, input];
+    });
+  };
+
+  const onRegisterRecord = useCallback(async (): Promise<void> => {
+    const imgFiles = images.map(({id, name}) => ({
+      fileId: id,
+      fileName: name,
+    }));
+
+    const hasContent = imgFiles.length > 0 || !!description;
+    const hasDateAndLocation = !!date && !!city;
+    const hasTag = selectedTags.length > 0;
+
+    if (!hasContent || !hasDateAndLocation || !hasTag) {
+      ToastService.showError('Invalid parameters');
+      return;
+    }
+
+    await registerRecord({
+      variables: {
+        imgFiles,
+        description,
+        areaCategoryTag: selectedTags,
+        date: date.toISOString(),
+        location: city,
+        importance: 1,
+      },
+    });
+  }, [city, date, description, images, registerRecord, selectedTags]);
 
   return (
     <BackgroundCommon edges={['top', 'right', 'left']}>
@@ -126,12 +222,8 @@ const FirstMemory = () => {
           {!textMode && (
             <ImageContainer>
               <Swiper>
-                {(image ?? [])?.map(i => (
-                  <StyledImage
-                    source={{
-                      uri: i ? i.uri : 'https://picsum.photos/343/412',
-                    }}
-                  />
+                {images.map(({id, uri}) => (
+                  <StyledImage key={id} source={{uri}} />
                 ))}
               </Swiper>
               <ClearButton
@@ -145,19 +237,16 @@ const FirstMemory = () => {
               </ClearButton>
               <TouchableOpacity
                 onPress={async () => {
-                  await OpenCamera('photo', async res => {
-                    console.log('tempp', [...(image ?? []), ...res]);
-                    setImage([...(image ?? []), ...res]);
+                  await OpenCamera('photo', res => {
+                    setImages(prev => prev.concat(res));
                   });
                 }}>
                 <Icon source={CAMERA} />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={async () => {
-                  await OpenCamera('video', async res => {
-                    if (!isEmpty(res)) {
-                      // setImage(res[0]);
-                    }
+                  await OpenCamera('video', res => {
+                    setImages(prev => prev.concat(res));
                   });
                 }}>
                 <Icon source={VIDEO_CAMERA} />
@@ -167,8 +256,8 @@ const FirstMemory = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={async () => {
-                  await ChooseMultiple('any', result => {
-                    setImage([...(image ?? []), ...result]);
+                  await ChooseMultiple('any', res => {
+                    setImages(prev => prev.concat(res));
                   });
                 }}>
                 <SearchIcon source={SEARCH} />
@@ -193,8 +282,11 @@ const FirstMemory = () => {
               <IconButton iconSrc={loeyB}> 1</IconButton>
             </InformationContainer>
           )}
-          <TextInputContainer>
+          <TextInputContainer
+            footerHeight={bottom + MINIMIZED_TAG_SHEET_HEIGHT}>
             <StyledTextInput
+              value={description}
+              onChangeText={setDescription}
               multiline={true}
               placeholder={'Write about the experience'}
               placeholderTextColor={ColorMap.LightBlue2}
@@ -266,14 +358,19 @@ const FirstMemory = () => {
           dismiss={() => setOpenDeleteModal(false)}
           callback={() => {
             setOpenDeleteModal(false);
-            setImage(undefined);
+            setImages([]);
           }}
           content="Are you sure to delete this image from your device album?"
           iconSource={DELETE_MODAL}
           buttonText="Delete from device album"
         />
 
-        <BottomModal />
+        <TagSheet
+          ref={tagSheetRef}
+          selectedTags={selectedTags}
+          onSelectTag={onSelectTag}
+          onSubmit={onRegisterRecord}
+        />
       </PageWrapper>
     </BackgroundCommon>
   );

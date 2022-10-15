@@ -7,7 +7,8 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useDispatch} from 'react-redux';
 import styled from 'styled-components/native';
 
-import {Authentication, useRegisterUserMutation} from '~/apollo/generated';
+import {useRegisterUserMutation} from '~/apollo/generated';
+import {saveToken} from '~/apollo/utils/auth';
 import BackgroundCommon from '~/components/BackgroundCommon';
 import Button from '~/components/Button';
 import TextField from '~/components/TextField';
@@ -61,7 +62,8 @@ const RegisterWithPass: FC<Props> = ({
   const [registerUser] = useRegisterUserMutation({
     onCompleted: async ({registerUser: {data}}) => {
       if (data) {
-        dispatch(onLogin(data as Authentication));
+        await saveToken(data);
+        dispatch(onLogin(data));
         ToastService.showSuccess('Welcome to loeyB');
       }
     },

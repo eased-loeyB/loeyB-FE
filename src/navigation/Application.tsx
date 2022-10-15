@@ -15,8 +15,13 @@ import {
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
 
-import {useRefreshMutation} from '~/apollo/generated';
+import {
+  useFetchRegisteredAreaAndCategoryAndTagLazyQuery,
+  useFetchRegisteredRecordsLazyQuery,
+  useRefreshMutation,
+} from '~/apollo/generated';
 import {EventToken} from '~/apollo/types/event';
+import {removeToken, saveToken} from '~/apollo/utils/auth';
 import {isSuccessResponse} from '~/apollo/utils/error';
 import Splash from '~/screens/Splash';
 import {useTypedSelector} from '~/store';
@@ -24,6 +29,7 @@ import {
   onLogin,
   onLogout,
   resetData,
+  updateUserData,
 } from '~/store/reduxtoolkit/user/userSlice';
 import {loadRefreshToken} from '~/utils/asyncstorage';
 import {isIOS} from '~/utils/device';
@@ -51,7 +57,7 @@ const Stack = createStackNavigator();
 const ApplicationNavigator: FC = () => {
   const {
     authData: {isLoggedIn, isLoginExpired},
-    userData: {userName, categoryAndTags, stardustRecords},
+    userData: {userName, areaAndCategoryAndTags, stardustRecords},
   } = useTypedSelector(({user}) => user);
   const dispatch = useDispatch();
 
@@ -61,7 +67,10 @@ const ApplicationNavigator: FC = () => {
     onCompleted: async ({refresh: {result, data}}) => {
       if (isSuccessResponse(result)) {
         if (data) {
+          await saveToken(data);
           dispatch(onLogin(data));
+          await fetchCategoryAndTag();
+          await fetchRecords();
         } else {
           dispatch(resetData());
         }
@@ -71,10 +80,41 @@ const ApplicationNavigator: FC = () => {
     },
   });
 
+  const [fetchCategoryAndTag] =
+    useFetchRegisteredAreaAndCategoryAndTagLazyQuery({
+      onCompleted: ({fetchRegisteredAreaAndCategoryAndTag: {data, result}}) => {
+        if (isSuccessResponse(result)) {
+          if (data) {
+            dispatch(
+              updateUserData({
+                areaAndCategoryAndTags: data,
+              }),
+            );
+          }
+        }
+      },
+    });
+
+  const [fetchRecords] = useFetchRegisteredRecordsLazyQuery({
+    onCompleted: ({fetchRegisteredRecords: {data, result}}) => {
+      if (isSuccessResponse(result)) {
+        if (data) {
+          dispatch(
+            updateUserData({
+              stardustRecords: data,
+            }),
+          );
+        }
+      }
+    },
+  });
+
   const hasUserData = useMemo(
     () =>
-      !!userName && categoryAndTags.length > 0 && stardustRecords.length > 0,
-    [userName, categoryAndTags, stardustRecords],
+      !!userName &&
+      areaAndCategoryAndTags.length > 0 &&
+      stardustRecords.length > 0,
+    [userName, areaAndCategoryAndTags, stardustRecords],
   );
 
   const requestUserPermission = async () => {
@@ -119,7 +159,8 @@ const ApplicationNavigator: FC = () => {
 
     const tokenInvalidEvent = DeviceEventEmitter.addListener(
       EventToken.INVALID_TOKEN,
-      () => {
+      async () => {
+        await removeToken();
         dispatch(onLogout());
       },
     );
