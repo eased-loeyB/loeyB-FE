@@ -22,6 +22,7 @@ export const FETCH_RECENT_CATEGORY_AND_TAG: TypedDocumentNode<
       errorMessage
       result
       data {
+        area
         category
         tag
       }
@@ -56,34 +57,31 @@ export const FETCH_REGISTERED_RECORDS: TypedDocumentNode<
   FetchRegisteredRecordsInput
 > = gql`
   query fetchRegisteredRecords(
-    $email: String
     $area: LoeybAreaType
     $category: LoeybCategoryType
     $tag: String
     $date: String
   ) {
     fetchRegisteredRecords(
-      input: {
-        email: $email
-        area: $area
-        category: $category
-        tag: $tag
-        date: $date
-      }
+      input: {area: $area, category: $category, tag: $tag, date: $date}
     ) {
       errorMessage
       result
       data {
-        area
-        category
-        date
-        description
-        fileId
-        fileName
+        id
+        files {
+          fileId
+          fileName
+        }
         importance
+        description
         location
-        recordId
-        tag
+        date
+        areaCategoryTag {
+          area
+          category
+          tag
+        }
       }
     }
   }
@@ -121,6 +119,7 @@ export const SEARCH_TAG: TypedDocumentNode<
       errorMessage
       result
       data {
+        area
         category
         tag
       }

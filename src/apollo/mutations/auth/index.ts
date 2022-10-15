@@ -2,7 +2,6 @@ import {gql, TypedDocumentNode} from '@apollo/client';
 
 import {
   AuthenticationOutput,
-  GoogleLoginInput,
   Output,
   RegisterUserInput,
   RequestEmailVerificationCodeInput,
@@ -75,25 +74,6 @@ export const SET_USER_NAME: TypedDocumentNode<Output, SetUsernameInput> = gql`
     setUsername(input: {username: $username}) {
       result
       errorMessage
-    }
-  }
-`;
-
-export const GOOGLE_LOGIN: TypedDocumentNode<
-  AuthenticationOutput,
-  GoogleLoginInput
-> = gql`
-  mutation googleLogin($token: String!, $deviceToken: String) {
-    googleLogin(input: {token: $token, deviceToken: $deviceToken}) {
-      result
-      errorMessage
-      data {
-        accessToken
-        tokenType
-        expiresIn
-        refreshToken
-        userName
-      }
     }
   }
 `;

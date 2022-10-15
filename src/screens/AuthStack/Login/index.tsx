@@ -12,7 +12,7 @@ import styled from 'styled-components/native';
 
 import {
   LoeybErrorCode,
-  useGoogleLoginMutation,
+  useGoogleLoginLazyQuery,
   useRequestEmailVerificationCodeMutation,
 } from '~/apollo/generated';
 import {saveToken} from '~/apollo/utils/auth';
@@ -81,8 +81,8 @@ const Login: FC = () => {
       },
     });
 
-  const [googleLogin, {loading: isLoadingGoogleLogin}] = useGoogleLoginMutation(
-    {
+  const [googleLogin, {loading: isLoadingGoogleLogin}] =
+    useGoogleLoginLazyQuery({
       onCompleted: async ({googleLogin: {data}}) => {
         if (data) {
           await saveToken(data);
@@ -92,8 +92,7 @@ const Login: FC = () => {
           ToastService.showError('Something went wrong. Please try again.');
         }
       },
-    },
-  );
+    });
 
   const isLoading = isLoadingRequestCode || isLoadingGoogleLogin;
 
@@ -113,7 +112,7 @@ const Login: FC = () => {
       await GoogleSignin.signIn();
       const currentUser = await GoogleSignin.getTokens();
       console.log('Respsone from google: => ', currentUser);
-      googleLogin({
+      await googleLogin({
         variables: {
           token: currentUser.accessToken,
         },

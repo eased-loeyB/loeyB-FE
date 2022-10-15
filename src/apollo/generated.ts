@@ -20,6 +20,16 @@ export type AreaCategoryInput = {
   category: LoeybCategoryType;
 };
 
+export type AreaCategoryTag = {
+  __typename?: 'AreaCategoryTag';
+  /** area */
+  area?: Maybe<LoeybAreaType>;
+  /** category */
+  category: LoeybCategoryType;
+  /** tag */
+  tag?: Maybe<Scalars['String']>;
+};
+
 export type AreaCategoryTagInput = {
   area?: InputMaybe<LoeybAreaType>;
   category?: InputMaybe<LoeybCategoryType>;
@@ -70,13 +80,10 @@ export type FetchRegisteredRecordsInput = {
   /** category */
   category?: InputMaybe<LoeybCategoryType>;
   date?: InputMaybe<Scalars['String']>;
-  /** 이메일 */
-  email?: InputMaybe<Scalars['String']>;
   /** tag */
   tag?: InputMaybe<Scalars['String']>;
 };
 
-/** 이메일 인증 코드 */
 export type GoogleLoginInput = {
   /** device token */
   deviceToken?: InputMaybe<Scalars['String']>;
@@ -197,8 +204,6 @@ export type Mutation = {
   addCategoryAndArea: Output;
   /** add categories when upload img file */
   addTag: Output;
-  /** 이메일 인증 요청 */
-  googleLogin: AuthenticationOutput;
   /** Authorization: Bearer 토큰 갱신 */
   refresh: AuthenticationOutput;
   /** register at least 3 categories at first */
@@ -223,11 +228,6 @@ export type MutationAddCategoryAndAreaArgs = {
 
 export type MutationAddTagArgs = {
   input: AddTagInput;
-};
-
-
-export type MutationGoogleLoginArgs = {
-  input: GoogleLoginInput;
 };
 
 
@@ -286,6 +286,8 @@ export type Query = {
   fetchRegisteredRecords: StardustRecordsOutput;
   /** fetchTagRatio */
   fetchTagRatio: AreaTagRatiosOutput;
+  /** 이메일 인증 요청 */
+  googleLogin: AuthenticationOutput;
   sayHello: Scalars['String'];
   /** searchTag */
   searchTag: RegisteredCategoryAndTagOutput;
@@ -319,6 +321,11 @@ export type QueryFetchTagRatioArgs = {
 };
 
 
+export type QueryGoogleLoginArgs = {
+  input: GoogleLoginInput;
+};
+
+
 export type QuerySearchTagArgs = {
   input: SearchTagInput;
 };
@@ -335,10 +342,10 @@ export type RegisterCategoriesInput = {
 };
 
 export type RegisterRecordInput = {
-  areaCategoryTag: Array<AreaCategoryTagInput>;
+  areaCategoryTag?: InputMaybe<Array<AreaCategoryTagInput>>;
   date: Scalars['String'];
   description?: InputMaybe<Scalars['String']>;
-  imgFiles?: InputMaybe<ImgFileInput>;
+  imgFiles?: InputMaybe<Array<ImgFileInput>>;
   importance?: InputMaybe<Scalars['Float']>;
   location: Scalars['String'];
 };
@@ -381,7 +388,9 @@ export type RegisteredAreaAndCategoryAndTagOutput = {
 
 export type RegisteredCategoryAndTag = {
   __typename?: 'RegisteredCategoryAndTag';
-  category?: Maybe<Scalars['String']>;
+  /** category tag의 색상때문에 필요 */
+  area?: Maybe<LoeybAreaType>;
+  category?: Maybe<LoeybCategoryType>;
   tag?: Maybe<Scalars['String']>;
 };
 
@@ -444,18 +453,16 @@ export type SetUsernameInput = {
 
 export type StardustRecords = {
   __typename?: 'StardustRecords';
-  area?: Maybe<Scalars['String']>;
-  category?: Maybe<Scalars['String']>;
+  /** AreaCategoryTag */
+  areaCategoryTag?: Maybe<Array<AreaCategoryTag>>;
   date?: Maybe<Scalars['String']>;
   /** description */
   description?: Maybe<Scalars['String']>;
-  fileId?: Maybe<Scalars['String']>;
-  fileName?: Maybe<Scalars['String']>;
+  files?: Maybe<Array<StartdustFile>>;
+  id?: Maybe<Scalars['String']>;
   /** 중요도 */
   importance?: Maybe<Scalars['Float']>;
   location?: Maybe<Scalars['String']>;
-  recordId?: Maybe<Scalars['String']>;
-  tag?: Maybe<Scalars['String']>;
 };
 
 export type StardustRecordsOutput = {
@@ -465,6 +472,15 @@ export type StardustRecordsOutput = {
   errorMessage?: Maybe<Scalars['String']>;
   /** LOEYB ERROR CODE */
   result: LoeybErrorCode;
+};
+
+/** startdust record img file */
+export type StartdustFile = {
+  __typename?: 'StartdustFile';
+  /** file id */
+  fileId?: Maybe<Scalars['String']>;
+  /** file name */
+  fileName?: Maybe<Scalars['String']>;
 };
 
 /** 토큰 갱신 */
@@ -477,10 +493,10 @@ export type UpdateRecordInput = {
   areaCategoryTag?: InputMaybe<Array<AreaCategoryTagInput>>;
   date?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
-  imgFiles?: InputMaybe<ImgFileInput>;
+  imgFiles?: InputMaybe<Array<ImgFileInput>>;
   importance?: InputMaybe<Scalars['Float']>;
   location?: InputMaybe<Scalars['String']>;
-  recordId?: InputMaybe<Scalars['String']>;
+  recordId: Scalars['String'];
 };
 
 /** 이메일 인증 */
@@ -575,14 +591,6 @@ export type SetUsernameMutationVariables = Exact<{
 
 export type SetUsernameMutation = { __typename?: 'Mutation', setUsername: { __typename?: 'Output', result: LoeybErrorCode, errorMessage?: string | null } };
 
-export type GoogleLoginMutationVariables = Exact<{
-  token: Scalars['String'];
-  deviceToken?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type GoogleLoginMutation = { __typename?: 'Mutation', googleLogin: { __typename?: 'AuthenticationOutput', result: LoeybErrorCode, errorMessage?: string | null, data?: { __typename?: 'Authentication', accessToken: string, tokenType: string, expiresIn: number, refreshToken: string, userName?: string | null } | null } };
-
 export type RegisterCategoriesMutationVariables = Exact<{
   areaCategory: Array<AreaCategoryInput> | AreaCategoryInput;
 }>;
@@ -591,7 +599,7 @@ export type RegisterCategoriesMutationVariables = Exact<{
 export type RegisterCategoriesMutation = { __typename?: 'Mutation', registerCategories: { __typename?: 'Output', result: LoeybErrorCode, errorMessage?: string | null } };
 
 export type RegisterRecordMutationVariables = Exact<{
-  imgFiles?: InputMaybe<ImgFileInput>;
+  imgFiles?: InputMaybe<Array<ImgFileInput> | ImgFileInput>;
   areaCategoryTag: Array<AreaCategoryTagInput> | AreaCategoryTagInput;
   date: Scalars['String'];
   location: Scalars['String'];
@@ -603,9 +611,9 @@ export type RegisterRecordMutationVariables = Exact<{
 export type RegisterRecordMutation = { __typename?: 'Mutation', registerRecord: { __typename?: 'Output', result: LoeybErrorCode, errorMessage?: string | null } };
 
 export type UpdateRecordMutationVariables = Exact<{
-  recordId?: InputMaybe<Scalars['String']>;
-  imgFiles?: InputMaybe<ImgFileInput>;
-  areaCategoryTag?: InputMaybe<Array<AreaCategoryTagInput> | AreaCategoryTagInput>;
+  recordId: Scalars['String'];
+  imgFiles?: InputMaybe<Array<ImgFileInput> | ImgFileInput>;
+  areaCategoryTag: Array<AreaCategoryTagInput> | AreaCategoryTagInput;
   date?: InputMaybe<Scalars['String']>;
   location?: InputMaybe<Scalars['String']>;
   importance?: InputMaybe<Scalars['Float']>;
@@ -640,6 +648,14 @@ export type AuthenticateQueryVariables = Exact<{
 
 export type AuthenticateQuery = { __typename?: 'Query', authenticate: { __typename?: 'AuthenticationOutput', errorMessage?: string | null, result: LoeybErrorCode, data?: { __typename?: 'Authentication', accessToken: string, tokenType: string, expiresIn: number, refreshToken: string, userName?: string | null } | null } };
 
+export type GoogleLoginQueryVariables = Exact<{
+  token: Scalars['String'];
+  deviceToken?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GoogleLoginQuery = { __typename?: 'Query', googleLogin: { __typename?: 'AuthenticationOutput', result: LoeybErrorCode, errorMessage?: string | null, data?: { __typename?: 'Authentication', accessToken: string, tokenType: string, expiresIn: number, refreshToken: string, userName?: string | null } | null } };
+
 export type VerifyEmailVerificationCodeQueryVariables = Exact<{
   email: Scalars['String'];
   code: Scalars['String'];
@@ -647,6 +663,13 @@ export type VerifyEmailVerificationCodeQueryVariables = Exact<{
 
 
 export type VerifyEmailVerificationCodeQuery = { __typename?: 'Query', verifyEmailVerificationCode: { __typename?: 'Output', errorMessage?: string | null, result: LoeybErrorCode } };
+
+export type FetchRecentCategoryAndTagQueryVariables = Exact<{
+  count?: InputMaybe<Scalars['Float']>;
+}>;
+
+
+export type FetchRecentCategoryAndTagQuery = { __typename?: 'Query', fetchRecentCategoryAndTag: { __typename?: 'RegisteredCategoryAndTagsOutput', errorMessage?: string | null, result: LoeybErrorCode, data?: Array<{ __typename?: 'RegisteredCategoryAndTag', area?: LoeybAreaType | null, category?: LoeybCategoryType | null, tag?: string | null }> | null } };
 
 export type FetchRegisteredAreaAndCategoryAndTagQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['String']>;
@@ -657,7 +680,6 @@ export type FetchRegisteredAreaAndCategoryAndTagQueryVariables = Exact<{
 export type FetchRegisteredAreaAndCategoryAndTagQuery = { __typename?: 'Query', fetchRegisteredAreaAndCategoryAndTag: { __typename?: 'RegisteredAreaAndCategoryAndTagOutput', errorMessage?: string | null, result: LoeybErrorCode, data?: Array<{ __typename?: 'RegisteredAreaAndCategoryAndTag', area?: LoeybAreaType | null, category?: LoeybCategoryType | null, tag?: Array<string> | null }> | null } };
 
 export type FetchRegisteredRecordsQueryVariables = Exact<{
-  email?: InputMaybe<Scalars['String']>;
   area?: InputMaybe<LoeybAreaType>;
   category?: InputMaybe<LoeybCategoryType>;
   tag?: InputMaybe<Scalars['String']>;
@@ -665,7 +687,7 @@ export type FetchRegisteredRecordsQueryVariables = Exact<{
 }>;
 
 
-export type FetchRegisteredRecordsQuery = { __typename?: 'Query', fetchRegisteredRecords: { __typename?: 'StardustRecordsOutput', errorMessage?: string | null, result: LoeybErrorCode, data?: Array<{ __typename?: 'StardustRecords', area?: string | null, category?: string | null, date?: string | null, description?: string | null, fileId?: string | null, fileName?: string | null, importance?: number | null, location?: string | null, recordId?: string | null, tag?: string | null }> | null } };
+export type FetchRegisteredRecordsQuery = { __typename?: 'Query', fetchRegisteredRecords: { __typename?: 'StardustRecordsOutput', errorMessage?: string | null, result: LoeybErrorCode, data?: Array<{ __typename?: 'StardustRecords', id?: string | null, importance?: number | null, description?: string | null, location?: string | null, date?: string | null, files?: Array<{ __typename?: 'StartdustFile', fileId?: string | null, fileName?: string | null }> | null, areaCategoryTag?: Array<{ __typename?: 'AreaCategoryTag', area?: LoeybAreaType | null, category: LoeybCategoryType, tag?: string | null }> | null }> | null } };
 
 export type FetchTagRatioQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['String']>;
@@ -683,14 +705,7 @@ export type SearchTagQueryVariables = Exact<{
 }>;
 
 
-export type SearchTagQuery = { __typename?: 'Query', searchTag: { __typename?: 'RegisteredCategoryAndTagOutput', errorMessage?: string | null, result: LoeybErrorCode, data?: { __typename?: 'RegisteredCategoryAndTag', category?: string | null, tag?: string | null } | null } };
-
-export type FetchRecentCategoryAndTagQueryVariables = Exact<{
-  count?: InputMaybe<Scalars['Float']>;
-}>;
-
-
-export type FetchRecentCategoryAndTagQuery = { __typename?: 'Query', fetchRecentCategoryAndTag: { __typename?: 'RegisteredCategoryAndTagsOutput', errorMessage?: string | null, result: LoeybErrorCode, data?: Array<{ __typename?: 'RegisteredCategoryAndTag', category?: string | null, tag?: string | null }> | null } };
+export type SearchTagQuery = { __typename?: 'Query', searchTag: { __typename?: 'RegisteredCategoryAndTagOutput', errorMessage?: string | null, result: LoeybErrorCode, data?: { __typename?: 'RegisteredCategoryAndTag', area?: LoeybAreaType | null, category?: LoeybCategoryType | null, tag?: string | null } | null } };
 
 
 export const RefreshDocument = gql`
@@ -850,48 +865,6 @@ export function useSetUsernameMutation(baseOptions?: Apollo.MutationHookOptions<
 export type SetUsernameMutationHookResult = ReturnType<typeof useSetUsernameMutation>;
 export type SetUsernameMutationResult = Apollo.MutationResult<SetUsernameMutation>;
 export type SetUsernameMutationOptions = Apollo.BaseMutationOptions<SetUsernameMutation, SetUsernameMutationVariables>;
-export const GoogleLoginDocument = gql`
-    mutation googleLogin($token: String!, $deviceToken: String) {
-  googleLogin(input: {token: $token, deviceToken: $deviceToken}) {
-    result
-    errorMessage
-    data {
-      accessToken
-      tokenType
-      expiresIn
-      refreshToken
-      userName
-    }
-  }
-}
-    `;
-export type GoogleLoginMutationFn = Apollo.MutationFunction<GoogleLoginMutation, GoogleLoginMutationVariables>;
-
-/**
- * __useGoogleLoginMutation__
- *
- * To run a mutation, you first call `useGoogleLoginMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGoogleLoginMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [googleLoginMutation, { data, loading, error }] = useGoogleLoginMutation({
- *   variables: {
- *      token: // value for 'token'
- *      deviceToken: // value for 'deviceToken'
- *   },
- * });
- */
-export function useGoogleLoginMutation(baseOptions?: Apollo.MutationHookOptions<GoogleLoginMutation, GoogleLoginMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GoogleLoginMutation, GoogleLoginMutationVariables>(GoogleLoginDocument, options);
-      }
-export type GoogleLoginMutationHookResult = ReturnType<typeof useGoogleLoginMutation>;
-export type GoogleLoginMutationResult = Apollo.MutationResult<GoogleLoginMutation>;
-export type GoogleLoginMutationOptions = Apollo.BaseMutationOptions<GoogleLoginMutation, GoogleLoginMutationVariables>;
 export const RegisterCategoriesDocument = gql`
     mutation registerCategories($areaCategory: [AreaCategoryInput!]!) {
   registerCategories(input: {areaCategory: $areaCategory}) {
@@ -927,7 +900,7 @@ export type RegisterCategoriesMutationHookResult = ReturnType<typeof useRegister
 export type RegisterCategoriesMutationResult = Apollo.MutationResult<RegisterCategoriesMutation>;
 export type RegisterCategoriesMutationOptions = Apollo.BaseMutationOptions<RegisterCategoriesMutation, RegisterCategoriesMutationVariables>;
 export const RegisterRecordDocument = gql`
-    mutation registerRecord($imgFiles: ImgFileInput, $areaCategoryTag: [AreaCategoryTagInput!]!, $date: String!, $location: String!, $importance: Float, $description: String) {
+    mutation registerRecord($imgFiles: [ImgFileInput!], $areaCategoryTag: [AreaCategoryTagInput!]!, $date: String!, $location: String!, $importance: Float, $description: String) {
   registerRecord(
     input: {imgFiles: $imgFiles, areaCategoryTag: $areaCategoryTag, date: $date, location: $location, importance: $importance, description: $description}
   ) {
@@ -968,7 +941,7 @@ export type RegisterRecordMutationHookResult = ReturnType<typeof useRegisterReco
 export type RegisterRecordMutationResult = Apollo.MutationResult<RegisterRecordMutation>;
 export type RegisterRecordMutationOptions = Apollo.BaseMutationOptions<RegisterRecordMutation, RegisterRecordMutationVariables>;
 export const UpdateRecordDocument = gql`
-    mutation updateRecord($recordId: String, $imgFiles: ImgFileInput, $areaCategoryTag: [AreaCategoryTagInput!], $date: String, $location: String, $importance: Float, $description: String) {
+    mutation updateRecord($recordId: String!, $imgFiles: [ImgFileInput!], $areaCategoryTag: [AreaCategoryTagInput!]!, $date: String, $location: String, $importance: Float, $description: String) {
   updateRecord(
     input: {recordId: $recordId, imgFiles: $imgFiles, areaCategoryTag: $areaCategoryTag, date: $date, location: $location, importance: $importance, description: $description}
   ) {
@@ -1126,6 +1099,50 @@ export function useAuthenticateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type AuthenticateQueryHookResult = ReturnType<typeof useAuthenticateQuery>;
 export type AuthenticateLazyQueryHookResult = ReturnType<typeof useAuthenticateLazyQuery>;
 export type AuthenticateQueryResult = Apollo.QueryResult<AuthenticateQuery, AuthenticateQueryVariables>;
+export const GoogleLoginDocument = gql`
+    query googleLogin($token: String!, $deviceToken: String) {
+  googleLogin(input: {token: $token, deviceToken: $deviceToken}) {
+    result
+    errorMessage
+    data {
+      accessToken
+      tokenType
+      expiresIn
+      refreshToken
+      userName
+    }
+  }
+}
+    `;
+
+/**
+ * __useGoogleLoginQuery__
+ *
+ * To run a query within a React component, call `useGoogleLoginQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGoogleLoginQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGoogleLoginQuery({
+ *   variables: {
+ *      token: // value for 'token'
+ *      deviceToken: // value for 'deviceToken'
+ *   },
+ * });
+ */
+export function useGoogleLoginQuery(baseOptions: Apollo.QueryHookOptions<GoogleLoginQuery, GoogleLoginQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GoogleLoginQuery, GoogleLoginQueryVariables>(GoogleLoginDocument, options);
+      }
+export function useGoogleLoginLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GoogleLoginQuery, GoogleLoginQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GoogleLoginQuery, GoogleLoginQueryVariables>(GoogleLoginDocument, options);
+        }
+export type GoogleLoginQueryHookResult = ReturnType<typeof useGoogleLoginQuery>;
+export type GoogleLoginLazyQueryHookResult = ReturnType<typeof useGoogleLoginLazyQuery>;
+export type GoogleLoginQueryResult = Apollo.QueryResult<GoogleLoginQuery, GoogleLoginQueryVariables>;
 export const VerifyEmailVerificationCodeDocument = gql`
     query verifyEmailVerificationCode($email: String!, $code: String!) {
   verifyEmailVerificationCode(input: {email: $email, code: $code}) {
@@ -1163,6 +1180,47 @@ export function useVerifyEmailVerificationCodeLazyQuery(baseOptions?: Apollo.Laz
 export type VerifyEmailVerificationCodeQueryHookResult = ReturnType<typeof useVerifyEmailVerificationCodeQuery>;
 export type VerifyEmailVerificationCodeLazyQueryHookResult = ReturnType<typeof useVerifyEmailVerificationCodeLazyQuery>;
 export type VerifyEmailVerificationCodeQueryResult = Apollo.QueryResult<VerifyEmailVerificationCodeQuery, VerifyEmailVerificationCodeQueryVariables>;
+export const FetchRecentCategoryAndTagDocument = gql`
+    query fetchRecentCategoryAndTag($count: Float = 6) {
+  fetchRecentCategoryAndTag(input: {count: $count}) {
+    errorMessage
+    result
+    data {
+      area
+      category
+      tag
+    }
+  }
+}
+    `;
+
+/**
+ * __useFetchRecentCategoryAndTagQuery__
+ *
+ * To run a query within a React component, call `useFetchRecentCategoryAndTagQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchRecentCategoryAndTagQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchRecentCategoryAndTagQuery({
+ *   variables: {
+ *      count: // value for 'count'
+ *   },
+ * });
+ */
+export function useFetchRecentCategoryAndTagQuery(baseOptions?: Apollo.QueryHookOptions<FetchRecentCategoryAndTagQuery, FetchRecentCategoryAndTagQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchRecentCategoryAndTagQuery, FetchRecentCategoryAndTagQueryVariables>(FetchRecentCategoryAndTagDocument, options);
+      }
+export function useFetchRecentCategoryAndTagLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchRecentCategoryAndTagQuery, FetchRecentCategoryAndTagQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchRecentCategoryAndTagQuery, FetchRecentCategoryAndTagQueryVariables>(FetchRecentCategoryAndTagDocument, options);
+        }
+export type FetchRecentCategoryAndTagQueryHookResult = ReturnType<typeof useFetchRecentCategoryAndTagQuery>;
+export type FetchRecentCategoryAndTagLazyQueryHookResult = ReturnType<typeof useFetchRecentCategoryAndTagLazyQuery>;
+export type FetchRecentCategoryAndTagQueryResult = Apollo.QueryResult<FetchRecentCategoryAndTagQuery, FetchRecentCategoryAndTagQueryVariables>;
 export const FetchRegisteredAreaAndCategoryAndTagDocument = gql`
     query fetchRegisteredAreaAndCategoryAndTag($limit: String = "40", $offset: String = "0") {
   fetchRegisteredAreaAndCategoryAndTag(input: {limit: $limit, offset: $offset}) {
@@ -1206,23 +1264,27 @@ export type FetchRegisteredAreaAndCategoryAndTagQueryHookResult = ReturnType<typ
 export type FetchRegisteredAreaAndCategoryAndTagLazyQueryHookResult = ReturnType<typeof useFetchRegisteredAreaAndCategoryAndTagLazyQuery>;
 export type FetchRegisteredAreaAndCategoryAndTagQueryResult = Apollo.QueryResult<FetchRegisteredAreaAndCategoryAndTagQuery, FetchRegisteredAreaAndCategoryAndTagQueryVariables>;
 export const FetchRegisteredRecordsDocument = gql`
-    query fetchRegisteredRecords($email: String, $area: LoeybAreaType, $category: LoeybCategoryType, $tag: String, $date: String) {
+    query fetchRegisteredRecords($area: LoeybAreaType, $category: LoeybCategoryType, $tag: String, $date: String) {
   fetchRegisteredRecords(
-    input: {email: $email, area: $area, category: $category, tag: $tag, date: $date}
+    input: {area: $area, category: $category, tag: $tag, date: $date}
   ) {
     errorMessage
     result
     data {
-      area
-      category
-      date
-      description
-      fileId
-      fileName
+      id
+      files {
+        fileId
+        fileName
+      }
       importance
+      description
       location
-      recordId
-      tag
+      date
+      areaCategoryTag {
+        area
+        category
+        tag
+      }
     }
   }
 }
@@ -1240,7 +1302,6 @@ export const FetchRegisteredRecordsDocument = gql`
  * @example
  * const { data, loading, error } = useFetchRegisteredRecordsQuery({
  *   variables: {
- *      email: // value for 'email'
  *      area: // value for 'area'
  *      category: // value for 'category'
  *      tag: // value for 'tag'
@@ -1310,6 +1371,7 @@ export const SearchTagDocument = gql`
     errorMessage
     result
     data {
+      area
       category
       tag
     }
@@ -1346,43 +1408,3 @@ export function useSearchTagLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type SearchTagQueryHookResult = ReturnType<typeof useSearchTagQuery>;
 export type SearchTagLazyQueryHookResult = ReturnType<typeof useSearchTagLazyQuery>;
 export type SearchTagQueryResult = Apollo.QueryResult<SearchTagQuery, SearchTagQueryVariables>;
-export const FetchRecentCategoryAndTagDocument = gql`
-    query fetchRecentCategoryAndTag($count: Float = 6) {
-  fetchRecentCategoryAndTag(input: {count: $count}) {
-    errorMessage
-    result
-    data {
-      category
-      tag
-    }
-  }
-}
-    `;
-
-/**
- * __useFetchRecentCategoryAndTagQuery__
- *
- * To run a query within a React component, call `useFetchRecentCategoryAndTagQuery` and pass it any options that fit your needs.
- * When your component renders, `useFetchRecentCategoryAndTagQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFetchRecentCategoryAndTagQuery({
- *   variables: {
- *      count: // value for 'count'
- *   },
- * });
- */
-export function useFetchRecentCategoryAndTagQuery(baseOptions?: Apollo.QueryHookOptions<FetchRecentCategoryAndTagQuery, FetchRecentCategoryAndTagQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FetchRecentCategoryAndTagQuery, FetchRecentCategoryAndTagQueryVariables>(FetchRecentCategoryAndTagDocument, options);
-      }
-export function useFetchRecentCategoryAndTagLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchRecentCategoryAndTagQuery, FetchRecentCategoryAndTagQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FetchRecentCategoryAndTagQuery, FetchRecentCategoryAndTagQueryVariables>(FetchRecentCategoryAndTagDocument, options);
-        }
-export type FetchRecentCategoryAndTagQueryHookResult = ReturnType<typeof useFetchRecentCategoryAndTagQuery>;
-export type FetchRecentCategoryAndTagLazyQueryHookResult = ReturnType<typeof useFetchRecentCategoryAndTagLazyQuery>;
-export type FetchRecentCategoryAndTagQueryResult = Apollo.QueryResult<FetchRecentCategoryAndTagQuery, FetchRecentCategoryAndTagQueryVariables>;
