@@ -187,12 +187,12 @@ const FirstMemory = () => {
   };
 
   const onRegisterRecord = useCallback(async (): Promise<void> => {
-    const [imgFile] = images.map(({id, name}) => ({
+    const imgFiles = images.map(({id, name}) => ({
       fileId: id,
       fileName: name,
     }));
 
-    const hasContent = !!imgFile || !!description;
+    const hasContent = imgFiles.length > 0 || !!description;
     const hasDateAndLocation = !!date && !!city;
     const hasTag = selectedTags.length > 0;
 
@@ -203,7 +203,7 @@ const FirstMemory = () => {
 
     await registerRecord({
       variables: {
-        imgFiles: imgFile,
+        imgFiles,
         description,
         areaCategoryTag: selectedTags,
         date: date.toISOString(),
@@ -237,8 +237,7 @@ const FirstMemory = () => {
               </ClearButton>
               <TouchableOpacity
                 onPress={async () => {
-                  await OpenCamera('photo', async res => {
-                    console.log('tempp', res);
+                  await OpenCamera('photo', res => {
                     setImages(prev => prev.concat(res));
                   });
                 }}>
@@ -246,10 +245,8 @@ const FirstMemory = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={async () => {
-                  await OpenCamera('video', async res => {
-                    if (!isEmpty(res)) {
-                      // setImages(res[0]);
-                    }
+                  await OpenCamera('video', res => {
+                    setImages(prev => prev.concat(res));
                   });
                 }}>
                 <Icon source={VIDEO_CAMERA} />
@@ -259,8 +256,8 @@ const FirstMemory = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={async () => {
-                  await ChooseMultiple('any', result => {
-                    setImages(prev => prev.concat(result));
+                  await ChooseMultiple('any', res => {
+                    setImages(prev => prev.concat(res));
                   });
                 }}>
                 <SearchIcon source={SEARCH} />
