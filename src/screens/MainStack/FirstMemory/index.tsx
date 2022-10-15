@@ -3,7 +3,6 @@ import {Image, Platform, TouchableOpacity} from 'react-native';
 
 import BottomSheet from '@gorhom/bottom-sheet';
 import dayjs from 'dayjs';
-import {isEmpty} from 'lodash';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
 import {useDispatch} from 'react-redux';
