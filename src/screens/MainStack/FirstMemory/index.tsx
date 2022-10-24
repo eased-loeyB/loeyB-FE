@@ -328,7 +328,7 @@ const FirstMemory = () => {
         />
 
         <MyDatePicker
-          callback={d => {
+          onChange={d => {
             setDate(dayjs(d));
             console.log('da', dayjs(d).toString());
             setOpenTimePicker(false);

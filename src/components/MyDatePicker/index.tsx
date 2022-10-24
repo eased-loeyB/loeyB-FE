@@ -1,15 +1,17 @@
 import React, {FC} from 'react';
 
 import dayjs, {Dayjs} from 'dayjs';
+import {rgba} from 'polished';
 import {Calendar} from 'react-native-calendars';
 import Modal from 'react-native-modal';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 
 import {ColorMap} from '~/utils/Colors';
 
 export interface MyDatePickerProps {
   open: boolean;
-  callback: (date: Date) => void;
+  onChange: (date: Date) => void;
   dismiss: () => void;
   date: Dayjs;
 }
@@ -19,80 +21,91 @@ const Base = styled(Modal)`
   margin: 0;
 `;
 
-const CalendarWrapper = styled.View`
-  padding-bottom: 50px;
-  background-color: ${ColorMap.DarkBlue};
+const CalendarWrapper = styled.View<{bottom: number}>`
+  margin-bottom: ${({bottom}) => -bottom}px;
+`;
+
+const StyledCalendar = styled(Calendar)<{bottom: number}>`
+  border-radius: 24px;
+  padding-top: 20px;
+  padding-bottom: ${({bottom}) => bottom + 16}px;
 `;
 
 const Header = styled.View`
-  width: 150px;
-  height: 38px;
-  margin-top: 10px;
-  background-color: rgba(229, 249, 255, 0.08);
+  display: flex;
+  justify-content: center;
+  background-color: rgba(230, 249, 255, 0.08);
   border-radius: 8px;
+  padding: 8px 16px;
 `;
 
 const HeaderText = styled.Text`
   font-size: 20px;
   font-weight: 700;
+  line-height: 24px;
   color: ${ColorMap.White};
+  text-align: center;
 `;
 
 const MyDatePicker: FC<MyDatePickerProps> = ({
   open,
-  callback,
+  onChange,
   dismiss,
   date,
-}) => (
-  <Base
-    swipeDirection={['down']}
-    isVisible={open}
-    onDismiss={() => {
-      dismiss();
-    }}
-    onSwipeComplete={dismiss}>
-    <CalendarWrapper>
-      <Calendar
-        current={date.toString()}
-        // Handler which gets executed on day press. Default = undefined
-        onDayPress={day => {
-          const d = new Date(day.year, day.month - 1, day.day, 9, 0);
-          callback(d);
-        }}
-        disableAllTouchEventsForDisabledDays={true}
-        enableSwipeMonths={true}
-        renderHeader={d => {
-          return (
+}) => {
+  const {bottom} = useSafeAreaInsets();
+
+  const dateString = date.format('YYYY-MM-DD');
+
+  return (
+    <Base
+      swipeDirection={['down']}
+      isVisible={open}
+      onBackdropPress={dismiss}
+      onSwipeComplete={dismiss}>
+      <CalendarWrapper bottom={bottom}>
+        <StyledCalendar
+          initialDate={dateString}
+          current={dateString}
+          maxDate={new Date().toDateString()}
+          markedDates={{[dateString]: {selected: true}}}
+          onDayPress={day =>
+            onChange(new Date(day.year, day.month - 1, day.day))
+          }
+          disableAllTouchEventsForDisabledDays
+          enableSwipeMonths
+          renderHeader={d => (
             <Header>
-              <HeaderText>{dayjs(d).format('MM-YYYY')}</HeaderText>
+              <HeaderText>{dayjs(d).format('MMMM YYYY')}</HeaderText>
             </Header>
-          );
-        }}
-        theme={{
-          backgroundColor: '#050D20',
-          calendarBackground: '#050D20',
-          textSectionTitleColor: '#A7DAF6',
-          textSectionTitleDisabledColor: '#d9e1e8',
-          selectedDayBackgroundColor: '#00adf5',
-          selectedDayTextColor: 'red',
-          dayTextColor: '#F2F2F2',
-          textDisabledColor: 'rgba(229, 249, 255, 0.6)',
-          dotColor: '#00adf5',
-          selectedDotColor: '#ffffff',
-          arrowColor: '#E5F9FF',
-          disabledArrowColor: '#d9e1e8',
-          monthTextColor: 'blue',
-          indicatorColor: 'blue',
-          textDayFontWeight: '300',
-          textMonthFontWeight: 'bold',
-          textDayHeaderFontWeight: '300',
-          textDayFontSize: 16,
-          textMonthFontSize: 16,
-          textDayHeaderFontSize: 16,
-        }}
-      />
-    </CalendarWrapper>
-  </Base>
-);
+          )}
+          bottom={bottom}
+          theme={{
+            backgroundColor: ColorMap.DarkBlue,
+            calendarBackground: ColorMap.DarkBlue,
+            textSectionTitleColor: ColorMap.LightBlue,
+            selectedDayBackgroundColor: ColorMap.LightBlue2,
+            selectedDayTextColor: ColorMap.DarkBlue,
+            dayTextColor: '#F2F2F2',
+            todayTextColor: '#F2F2F2',
+            textDisabledColor: rgba(ColorMap.LightBlue2, 0.6),
+            arrowColor: ColorMap.LightBlue2,
+            textDayFontSize: 16,
+            textDayFontWeight: '400',
+            textDayHeaderFontSize: 12,
+            textDayHeaderFontWeight: '400',
+            'stylesheet.calendar.header': {
+              week: {
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                marginTop: 20,
+              },
+            },
+          }}
+        />
+      </CalendarWrapper>
+    </Base>
+  );
+};
 
 export default MyDatePicker;
