@@ -328,11 +328,7 @@ const FirstMemory = () => {
         />
 
         <MyDatePicker
-          onChange={d => {
-            setDate(dayjs(d));
-            console.log('da', dayjs(d).toString());
-            setOpenTimePicker(false);
-          }}
+          onChange={d => setDate(dayjs(d))}
           open={openTimePicker}
           date={date}
           dismiss={() => {
