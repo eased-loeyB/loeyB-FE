@@ -1,98 +1,236 @@
-import React, {FC} from 'react';
+import React, {FC, Fragment, useState} from 'react';
 
 import dayjs, {Dayjs} from 'dayjs';
+import {rgba} from 'polished';
 import {Calendar} from 'react-native-calendars';
 import Modal from 'react-native-modal';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 
 import {ColorMap} from '~/utils/Colors';
+import {deviceWidth} from '~/utils/design';
+
+import {
+  currentDate,
+  currentMonth,
+  currentYear,
+  MONTH_LIST,
+  now,
+  YEAR_LIST,
+} from './utils';
+
+dayjs.locale('en');
 
 export interface MyDatePickerProps {
   open: boolean;
-  callback: (date: Date) => void;
+  onChange: (date: Date) => void;
   dismiss: () => void;
   date: Dayjs;
+  maxDate?: Dayjs;
 }
 
 const Base = styled(Modal)`
-  justify-content: flex-end;
-  margin: 0;
+  justify-content: center;
+  margin: 0 8px;
 `;
 
-const CalendarWrapper = styled.View`
-  padding-bottom: 50px;
-  background-color: ${ColorMap.DarkBlue};
+const CalendarWrapper = styled.View<{bottom: number}>`
+  margin-bottom: ${({bottom}) => -bottom}px;
 `;
 
-const Header = styled.View`
-  width: 150px;
-  height: 38px;
-  margin-top: 10px;
-  background-color: rgba(229, 249, 255, 0.08);
+const StyledCalendar = styled(Calendar)<{bottom: number}>`
+  border-radius: 24px;
+  padding-top: 20px;
+  padding-bottom: ${({bottom}) => bottom + 16}px;
+`;
+
+const Header = styled.TouchableOpacity`
+  display: flex;
+  justify-content: center;
+  background-color: rgba(230, 249, 255, 0.08);
   border-radius: 8px;
+  padding: 8px 16px;
+  margin: 0 6px;
+`;
+
+const YearHeader = styled(Header)`
+  width: 84px;
+`;
+
+const MonthHeader = styled(Header)`
+  width: 78px;
 `;
 
 const HeaderText = styled.Text`
   font-size: 20px;
   font-weight: 700;
+  line-height: 24px;
   color: ${ColorMap.White};
+  text-align: center;
+`;
+
+const Picker = styled.ScrollView<{isVisible: boolean}>`
+  display: ${({isVisible}) => (isVisible ? 'flex' : 'none')};
+  position: absolute;
+  top: 58px;
+  height: 400px;
+  background-color: ${ColorMap.DarkBlue};
+  border-radius: 8px;
+  padding: 8px 0;
+`;
+
+const YearPicker = styled(Picker)`
+  right: ${deviceWidth / 2}px;
+  width: 68px;
+`;
+
+const MonthPicker = styled(Picker)`
+  left: ${deviceWidth / 2 + 8}px;
+  width: 112px;
+`;
+
+const PickerItem = styled.TouchableOpacity<{isSelected: boolean}>`
+  display: flex;
+  justify-content: center;
+  background-color: ${({isSelected}) =>
+    isSelected ? ColorMap.LightBlue2 : 'transparent'};
+  opacity: ${({disabled}) => (disabled ? 0.3 : 1)};
+  padding: 4px 16px;
+`;
+
+const PickerItemText = styled.Text<{isSelected: boolean}>`
+  font-size: 14px;
+  line-height: 24px;
+  color: ${({isSelected}) => (isSelected ? ColorMap.DarkBlue : ColorMap.White)};
 `;
 
 const MyDatePicker: FC<MyDatePickerProps> = ({
   open,
-  callback,
+  onChange,
   dismiss,
   date,
-}) => (
-  <Base
-    swipeDirection={['down']}
-    isVisible={open}
-    onDismiss={() => {
-      dismiss();
-    }}
-    onSwipeComplete={dismiss}>
-    <CalendarWrapper>
-      <Calendar
-        current={date.toString()}
-        // Handler which gets executed on day press. Default = undefined
-        onDayPress={day => {
-          const d = new Date(day.year, day.month - 1, day.day, 9, 0);
-          callback(d);
-        }}
-        disableAllTouchEventsForDisabledDays={true}
-        enableSwipeMonths={true}
-        renderHeader={d => {
-          return (
-            <Header>
-              <HeaderText>{dayjs(d).format('MM-YYYY')}</HeaderText>
-            </Header>
-          );
-        }}
-        theme={{
-          backgroundColor: '#050D20',
-          calendarBackground: '#050D20',
-          textSectionTitleColor: '#A7DAF6',
-          textSectionTitleDisabledColor: '#d9e1e8',
-          selectedDayBackgroundColor: '#00adf5',
-          selectedDayTextColor: 'red',
-          dayTextColor: '#F2F2F2',
-          textDisabledColor: 'rgba(229, 249, 255, 0.6)',
-          dotColor: '#00adf5',
-          selectedDotColor: '#ffffff',
-          arrowColor: '#E5F9FF',
-          disabledArrowColor: '#d9e1e8',
-          monthTextColor: 'blue',
-          indicatorColor: 'blue',
-          textDayFontWeight: '300',
-          textMonthFontWeight: 'bold',
-          textDayHeaderFontWeight: '300',
-          textDayFontSize: 16,
-          textMonthFontSize: 16,
-          textDayHeaderFontSize: 16,
-        }}
-      />
-    </CalendarWrapper>
-  </Base>
-);
+  maxDate = dayjs(now),
+}) => {
+  const {bottom} = useSafeAreaInsets();
+
+  const [openYearPicker, setOpenYearPicker] = useState(false);
+  const [openMonthPicker, setOpenMonthPicker] = useState(false);
+
+  const dateString = date.format('YYYY-MM-DD');
+
+  const handleChange = (newDate: Date): void => {
+    if (dayjs(newDate) > maxDate) {
+      newDate.setMonth(currentMonth);
+      newDate.setDate(currentDate);
+    }
+
+    onChange(newDate);
+  };
+
+  const onChangeYear = (year: number): void => {
+    handleChange(new Date(year, date.month(), date.date()));
+    setOpenYearPicker(false);
+  };
+
+  const onChangeMonth = (monthIndex: number): void => {
+    handleChange(new Date(date.year(), monthIndex, date.date()));
+    setOpenMonthPicker(false);
+  };
+
+  return (
+    <Base
+      isVisible={open}
+      backdropOpacity={0.1}
+      onBackdropPress={dismiss}
+      onSwipeComplete={dismiss}>
+      <CalendarWrapper bottom={bottom}>
+        <StyledCalendar
+          initialDate={dateString}
+          current={dateString}
+          maxDate={new Date().toDateString()}
+          markedDates={{[dateString]: {selected: true}}}
+          onDayPress={day =>
+            handleChange(new Date(day.year, day.month - 1, day.day))
+          }
+          disableAllTouchEventsForDisabledDays
+          enableSwipeMonths
+          renderHeader={d => {
+            const headerDate = dayjs(d);
+
+            return (
+              <>
+                <YearHeader onPress={() => setOpenYearPicker(prev => !prev)}>
+                  <HeaderText>{headerDate.year()}</HeaderText>
+                </YearHeader>
+                <MonthHeader onPress={() => setOpenMonthPicker(prev => !prev)}>
+                  <HeaderText>{headerDate.format('MMM')}</HeaderText>
+                </MonthHeader>
+              </>
+            );
+          }}
+          bottom={bottom}
+          theme={{
+            backgroundColor: ColorMap.DarkBlue,
+            calendarBackground: ColorMap.DarkBlue,
+            textSectionTitleColor: ColorMap.LightBlue,
+            selectedDayBackgroundColor: ColorMap.LightBlue2,
+            selectedDayTextColor: ColorMap.DarkBlue,
+            dayTextColor: '#F2F2F2',
+            todayTextColor: '#F2F2F2',
+            textDisabledColor: rgba(ColorMap.LightBlue2, 0.6),
+            arrowColor: ColorMap.LightBlue2,
+            textDayFontSize: 16,
+            textDayFontWeight: '400',
+            textDayHeaderFontSize: 12,
+            textDayHeaderFontWeight: '400',
+            'stylesheet.calendar.header': {
+              week: {
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                marginTop: 20,
+              },
+            },
+          }}
+        />
+        <YearPicker
+          isVisible={openYearPicker}
+          showsVerticalScrollIndicator={false}>
+          {YEAR_LIST.map(year => {
+            const isSelected = year === date.year();
+
+            return (
+              <PickerItem
+                key={year}
+                isSelected={isSelected}
+                onPress={() => onChangeYear(year)}>
+                <PickerItemText isSelected={isSelected}>{year}</PickerItemText>
+              </PickerItem>
+            );
+          })}
+        </YearPicker>
+
+        <MonthPicker
+          isVisible={openMonthPicker}
+          showsVerticalScrollIndicator={false}>
+          {MONTH_LIST.map((month: string, monthIndex: number) => {
+            const isSelected = monthIndex === date.month();
+            const disabled =
+              date.year() === currentYear && monthIndex > currentMonth;
+
+            return (
+              <PickerItem
+                key={month}
+                isSelected={isSelected}
+                disabled={disabled}
+                onPress={() => onChangeMonth(monthIndex)}>
+                <PickerItemText isSelected={isSelected}>{month}</PickerItemText>
+              </PickerItem>
+            );
+          })}
+        </MonthPicker>
+      </CalendarWrapper>
+    </Base>
+  );
+};
 
 export default MyDatePicker;
