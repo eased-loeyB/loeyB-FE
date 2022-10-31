@@ -1,7 +1,6 @@
-import {useNavigation} from '@react-navigation/native';
 import React, {FC, useRef} from 'react';
-import {Image} from 'react-native';
 
+import {useNavigation} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
 import styled from 'styled-components/native';
@@ -126,7 +125,7 @@ const Tutorial: FC = () => {
           </TextView>
           <DoneButton
             onPress={() => {
-              navigate(MainStackName.FIRST_MEMORY);
+              navigate(MainStackName.MAIN_PAGE);
             }}>
             <DoneText>Done!</DoneText>
           </DoneButton>
