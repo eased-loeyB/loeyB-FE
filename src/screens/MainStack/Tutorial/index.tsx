@@ -77,6 +77,13 @@ const ImageText = styled.Text`
   font-weight: 400;
 `;
 
+const TutorialImage = styled.Image`
+  width: 100%;
+  height: 100%;
+`;
+
+const DotStyle = {width: 12, height: 12, borderRadius: 6};
+
 const Tutorial: FC = () => {
   const {bottom} = useSafeAreaInsets();
   const {navigate} = useNavigation<MainStackNavigationProps>();
@@ -88,42 +95,30 @@ const Tutorial: FC = () => {
       ref={swiper}
       index={0}
       paginationStyle={{bottom: 106}}
-      dotStyle={{width: 12, height: 12, borderRadius: 6}}
-      dotColor="#868E96"
-      activeDotColor="white"
-      activeDotStyle={{width: 12, height: 12, borderRadius: 6}}>
+      dotStyle={{...DotStyle, opacity: 0.3}}
+      dotColor={ColorMap.LightBlue2}
+      activeDotColor={ColorMap.LightBlue2}
+      activeDotStyle={DotStyle}>
       <Container>
-        <Image
-          source={TUTORIAL_PAGE_1}
-          style={{width: '100%', height: '100%'}}
-        />
+        <TutorialImage source={TUTORIAL_PAGE_1} />
         <ImageView onPress={() => swiper?.current?.scrollBy(1)}>
           <ImageText>Skip</ImageText>
         </ImageView>
       </Container>
       <Container>
-        <Image
-          source={TUTORIAL_PAGE_2}
-          style={{width: '100%', height: '100%'}}
-        />
+        <TutorialImage source={TUTORIAL_PAGE_2} />
         <ImageView onPress={() => swiper?.current?.scrollBy(1)}>
           <ImageText>Skip</ImageText>
         </ImageView>
       </Container>
       <Container>
-        <Image
-          source={TUTORIAL_PAGE_3}
-          style={{width: '100%', height: '100%'}}
-        />
+        <TutorialImage source={TUTORIAL_PAGE_3} />
         <ImageView onPress={() => swiper?.current?.scrollBy(1)}>
           <ImageText>Skip</ImageText>
         </ImageView>
       </Container>
       <Container>
-        <Image
-          source={TUTORIAL_PAGE_4}
-          style={{width: '100%', height: '100%'}}
-        />
+        <TutorialImage source={TUTORIAL_PAGE_4} />
         <ModalView>
           <TextView>
             <ModalText>Add & select tags</ModalText>
