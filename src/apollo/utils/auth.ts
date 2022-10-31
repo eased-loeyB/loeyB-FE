@@ -1,4 +1,7 @@
 import {
+  removeAccessToken,
+  removeExpiresIn,
+  removeRefreshToken,
   saveAccessToken,
   saveExpiresIn,
   saveRefreshToken,
@@ -14,4 +17,10 @@ export async function saveToken({
   await saveAccessToken(accessToken);
   await saveRefreshToken(refreshToken);
   await saveExpiresIn(`${expiresIn}`);
+}
+
+export async function removeToken(): Promise<void> {
+  await removeAccessToken();
+  await removeRefreshToken();
+  await removeExpiresIn();
 }

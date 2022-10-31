@@ -31,7 +31,6 @@ export const errorHandler: ErrorHandler = ({
 
       switch (message) {
         case EventToken.INVALID_TOKEN:
-          // await onLogout();
           DeviceEventEmitter.emit(message);
           toastMessage = 'commons.errors.token.invalid';
           break;

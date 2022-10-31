@@ -10,7 +10,7 @@
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "postinstall": "cd ./ios && pod install && cd ..",
-    "clean:android": "cd ./android && ./gradlew clean && cd ..",
+    "clean:android": "cd ./android && ./gradlew clean && cd .. && react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
     "clean:ios": "cd ./ios && xcodebuild clean && cd ..",
     "build:android": "yarn clean:android && cd ./android && ./gradlew assembleDebug && cd ..",
     "codegen": "graphql-codegen --config codegen.yml"
@@ -18,7 +18,7 @@
   "dependencies": {
     "@apollo/client": "^3.5.10",
     "@apollo/react-hooks": "^4.0.0",
-    "@gorhom/bottom-sheet": "^4",
+    "@gorhom/bottom-sheet": "^4.4.5",
     "@notifee/react-native": "^5.3.0",
     "@react-native-async-storage/async-storage": "^1.17.0",
     "@react-native-community/cameraroll": "^4.1.2",

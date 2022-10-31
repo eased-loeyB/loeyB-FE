@@ -1,5 +1,4 @@
 import React, {FC} from 'react';
-import {Keyboard, TouchableWithoutFeedback} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
 import styled from 'styled-components/native';
@@ -12,18 +11,16 @@ import {
   MainStackNavigationProps,
 } from '~/navigation/stacks/MainStack';
 import {useTypedSelector} from '~/store';
-import {deviceHeight, deviceWidth} from '~/utils/design';
-import {TitleStyle} from '~/utils/Styles';
+import {deviceHeight} from '~/utils/design';
+import {BottomWrapperStyle, ContainerStyle, TitleStyle} from '~/utils/Styles';
 
 const Container = styled.View`
-  flex: 1;
-  align-items: center;
+  ${ContainerStyle}
 `;
 
-const CircleWrapper = styled.View`
+const CircleWrapper = styled(Container)`
   position: absolute;
-  top: ${deviceHeight / 2 - 250}px;
-  left: ${deviceWidth / 2 - 190}px;
+  top: ${deviceHeight / 2 - 254}px;
 `;
 
 const CircleImage = styled.Image`
@@ -31,13 +28,25 @@ const CircleImage = styled.Image`
   aspect-ratio: 1;
 `;
 
+const TitleWrapper = styled.View`
+  flex: 1;
+  justify-content: space-between;
+  padding-top: 40px;
+  padding-bottom: 120px;
+`;
+
 const Title = styled.Text`
   ${TitleStyle}
   text-align: center;
 `;
 
+const Subtitle = styled(Title)`
+  font-size: 18px;
+  line-height: 32px;
+`;
+
 const ButtonWrapper = styled.View`
-  margin-top: 28px;
+  ${BottomWrapperStyle}
 `;
 
 const Welcome: FC = () => {
@@ -48,33 +57,29 @@ const Welcome: FC = () => {
     <BackgroundCommon
       haveFilter={true}
       canGoBack={true}
-      title={''}
+      isAuth={false}
       filterBG={BACKGROUND_WELCOME}
       customFiler={{top: 150}}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <Container>
-          <Container>
-            <CircleWrapper>
-              <CircleImage source={BACKGROUND_INPUT_NAME} />
-            </CircleWrapper>
-            <Container>
-              <Title>
-                Welcome to loeyB
-                {`\n ${userName}`}
-              </Title>
-            </Container>
-          </Container>
-          <ButtonWrapper>
-            <Button
-              title={'Next'}
-              callback={() => {
-                push(MainStackName.TUTORIAL);
-              }}
-              enable={true}
-            />
-          </ButtonWrapper>
-        </Container>
-      </TouchableWithoutFeedback>
+      <Container>
+        <CircleWrapper>
+          <CircleImage source={BACKGROUND_INPUT_NAME} />
+        </CircleWrapper>
+
+        <TitleWrapper>
+          <Title>{`Welcome to loeyB,\n${userName}`}</Title>
+          <Subtitle>{'Let’s learn how to\nsave moments as stardusts'}</Subtitle>
+        </TitleWrapper>
+
+        <ButtonWrapper>
+          <Button
+            title={'Next'}
+            callback={() => {
+              push(MainStackName.TUTORIAL);
+            }}
+            enable={true}
+          />
+        </ButtonWrapper>
+      </Container>
     </BackgroundCommon>
   );
 };

@@ -26,7 +26,7 @@ export const REGISTER_RECORD: TypedDocumentNode<
   RegisterRecordInput
 > = gql`
   mutation registerRecord(
-    $imgFiles: ImgFileInput
+    $imgFiles: [ImgFileInput!]
     $areaCategoryTag: [AreaCategoryTagInput!]!
     $date: String!
     $location: String!
@@ -51,9 +51,9 @@ export const REGISTER_RECORD: TypedDocumentNode<
 
 export const UPDATE_RECORD: TypedDocumentNode<Output, UpdateRecordInput> = gql`
   mutation updateRecord(
-    $recordId: String
-    $imgFiles: ImgFileInput
-    $areaCategoryTag: [AreaCategoryTagInput!]
+    $recordId: String!
+    $imgFiles: [ImgFileInput!]
+    $areaCategoryTag: [AreaCategoryTagInput!]!
     $date: String
     $location: String
     $importance: Float

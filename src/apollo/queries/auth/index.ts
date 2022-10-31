@@ -3,6 +3,7 @@ import {gql, TypedDocumentNode} from '@apollo/client';
 import {
   AuthenticationInput,
   AuthenticationOutput,
+  GoogleLoginInput,
   Output,
   VerifyEmailVerificationCodeInput,
 } from '~/apollo/generated';
@@ -21,6 +22,25 @@ export const AUTHENTICATE: TypedDocumentNode<
     ) {
       errorMessage
       result
+      data {
+        accessToken
+        tokenType
+        expiresIn
+        refreshToken
+        userName
+      }
+    }
+  }
+`;
+
+export const GOOGLE_LOGIN: TypedDocumentNode<
+  AuthenticationOutput,
+  GoogleLoginInput
+> = gql`
+  query googleLogin($token: String!, $deviceToken: String) {
+    googleLogin(input: {token: $token, deviceToken: $deviceToken}) {
+      result
+      errorMessage
       data {
         accessToken
         tokenType

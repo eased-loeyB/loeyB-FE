@@ -1,5 +1,10 @@
 import React, {FC, memo} from 'react';
-import {Image, ImageRequireSource, ImageStyle} from 'react-native';
+import {
+  Image,
+  ImageRequireSource,
+  ImageStyle,
+  TouchableOpacity,
+} from 'react-native';
 
 // @ts-ignore
 import RadialGradient from 'react-native-radial-gradient';
@@ -15,6 +20,7 @@ export interface BackgroundCommonProps {
   children: JSX.Element;
   haveFilter?: boolean;
   canGoBack?: boolean;
+  isAuth?: boolean;
   title?: string;
   filterBG?: ImageRequireSource;
   customFiler?: ImageStyle;
@@ -35,16 +41,10 @@ const Wrapper = styled(SafeAreaView)`
   flex: 1;
 `;
 
-const Container = styled.View`
+const Container = styled.View<{isAuth: boolean}>`
   flex-direction: row;
-  padding: 24px 16px;
+  padding: ${({isAuth}) => (isAuth ? '48px 24px 0' : '20px 24px')};
   justify-content: space-between;
-`;
-
-const BackButton = styled.TouchableOpacity`
-  position: absolute;
-  top: 48px;
-  left: 24px;
 `;
 
 const Title = styled.Text`
@@ -55,6 +55,7 @@ const BackgroundCommon: FC<BackgroundCommonProps> = ({
   children,
   haveFilter,
   canGoBack,
+  isAuth = true,
   title,
   filterBG,
   customFiler,
@@ -70,10 +71,10 @@ const BackgroundCommon: FC<BackgroundCommonProps> = ({
     )}
     <Wrapper edges={edges ?? ['bottom', 'left', 'right', 'top']}>
       {canGoBack && (
-        <Container>
-          <BackButton onPress={goBack}>
+        <Container isAuth={isAuth}>
+          <TouchableOpacity onPress={goBack}>
             <Image source={ARROW_BACK} />
-          </BackButton>
+          </TouchableOpacity>
           <Title>{title}</Title>
         </Container>
       )}
