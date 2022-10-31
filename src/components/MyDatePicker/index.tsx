@@ -10,7 +10,14 @@ import styled from 'styled-components/native';
 import {ColorMap} from '~/utils/Colors';
 import {deviceWidth} from '~/utils/design';
 
-import {MONTH_LIST, YEAR_LIST} from './utils';
+import {
+  currentDate,
+  currentMonth,
+  currentYear,
+  MONTH_LIST,
+  now,
+  YEAR_LIST,
+} from './utils';
 
 dayjs.locale('en');
 
@@ -19,6 +26,7 @@ export interface MyDatePickerProps {
   onChange: (date: Date) => void;
   dismiss: () => void;
   date: Dayjs;
+  maxDate?: Dayjs;
 }
 
 const Base = styled(Modal)`
@@ -46,7 +54,7 @@ const Header = styled.TouchableOpacity`
 `;
 
 const YearHeader = styled(Header)`
-  width: 82px;
+  width: 84px;
 `;
 
 const MonthHeader = styled(Header)`
@@ -86,6 +94,7 @@ const PickerItem = styled.TouchableOpacity<{isSelected: boolean}>`
   justify-content: center;
   background-color: ${({isSelected}) =>
     isSelected ? ColorMap.LightBlue2 : 'transparent'};
+  opacity: ${({disabled}) => (disabled ? 0.3 : 1)};
   padding: 4px 16px;
 `;
 
@@ -100,6 +109,7 @@ const MyDatePicker: FC<MyDatePickerProps> = ({
   onChange,
   dismiss,
   date,
+  maxDate = dayjs(now),
 }) => {
   const {bottom} = useSafeAreaInsets();
 
@@ -108,13 +118,22 @@ const MyDatePicker: FC<MyDatePickerProps> = ({
 
   const dateString = date.format('YYYY-MM-DD');
 
+  const handleChange = (newDate: Date): void => {
+    if (dayjs(newDate) > maxDate) {
+      newDate.setMonth(currentMonth);
+      newDate.setDate(currentDate);
+    }
+
+    onChange(newDate);
+  };
+
   const onChangeYear = (year: number): void => {
-    onChange(new Date(year, date.month(), date.date()));
+    handleChange(new Date(year, date.month(), date.date()));
     setOpenYearPicker(false);
   };
 
   const onChangeMonth = (monthIndex: number): void => {
-    onChange(new Date(date.year(), monthIndex, date.date()));
+    handleChange(new Date(date.year(), monthIndex, date.date()));
     setOpenMonthPicker(false);
   };
 
@@ -131,7 +150,7 @@ const MyDatePicker: FC<MyDatePickerProps> = ({
           maxDate={new Date().toDateString()}
           markedDates={{[dateString]: {selected: true}}}
           onDayPress={day =>
-            onChange(new Date(day.year, day.month - 1, day.day))
+            handleChange(new Date(day.year, day.month - 1, day.day))
           }
           disableAllTouchEventsForDisabledDays
           enableSwipeMonths
@@ -195,11 +214,14 @@ const MyDatePicker: FC<MyDatePickerProps> = ({
           showsVerticalScrollIndicator={false}>
           {MONTH_LIST.map((month: string, monthIndex: number) => {
             const isSelected = monthIndex === date.month();
+            const disabled =
+              date.year() === currentYear && monthIndex > currentMonth;
 
             return (
               <PickerItem
                 key={month}
                 isSelected={isSelected}
+                disabled={disabled}
                 onPress={() => onChangeMonth(monthIndex)}>
                 <PickerItemText isSelected={isSelected}>{month}</PickerItemText>
               </PickerItem>
