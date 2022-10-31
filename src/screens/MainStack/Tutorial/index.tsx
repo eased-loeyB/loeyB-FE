@@ -67,7 +67,7 @@ const DoneText = styled.Text`
 `;
 
 const ImageView = styled.TouchableOpacity`
-  bottom: 106;
+  bottom: 106px;
   position: absolute;
   left: 38px;
 `;
