@@ -72,6 +72,11 @@ const ImageText = styled.Text`
   font-weight: 400;
 `;
 
+const TutorialImage = styled.Image`
+  width: 100%;
+  height: 100%;
+`;
+
 const Tutorial: FC = () => {
   const {bottom} = useSafeAreaInsets();
   const [index, setIndex] = useState(0);
@@ -84,37 +89,25 @@ const Tutorial: FC = () => {
       activeDotColor="white"
       activeDotStyle={{width: 12, height: 12, borderRadius: 6}}>
       <Container>
-        <Image
-          source={TUTORIAL_PAGE_1}
-          style={{width: '100%', height: '100%'}}
-        />
+        <TutorialImage source={TUTORIAL_PAGE_1} />
         <ImageView onPress={() => setIndex(1)}>
           <ImageText>Skip</ImageText>
         </ImageView>
       </Container>
       <Container>
-        <Image
-          source={TUTORIAL_PAGE_2}
-          style={{width: '100%', height: '100%'}}
-        />
+        <TutorialImage source={TUTORIAL_PAGE_2} />
         <ImageView onPress={() => setIndex(2)}>
           <ImageText>Skip</ImageText>
         </ImageView>
       </Container>
       <Container>
-        <Image
-          source={TUTORIAL_PAGE_3}
-          style={{width: '100%', height: '100%'}}
-        />
+        <TutorialImage source={TUTORIAL_PAGE_3} />
         <ImageView onPress={() => setIndex(3)}>
           <ImageText>Skip</ImageText>
         </ImageView>
       </Container>
       <Container>
-        <Image
-          source={TUTORIAL_PAGE_4}
-          style={{width: '100%', height: '100%'}}
-        />
+        <TutorialImage source={TUTORIAL_PAGE_4} />
         <ModalView>
           <TextView>
             <ModalText>Add & select tags</ModalText>
