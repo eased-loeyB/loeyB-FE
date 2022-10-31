@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import React, {FC, useRef} from 'react';
 import {Image} from 'react-native';
 
@@ -11,6 +12,10 @@ import {
   TUTORIAL_PAGE_3,
   TUTORIAL_PAGE_4,
 } from '~/assets';
+import {
+  MainStackName,
+  MainStackNavigationProps,
+} from '~/navigation/stacks/MainStack';
 import {ColorMap} from '~/utils/Colors';
 import {ContainerStyle} from '~/utils/Styles';
 
@@ -74,6 +79,8 @@ const ImageText = styled.Text`
 
 const Tutorial: FC = () => {
   const {bottom} = useSafeAreaInsets();
+  const {navigate} = useNavigation<MainStackNavigationProps>();
+
   const swiper = useRef(null);
 
   return (
@@ -122,7 +129,10 @@ const Tutorial: FC = () => {
             <ModalText>Add & select tags</ModalText>
             <ModalText>about the experience</ModalText>
           </TextView>
-          <DoneButton>
+          <DoneButton
+            onPress={() => {
+              navigate(MainStackName.FIRST_MEMORY);
+            }}>
             <DoneText>Done!</DoneText>
           </DoneButton>
         </ModalView>
