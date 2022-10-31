@@ -74,7 +74,7 @@ const Welcome: FC = () => {
           <Button
             title={'Next'}
             callback={() => {
-              push(MainStackName.FIRST_MEMORY);
+              push(MainStackName.TUTORIAL);
             }}
             enable={true}
           />

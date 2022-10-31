@@ -8,6 +8,7 @@ import {
 import FirstMemory from '~/screens/MainStack/FirstMemory';
 import InputName from '~/screens/MainStack/InputName';
 import SelectCategory from '~/screens/MainStack/SelectCategory';
+import Tutorial from '~/screens/MainStack/Tutorial';
 import Welcome from '~/screens/MainStack/Welcome';
 import {useTypedSelector} from '~/store';
 
@@ -17,6 +18,7 @@ export enum MainStackName {
   WELCOME = 'WELCOME',
   FIRST_MEMORY = 'FIRST_MEMORY',
   CAMERA = 'CAMERA',
+  TUTORIAL = 'TUTORIAL',
 }
 
 export type MainStackNavigationProps = StackNavigationProp<
@@ -55,6 +57,7 @@ const MainStack: FC = () => {
 
       <Stack.Screen name={MainStackName.WELCOME} component={Welcome} />
       <Stack.Screen name={MainStackName.FIRST_MEMORY} component={FirstMemory} />
+      <Stack.Screen name={MainStackName.TUTORIAL} component={Tutorial} />
     </Stack.Navigator>
   );
 };
